@@ -1,0 +1,3 @@
+frame.number|pfcp.urr_id|pfcp.ur_seqn|pfcp.volume_measurement.tovol|pfcp.volume_measurement.ulvol|pfcp.volume_measurement.dlvol
+19|1|0|1048844|1048844|0
+36|1,2|1,0|0,0|0,0|0,0

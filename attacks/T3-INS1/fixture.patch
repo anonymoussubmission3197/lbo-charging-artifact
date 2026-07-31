@@ -1,0 +1,111 @@
+diff --git a/lib/diameter/gy/message.c b/lib/diameter/gy/message.c
+index 4d282d397..dd66d93a3 100644
+--- a/lib/diameter/gy/message.c
++++ b/lib/diameter/gy/message.c
+@@ -45,6 +45,7 @@ struct dict_object *ogs_diam_gy_cc_output_octets = NULL;
+ struct dict_object *ogs_diam_gy_cc_service_specific_units = NULL;
+ struct dict_object *ogs_diam_gy_reporting_reason = NULL;
+ struct dict_object *ogs_diam_gy_service_id = NULL;
++struct dict_object *ogs_diam_gy_rating_group = NULL;
+ 
+ struct dict_object *ogs_diam_gy_service_information = NULL;
+ struct dict_object *ogs_diam_gy_ps_information = NULL;
+@@ -112,6 +113,7 @@ int ogs_diam_gy_init(void)
+     CHECK_dict_search(DICT_AVP, AVP_BY_NAME_ALL_VENDORS, "CC-Service-Specific-Units", &ogs_diam_gy_cc_service_specific_units);
+     CHECK_dict_search(DICT_AVP, AVP_BY_NAME_ALL_VENDORS, "Reporting-Reason", &ogs_diam_gy_reporting_reason);
+     CHECK_dict_search(DICT_AVP, AVP_BY_NAME_ALL_VENDORS, "Service-Identifier", &ogs_diam_gy_service_id);
++    CHECK_dict_search(DICT_AVP, AVP_BY_NAME_ALL_VENDORS, "Rating-Group", &ogs_diam_gy_rating_group);
+ 
+     CHECK_dict_search(DICT_AVP, AVP_BY_NAME_ALL_VENDORS, "Service-Information", &ogs_diam_gy_service_information);
+     CHECK_dict_search(DICT_AVP, AVP_BY_NAME_ALL_VENDORS, "PS-Information", &ogs_diam_gy_ps_information);
+diff --git a/lib/diameter/gy/message.h b/lib/diameter/gy/message.h
+index 5880ca59c..3e5d39979 100644
+--- a/lib/diameter/gy/message.h
++++ b/lib/diameter/gy/message.h
+@@ -94,6 +94,7 @@ extern struct dict_object *ogs_diam_gy_reporting_reason;
+ #define OGS_DIAM_GY_REPORTING_REASON_POOL_EXHAUSTED             8
+ #define OGS_DIAM_GY_REPORTING_REASON_UNUSED_QUOTA_TIMER         9
+ extern struct dict_object *ogs_diam_gy_service_id;
++extern struct dict_object *ogs_diam_gy_rating_group;
+ extern struct dict_object *ogs_diam_gy_service_information;
+ extern struct dict_object *ogs_diam_gy_ps_information;
+ extern struct dict_object *ogs_diam_gy_3gpp_charging_id;
+diff --git a/src/smf/context.c b/src/smf/context.c
+index dde58c18b..59208b50d 100644
+--- a/src/smf/context.c
++++ b/src/smf/context.c
+@@ -2415,8 +2415,9 @@ smf_bearer_t *smf_qos_flow_add(smf_sess_t *sess)
+     urr->meas_method = OGS_PFCP_MEASUREMENT_METHOD_VOLUME;
+     urr->rep_triggers.volume_threshold = 1;
+     urr->vol_threshold.tovol = 1;
+-    urr->vol_threshold.total_volume = 1024*1024*100;
++    urr->vol_threshold.total_volume = 1024*1024; /* T1-1 test fixture */
+ 
++    ogs_pfcp_pdr_associate_urr(ul_pdr, urr); /* T1-1 test fixture */
+     ogs_pfcp_pdr_associate_urr(dl_pdr, urr);
+ 
+     /* QER */
+diff --git a/src/smf/gy-path.c b/src/smf/gy-path.c
+index 4590091dc..d6030db22 100644
+--- a/src/smf/gy-path.c
++++ b/src/smf/gy-path.c
+@@ -290,6 +290,15 @@ static void fill_multiple_services_credit_control_ccr(smf_sess_t *sess,
+     ret = fd_msg_avp_new(ogs_diam_gy_multiple_services_cc, 0, &avp);
+     ogs_assert(ret == 0);
+ 
++    /* T1-1 fixture: carry the applied 5QI as the OCS charging key. */
++    ret = fd_msg_avp_new(ogs_diam_gy_rating_group, 0, &avpch1);
++    ogs_assert(ret == 0);
++    val.u32 = sess->session.qos.index;
++    ret = fd_msg_avp_setvalue(avpch1, &val);
++    ogs_assert(ret == 0);
++    ret = fd_msg_avp_add(avp, MSG_BRW_LAST_CHILD, avpch1);
++    ogs_assert(ret == 0);
++
+     /* Requested-Service-Unit, RFC4006 8.18 */
+     if (cc_request_type == OGS_DIAM_GY_CC_REQUEST_TYPE_INITIAL_REQUEST ||
+         cc_request_type == OGS_DIAM_GY_CC_REQUEST_TYPE_UPDATE_REQUEST)
+@@ -301,7 +310,6 @@ static void fill_multiple_services_credit_control_ccr(smf_sess_t *sess,
+         fill_used_service_unit(sess, cc_request_type, avp);
+ 
+         /* Service-Identifier, RFC4006 8.28. Not used in Gy. */
+-        /* Rating-Group */
+ 
+         /* Reporting-Reason, TS 32.299 7.2.175 */
+         /* "values QHT, FINAL, VALIDITY_TIME, FORCED_REAUTHORISATION,
+diff --git a/src/smf/n4-handler.c b/src/smf/n4-handler.c
+index ee048f6fc..6eb7469f1 100644
+--- a/src/smf/n4-handler.c
++++ b/src/smf/n4-handler.c
+@@ -1581,6 +1581,7 @@ uint8_t smf_n4_handle_session_report_request(
+     uint8_t cause_value = 0;
+     uint16_t pdr_id = 0;
+     unsigned int i;
++    unsigned int accepted_usage_reports = 0;
+ 
+     smf_metrics_inst_global_inc(SMF_METR_GLOB_CTR_SM_N4SESSIONREPORT);
+ 
+@@ -1752,11 +1753,23 @@ uint8_t smf_n4_handle_session_report_request(
+             if (volume.dlvol)
+                 sess->gy.dl_octets += volume.downlink_volume;
+             sess->gy.duration += use_rep->duration_measurement.u32;
++            accepted_usage_reports++;
++            ogs_warn("selected-standard-scenario accepted Usage Report index[%u] urr[%u] "
++                    "ur_seqn[%u] total[%llu] ul[%llu] dl[%llu]",
++                    i, urr_id, use_rep->ur_seqn.u32,
++                    (unsigned long long)volume.total_volume,
++                    (unsigned long long)volume.uplink_volume,
++                    (unsigned long long)volume.downlink_volume);
+             ogs_pfcp_parse_usage_report_trigger(
+                     &rep_trig, &use_rep->usage_report_trigger);
+             sess->gy.reporting_reason =
+                 smf_pfcp_urr_usage_report_trigger2diam_gy_reporting_reason(&rep_trig);
+         }
++        ogs_warn("selected-standard-scenario accumulated Usage Reports count[%u] "
++                "gy_ul[%llu] gy_dl[%llu]",
++                accepted_usage_reports,
++                (unsigned long long)sess->gy.ul_octets,
++                (unsigned long long)sess->gy.dl_octets);
+         switch (smf_use_gy_iface()) {
+         case 1:
+             if (!sess->gy.final_unit) {

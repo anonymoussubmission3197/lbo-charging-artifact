@@ -1,0 +1,11 @@
+case_id=T2-1
+audit_id=T2-A22
+baseline_or_attack=baseline
+workload=W3_EXACT_1MIB_UL_3MIB_DL
+capture_time_utc=PUBLIC
+kernel=6.17.0-40-generic
+open5gs_commit=26cbc33a418a292e3b3949be69155898d751bd6e
+source_diff_sha256=27dad8c80a31e36b7cfbef897e25406175e337c8b28003ea27a7d6711977182c
+smf_sha256=b4f54c6001172e164eb20439cf5cddb647d2545a20ab107b43edd787e6df465f
+upf_sha256=fa7307f85e83bfbdcc9df1cc726f224d16662bd79d3abf601e3235aa8007fdfc
+result_status=pending_semantic_import

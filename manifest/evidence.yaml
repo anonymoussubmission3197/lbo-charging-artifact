@@ -1,0 +1,215 @@
+schema_version: '1.0'
+note: Evidence mapping for the nineteen current paper representatives.
+cases:
+  T1-MOD:
+    backend: t1_mod1
+    verification_depth: paired_clean_source_raw_packet_trace_result_semantic
+    evidence_variant: isolated_w3_live_7_to_70
+    path: evidence/T1-MOD1
+    result: paired_result.json
+    expected:
+      audit_id: T1-A25
+      classification: E2E
+      workload: W3_EXACT_1MIB_UL_3MIB_DL
+      baseline_5qi: 9
+      attack_5qi: 6
+      g1_wire_acceptance: true
+      g2_state_effect: true
+      g3_backend_effect: true
+      kernel: 6.17.0-40-generic
+      baseline_charge_cents: 7
+      attack_charge_cents: 70
+      charge_multiplier: 10
+  T2-INS:
+    backend: t2_ins1
+    verification_depth: paired_clean_source_raw_packet_trace_result_semantic
+    path: evidence/T2-INS1
+    result: paired_result.json
+    expected:
+      audit_id: T2-A22
+      classification: E2E
+      workload: W3_EXACT_1MIB_UL_3MIB_DL
+      baseline_urr_count: 1
+      attack_urr_count: 2
+      g1_wire_acceptance: true
+      g2_state_effect: true
+      g3_backend_effect: true
+      kernel: 6.17.0-40-generic
+      baseline_charge_cents: 7
+      attack_charge_cents: 8
+  T3-MOD:
+    backend: t3_mod1
+    verification_depth: paired_clean_source_raw_packet_trace_result_semantic
+    path: evidence/T3-MOD1
+    result: paired_result.json
+    expected:
+      audit_id: T3-A17
+      classification: E2E
+      mutation_factor: 5
+      g1_wire_acceptance: true
+      g2_state_effect: true
+      g3_backend_effect: true
+      kernel: 6.17.0-40-generic
+      baseline_charge_cents: 17
+      attack_charge_cents: 61
+  T3-DUP:
+    backend: t3_dup1
+    verification_depth: paired_clean_source_raw_packet_trace_result_semantic
+    path: evidence/T3-DUP1
+    result: paired_result.json
+    expected:
+      audit_id: T3-A08
+      validation: E2E
+      kernel: 6.17.0-40-generic
+      report_count: 3
+      usage_report_ies_per_baseline_request: 1
+      usage_report_ies_per_attack_request: 2
+      baseline_usage_sum: 11049660
+      attack_gy_usage_sum: 22099320
+      baseline_charge_cents: 17
+      attack_charge_cents: 28
+      accepted_pfcp_responses: 3
+      accepted_cca_updates: 3
+  T3-SEQ:
+    backend: t3_seq1
+    verification_depth: paired_clean_source_raw_packet_trace_result_semantic
+    path: evidence/T3-SEQ1
+    result: paired_result.json
+    expected:
+      audit_id: T3-A02
+      validation: E2E
+      kernel: 6.17.0-40-generic
+      baseline_report_count: 3
+      attack_report_count: 6
+      semantic_replay_pairs: 3
+      baseline_usage_sum: 11049660
+      attack_gy_usage_sum: 22099320
+      baseline_charge_cents: 17
+      attack_charge_cents: 28
+      accepted_pfcp_responses: 6
+      accepted_cca_updates: 6
+  T3-DEL:
+    backend: t3_del1
+    verification_depth: paired_clean_source_raw_packet_trace_result_semantic
+    path: evidence/T3-DEL1
+    result: paired_result.json
+    expected:
+      audit_id: T3-A20
+      validation: E2E
+      kernel: 6.17.0-40-generic
+      report_count: 5
+      gtpu_packet_count_each: 30400
+      volume_ie_length: 41
+      flags:
+        tovol: true
+        ulvol: false
+        dlvol: true
+      omitted_uplink_bytes: 10524708
+      baseline_charge_cents: 27
+      attack_charge_cents: 16
+      accepted_pfcp_responses: 5
+      accepted_cca_updates: 5
+  T4-MOD:
+    backend: t4_mod1
+    verification_depth: paired_clean_source_raw_packet_trace_result_semantic
+    implementation_profile: Gy-semantic-analogue
+    path: evidence/T4-MOD1
+    result: paired_result.json
+    expected:
+      audit_id: T4G-A17
+      classification: E2E
+      implementation_profile: Gy-semantic-analogue
+      mutation_factor: 4
+      g1_wire_acceptance: true
+      g2_state_effect: true
+      g3_backend_effect: true
+      kernel: 6.17.0-40-generic
+      baseline_charge_cents: 27
+      attack_charge_cents: 58
+  T4-DUP:
+    backend: t4_dup1
+    verification_depth: paired_clean_source_raw_packet_trace_result_semantic
+    implementation_profile: Gy-semantic-analogue
+    path: evidence/T4-DUP1
+    result: paired_result.json
+    expected:
+      audit_id: T4G-A12
+      validation: E2E
+      classification: E2E
+      implementation_profile: Gy-semantic-analogue
+      kernel: 6.17.0-40-generic
+      gtpu_packet_count_each: 30400
+      report_count: 5
+      baseline_mscc_per_ccr: 1
+      attack_mscc_per_ccr: 2
+      original_usage_sum: 21050244
+      duplicated_gy_usage_sum: 42100488
+      usage_multiplier: 2
+      baseline_charge_cents: 27
+      attack_charge_cents: 48
+      accepted_pfcp_responses: 5
+      accepted_cca_updates: 5
+      accepted_attack_mscc_results: 10
+  T4-SEQ:
+    backend: t4_seq1
+    verification_depth: paired_clean_source_raw_packet_trace_result_semantic
+    implementation_profile: Gy-semantic-analogue
+    path: evidence/T4-SEQ1
+    result: paired_result.json
+    expected:
+      audit_id: T4G-A03
+      validation: E2E
+      classification: E2E
+      implementation_profile: Gy-semantic-analogue
+      kernel: 6.17.0-40-generic
+      gtpu_packet_count_each: 30400
+      pfcp_report_count: 5
+      semantic_replay_pair_count: 5
+      attack_ccr_update_count: 10
+      original_usage_sum: 21050244
+      replayed_gy_usage_sum: 42100488
+      usage_multiplier: 2
+      baseline_charge_cents: 27
+      attack_charge_cents: 48
+      accepted_pfcp_responses: 5
+      accepted_cca_updates: 10
+  T1-DEL:
+    backend: cell_package
+    path: evidence/T1-DEL1
+    result: result_summary.json
+  T1-DUP:
+    backend: cell_package
+    path: evidence/T1-DUP1
+    result: result_summary.json
+  T1-SEQ:
+    backend: cell_package
+    path: evidence/T1-SEQ1
+    result: result_summary.json
+  T2-MOD:
+    backend: cell_package
+    path: evidence/T2-MOD1
+    result: result_summary.json
+  T2-DEL:
+    backend: cell_package
+    path: evidence/T2-DEL1
+    result: result_summary.json
+  T2-DUP:
+    backend: cell_package
+    path: evidence/T2-DUP1
+    result: result_summary.json
+  T2-SEQ:
+    backend: cell_package
+    path: evidence/T2-SEQ1
+    result: result_summary.json
+  T3-INS:
+    backend: cell_package
+    path: evidence/T3-INS1
+    result: result_summary.json
+  T4-INS:
+    backend: cell_package
+    path: evidence/T4-INS1
+    result: result_summary.json
+  T4-DEL:
+    backend: cell_package
+    path: evidence/T4-DEL1
+    result: result_summary.json

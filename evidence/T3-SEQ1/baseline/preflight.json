@@ -1,0 +1,94 @@
+{
+  "schema_version": "1.0",
+  "case_id": "T3-1",
+  "mode": "baseline",
+  "source": "<LAB_ROOT>/INFOCOM_artifact/live_workspace/T3-1/open5gs-baseline",
+  "expected_commit": "26cbc33a418a292e3b3949be69155898d751bd6e",
+  "kernel": "6.17.0-40-generic",
+  "binary_sha256": {
+    "nrf": "4c42c44d093cf05daceab2dbcd28b601bc79de4f3601f5475e8b3a47b4d725c1",
+    "scp": "664bce8f27cc4d8624fb1a227ba5a6f038cb63f99b736e5bc05af9b9b26b6f7e",
+    "ausf": "9669e7b417edbee646f52b418d6e0bf581de99775f3801545e0f262f9c78f7ca",
+    "udm": "ed57f2026a5dfe54758d83cd3e3c351baee82c926cbd43f895de6b205bdf3042",
+    "udr": "12835a268155109541ec76aae379d68438874384462eb5c72396ccfb9dd41cbc",
+    "smf": "4d66144a945fee230d83b755cba0ad7aeb1d7cb9f5f83656ba49b2937e031946",
+    "upf": "0da4255c819e8187a00c5226908e633304f34ea0b2b53341e328fe89f45f1ac2",
+    "pcf": "955ce3d53b0998c30ce900eb47f07c4fb55685b8dd9e3d7fce982b3e671fa388",
+    "bsf": "b38e0ae22db132a4d61930921d1f467b56d33c7d518d332ebae97e6a85f2973f",
+    "nssf": "5e604a180aee1a46cfef3916ec89093be746857fb813c4b4cc75169d6bed8e70",
+    "sepp": "933e1b4766743be35816d4546140a5c641cdf897bc4b412f25c5ef436d7da5a0",
+    "amf": "393c4eddb64e426ff812161ef8c72c6912103b2a6855b5ec6c150261b27a8f45"
+  },
+  "checks": [
+    {
+      "check": "pinned commit",
+      "passed": true,
+      "detail": "26cbc33a418a292e3b3949be69155898d751bd6e"
+    },
+    {
+      "check": "isolated source diff",
+      "passed": true,
+      "detail": "src/smf/context.c"
+    },
+    {
+      "check": "source whitespace",
+      "passed": true,
+      "detail": "clean"
+    },
+    {
+      "check": "applied patch t3cand01_test_fixture_1mib_threshold.patch",
+      "passed": true,
+      "detail": "a830a79e239bd5c8d017b3087bde60bff7eb29fe6a7b5ed1072f2d2796cee42c"
+    },
+    {
+      "check": "T3-1 source marker",
+      "passed": true,
+      "detail": "absent"
+    },
+    {
+      "check": "cross-attack contamination",
+      "passed": true,
+      "detail": "none"
+    },
+    {
+      "check": "clean NF binaries",
+      "passed": true,
+      "detail": "12 built"
+    },
+    {
+      "check": "T3-1 binary marker",
+      "passed": true,
+      "detail": "absent"
+    },
+    {
+      "check": "runtime libraries",
+      "passed": true,
+      "detail": "resolved"
+    },
+    {
+      "check": "host commands",
+      "passed": true,
+      "detail": "available"
+    },
+    {
+      "check": "lab adapter scripts",
+      "passed": true,
+      "detail": "available"
+    },
+    {
+      "check": "Open5GS lab configs",
+      "passed": true,
+      "detail": "available"
+    },
+    {
+      "check": "runtime kernel",
+      "passed": true,
+      "detail": "6.17.0-40-generic"
+    },
+    {
+      "check": "gtp5g module",
+      "passed": true,
+      "detail": "available"
+    }
+  ]
+}

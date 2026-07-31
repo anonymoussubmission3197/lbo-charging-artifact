@@ -1,0 +1,10 @@
+case_id=T3-1
+audit_id=T3-A17
+capture_time_utc=PUBLIC
+kernel=6.17.0-40-generic
+open5gs_commit=26cbc33a418a292e3b3949be69155898d751bd6e
+source_diff_sha256=6493a8d719dd14ef62a0e62d6df33291d45aa87be167bd90459a1bab15dd6b75
+smf_sha256=c031e39ec74983c22051031e883a889e1fb3ba35cef37e3906da827649dbba46
+upf_sha256=fb4e2ff66bac58688c76ade142e53f37178b7542c60329f87e689dc86320100c
+mutation_factor=5
+result_status=pending_semantic_import

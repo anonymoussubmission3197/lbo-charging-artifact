@@ -1,0 +1,98 @@
+{
+  "cell": "T2-DUP",
+  "pcap_count": 18,
+  "pcaps": [
+    {
+      "bytes": 1159192,
+      "path": "captures/attack-run-1/gtpu.pcap",
+      "sha256": "e23aca7f816adf091aa93d3f49a7ba3a36b5af3db77be9cc56220488f6375c21"
+    },
+    {
+      "bytes": 796,
+      "path": "captures/attack-run-1/gy.pcap",
+      "sha256": "aca2aee126d2b34c7504abe955cce06a816b5bc471ca89c2ba71ca889e5ed694"
+    },
+    {
+      "bytes": 3781,
+      "path": "captures/attack-run-1/pfcp.pcap",
+      "sha256": "628a7ca7542927bff7745589781772b2205a81aa0a9816d16ab284dfb2193802"
+    },
+    {
+      "bytes": 1159192,
+      "path": "captures/attack-run-2/gtpu.pcap",
+      "sha256": "c4079d67a6e734aa5cdc331e4e955a4cb238c0af0d04e58d7add391441859493"
+    },
+    {
+      "bytes": 796,
+      "path": "captures/attack-run-2/gy.pcap",
+      "sha256": "a073750558a560f6a16c74713d40658d26a5ff0b0df871747fa03ce7f2f707d6"
+    },
+    {
+      "bytes": 3781,
+      "path": "captures/attack-run-2/pfcp.pcap",
+      "sha256": "959345b80716845ae833062b3b7dbefb75ba4b847e82381d48b274f71befa551"
+    },
+    {
+      "bytes": 1159192,
+      "path": "captures/attack-run-3/gtpu.pcap",
+      "sha256": "64cbaeb61983532c3d423039c94b9d3ebddedecc3b4b9bb610e242c7eba8658c"
+    },
+    {
+      "bytes": 796,
+      "path": "captures/attack-run-3/gy.pcap",
+      "sha256": "0feb629b07e11ed13e1edc83af07378cd0c5e4a7c47caaa04c06c2b561fe6e4c"
+    },
+    {
+      "bytes": 3781,
+      "path": "captures/attack-run-3/pfcp.pcap",
+      "sha256": "9395f3439e951f88c50bbe29f60395ec97675f44a241818f8cb813befe235daf"
+    },
+    {
+      "bytes": 1159192,
+      "path": "captures/baseline-run-1/gtpu.pcap",
+      "sha256": "689f98d87bc9184f525d0865c15d8fdacca1a84372c590012a9dae6972aad053"
+    },
+    {
+      "bytes": 1552,
+      "path": "captures/baseline-run-1/gy.pcap",
+      "sha256": "c1355b148067bd0ff2d3d8a116a28de344147acc6c117c491c3430814114ff2f"
+    },
+    {
+      "bytes": 4168,
+      "path": "captures/baseline-run-1/pfcp.pcap",
+      "sha256": "560481846b5ac5bd65896c8f0d7bf184cacf2edcecefbc2673b9d9a9d7ee8950"
+    },
+    {
+      "bytes": 1159192,
+      "path": "captures/baseline-run-2/gtpu.pcap",
+      "sha256": "26181647ac9c37895be323889a5821a3a80377d38141d3539431dcedde547e4d"
+    },
+    {
+      "bytes": 1552,
+      "path": "captures/baseline-run-2/gy.pcap",
+      "sha256": "aa0c9781e573fc29d85270dac5771a2e18185579a80bb58218fdde4638229a17"
+    },
+    {
+      "bytes": 4168,
+      "path": "captures/baseline-run-2/pfcp.pcap",
+      "sha256": "f1c62a6af578b34bec0754006a2ef813e027e8680896284c23cf59cc82f1e267"
+    },
+    {
+      "bytes": 1159192,
+      "path": "captures/baseline-run-3/gtpu.pcap",
+      "sha256": "e06ce5b48460ae996890c9c277fab0172c9b2cbe4903f0f7db430e6318fd4523"
+    },
+    {
+      "bytes": 1552,
+      "path": "captures/baseline-run-3/gy.pcap",
+      "sha256": "4732bab5fdb394a6121f912791cea05d495a673b956329c62ef59d4aafae6e38"
+    },
+    {
+      "bytes": 4168,
+      "path": "captures/baseline-run-3/pfcp.pcap",
+      "sha256": "e34152dc9903d5ce24b0b76257d7f83ee6ce7987a54a0730e3788cd84978e11c"
+    }
+  ],
+  "sanitized": true,
+  "schema": "lbo-public-cell-evidence-v1"
+}

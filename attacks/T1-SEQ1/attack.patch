@@ -1,0 +1,6 @@
+NONE
+
+T1-SEQ/selected-standard-scenario is a runtime sequence mutation. Baseline and attack use
+byte-identical source changes and byte-identical policy snapshots. The sole
+attack edit is delivery order: current policy followed by a stale-policy
+replay in a fresh HTTP/2 transaction.

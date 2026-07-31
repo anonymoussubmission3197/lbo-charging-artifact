@@ -1,0 +1,15 @@
+{
+  "schema_version": "3.0",
+  "counts": {
+    "messages": 11,
+    "native_fields": 2280,
+    "native_relevant_fields": 2050,
+    "native_constraints": 81,
+    "manipulation_primitives": 5,
+    "native_scenarios": 232,
+    "paper_cells": 20,
+    "runnable_cell_representatives": 19,
+    "n_a_cells": 1
+  },
+  "note": "Paper-aligned aggregate counts; T1-INS is N/A with zero retained scenarios."
+}

@@ -1,0 +1,95 @@
+diff --git a/src/smf/gy-path.c b/src/smf/gy-path.c
+index 4590091dc..3954e5b03 100644
+--- a/src/smf/gy-path.c
++++ b/src/smf/gy-path.c
+@@ -52,6 +52,7 @@ static int decode_granted_service_unit(
+ static int decode_final_unit_indication(
+         ogs_diam_gy_final_unit_t *fu, struct avp *avpch1, int *perror);
+ static void smf_gy_cca_cb(void *data, struct msg **msg);
++static void smf_gy_replay_cca_cb(void *data, struct msg **msg);
+ 
+ static __inline__ struct sess_state *new_state(os0_t sid)
+ {
+@@ -640,6 +641,7 @@ void smf_gy_send_ccr(smf_sess_t *sess, ogs_pool_id_t xact_id,
+     smf_ue_t *smf_ue = NULL;
+ 
+     struct msg *req = NULL;
++    struct msg *replay_req = NULL;
+     struct avp *avp;
+     struct avp *avpch1;
+     union avp_value val;
+@@ -952,6 +954,33 @@ void smf_gy_send_ccr(smf_sess_t *sess, ogs_pool_id_t xact_id,
+     /* Service-Information */
+     fill_service_information_ccr(sess, cc_request_type, req);
+ 
++    if (cc_request_type == OGS_DIAM_GY_CC_REQUEST_TYPE_UPDATE_REQUEST) {
++        uint8_t *replay_buffer = NULL;
++        size_t replay_buffer_len = 0;
++        struct msg_hdr *original_hdr = NULL;
++        struct msg_hdr *replay_hdr = NULL;
++
++        ret = fd_msg_bufferize(req, &replay_buffer, &replay_buffer_len);
++        ogs_assert(ret == 0);
++        ret = fd_msg_parse_buffer(
++                &replay_buffer, replay_buffer_len, &replay_req);
++        ogs_assert(ret == 0);
++        ret = fd_msg_parse_dict(
++                replay_req, fd_g_config->cnf_dict, NULL);
++        ogs_assert(ret == 0);
++
++        ret = fd_msg_hdr(req, &original_hdr);
++        ogs_assert(ret == 0);
++        ret = fd_msg_hdr(replay_req, &replay_hdr);
++        ogs_assert(ret == 0);
++
++        replay_hdr->msg_eteid = fd_msg_eteid_get();
++        ogs_warn("T4-3 CCR replay: request-number=%u "
++                "original-eteid=0x%08x replay-eteid=0x%08x",
++                sess_data->cc_request_number,
++                original_hdr->msg_eteid, replay_hdr->msg_eteid);
++    }
++
+ 
+     ret = clock_gettime(CLOCK_REALTIME, &sess_data->ts);
+ 
+@@ -968,6 +997,11 @@ void smf_gy_send_ccr(smf_sess_t *sess, ogs_pool_id_t xact_id,
+     ret = fd_msg_send(&req, smf_gy_cca_cb, svg);
+     ogs_assert(ret == 0);
+ 
++    if (replay_req) {
++        ret = fd_msg_send(&replay_req, smf_gy_replay_cca_cb, NULL);
++        ogs_assert(ret == 0);
++    }
++
+ 
+     /* Increment the counter */
+     ogs_assert(pthread_mutex_lock(&ogs_diam_stats_self()->stats_lock) == 0);
+@@ -975,6 +1009,28 @@ void smf_gy_send_ccr(smf_sess_t *sess, ogs_pool_id_t xact_id,
+     ogs_assert(pthread_mutex_unlock(&ogs_diam_stats_self()->stats_lock) == 0);
+ }
+ 
++static void smf_gy_replay_cca_cb(void *data, struct msg **msg)
++{
++    int ret;
++    struct msg_hdr *hdr = NULL;
++
++    (void)data;
++
++    ogs_assert(msg);
++    ogs_assert(*msg);
++
++    ret = fd_msg_hdr(*msg, &hdr);
++    ogs_assert(ret == 0);
++
++    ogs_warn("T4-3 replay CCA received: "
++            "hbhid=0x%08x eteid=0x%08x; discarding replay response",
++            hdr->msg_hbhid, hdr->msg_eteid);
++
++    ret = fd_msg_free(*msg);
++    ogs_assert(ret == 0);
++    *msg = NULL;
++}
++
+ static void smf_gy_cca_cb(void *data, struct msg **msg)
+ {
+     int rv;

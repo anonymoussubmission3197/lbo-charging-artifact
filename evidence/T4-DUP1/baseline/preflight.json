@@ -1,0 +1,100 @@
+{
+  "schema_version": "1.0",
+  "case_id": "T4-1",
+  "implementation_profile": "Gy-semantic-analogue",
+  "mode": "baseline",
+  "source": "<LAB_ROOT>/INFOCOM_artifact/live_workspace/T4-1/open5gs-baseline",
+  "expected_commit": "26cbc33a418a292e3b3949be69155898d751bd6e",
+  "kernel": "6.17.0-40-generic",
+  "binary_sha256": {
+    "nrf": "7d654464a1c33166ed640f4614d833096f609034702caf021dfaf875820bd7de",
+    "scp": "3119688bb1e36da1d39ec9fe8f44fcdc28824236633e6b9be43a2e485eeaf9ff",
+    "ausf": "09c44ab970b790ddf9bf86985c77c4836deb5d021f54de8bba3afde261de84a1",
+    "udm": "b4f6b960f986e438752ee656caac8927e48340f26bfc340a6032f296cb6f3a23",
+    "udr": "71d07f9c624907f5510d94ffbc09ebaea86d1ae19eabe38994f1f821d8501980",
+    "smf": "db9b330e71fe46e059329c9b05155920ee617d5e6fb8937186fa0d8c39ee53c6",
+    "upf": "def6675b245730b4dcd86e839368cca997ab32de8d1d76503cabcb1d04e31fe8",
+    "pcf": "cc6d814738d0c9631471e2e62336fd474c4dc7fa2cde64e2cebf6466506bf203",
+    "bsf": "058e8ea320fdbe9d330165ccc45d6f58992efa27d6890bec1c9b5ff4a8fee595",
+    "nssf": "6c572dc918bfd00dd83c3094e834165881e12bb480681f89b118a197642bb05a",
+    "sepp": "c224ec1d710a7df68a68233d132442d078b3812328e3cae284d5ce9ec013ac9a",
+    "amf": "1663049e1ca76b8a62791061401e7b13221610725a4c71aac289c3ce0ee26dbd"
+  },
+  "checks": [
+    {
+      "check": "pinned commit",
+      "passed": true,
+      "detail": "26cbc33a418a292e3b3949be69155898d751bd6e"
+    },
+    {
+      "check": "isolated source diff",
+      "passed": true,
+      "detail": "src/smf/context.c"
+    },
+    {
+      "check": "source whitespace",
+      "passed": true,
+      "detail": "clean"
+    },
+    {
+      "check": "applied patch t4cand01_test_fixture_bidirectional_1mib.patch",
+      "passed": true,
+      "detail": "08afaeef4a198129bf4c1e90e906fb4af8f6ce41c19af70862ad7d253dd86744"
+    },
+    {
+      "check": "T4-1 fixture marker",
+      "passed": true,
+      "detail": "present"
+    },
+    {
+      "check": "T4-1 attack marker",
+      "passed": true,
+      "detail": "absent"
+    },
+    {
+      "check": "cross-attack contamination",
+      "passed": true,
+      "detail": "none"
+    },
+    {
+      "check": "clean NF binaries",
+      "passed": true,
+      "detail": "12 built"
+    },
+    {
+      "check": "T4-1 SMF binary marker",
+      "passed": true,
+      "detail": "absent"
+    },
+    {
+      "check": "runtime libraries",
+      "passed": true,
+      "detail": "resolved"
+    },
+    {
+      "check": "host commands",
+      "passed": true,
+      "detail": "available"
+    },
+    {
+      "check": "lab adapter scripts",
+      "passed": true,
+      "detail": "available"
+    },
+    {
+      "check": "Open5GS lab configs",
+      "passed": true,
+      "detail": "available"
+    },
+    {
+      "check": "runtime kernel",
+      "passed": true,
+      "detail": "6.17.0-40-generic"
+    },
+    {
+      "check": "gtp5g module",
+      "passed": true,
+      "detail": "available"
+    }
+  ]
+}

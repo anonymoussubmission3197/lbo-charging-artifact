@@ -1,0 +1,11 @@
+case_id=T3-1
+audit_id=T3-A17
+baseline_or_attack=baseline
+capture_time_utc=PUBLIC
+kernel=6.17.0-40-generic
+open5gs_commit=26cbc33a418a292e3b3949be69155898d751bd6e
+source_diff_sha256=a830a79e239bd5c8d017b3087bde60bff7eb29fe6a7b5ed1072f2d2796cee42c
+smf_sha256=4d66144a945fee230d83b755cba0ad7aeb1d7cb9f5f83656ba49b2937e031946
+upf_sha256=0da4255c819e8187a00c5226908e633304f34ea0b2b53341e328fe89f45f1ac2
+mutation_factor=5
+result_status=pending_semantic_import

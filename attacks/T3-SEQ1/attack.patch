@@ -1,0 +1,50 @@
+diff --git a/src/upf/pfcp-path.c b/src/upf/pfcp-path.c
+index 114e58822..0ca98d892 100644
+--- a/src/upf/pfcp-path.c
++++ b/src/upf/pfcp-path.c
+@@ -388,5 +388,45 @@ int upf_pfcp_send_session_report_request(
+     rv = ogs_pfcp_xact_commit(xact);
+     ogs_expect(rv == OGS_OK);
+ 
++    if (report->type.usage_report && report->num_of_usage_report > 0) {
++        ogs_pkbuf_t *replay_buf = NULL;
++        ogs_pfcp_xact_t *replay_xact = NULL;
++
++        ogs_warn("T3-3 semantic usage replay: "
++                "sending the same Usage Report with a fresh PFCP transaction "
++                "urr=%u ur_seqn=%u total=%llu ul=%llu dl=%llu",
++                report->usage_report[0].id,
++                report->usage_report[0].seqn,
++                (unsigned long long)
++                    report->usage_report[0].vol_measurement.total_volume,
++                (unsigned long long)
++                    report->usage_report[0].vol_measurement.uplink_volume,
++                (unsigned long long)
++                    report->usage_report[0].vol_measurement.downlink_volume);
++
++        replay_xact = ogs_pfcp_xact_local_create(
++                sess->pfcp_node, sess_timeout, OGS_UINT_TO_POINTER(sess->id));
++        if (!replay_xact) {
++            ogs_error("ogs_pfcp_xact_local_create() failed for replay");
++            return OGS_ERROR;
++        }
++
++        replay_buf = ogs_pfcp_build_session_report_request(h.type, report);
++        if (!replay_buf) {
++            ogs_error("ogs_pfcp_build_session_report_request() failed "
++                    "for replay");
++            return OGS_ERROR;
++        }
++
++        rv = ogs_pfcp_xact_update_tx(replay_xact, &h, replay_buf);
++        if (rv != OGS_OK) {
++            ogs_error("ogs_pfcp_xact_update_tx() failed for replay");
++            return OGS_ERROR;
++        }
++
++        rv = ogs_pfcp_xact_commit(replay_xact);
++        ogs_expect(rv == OGS_OK);
++    }
++
+     return rv;
+ }

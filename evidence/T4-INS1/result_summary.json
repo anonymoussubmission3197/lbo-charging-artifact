@@ -1,0 +1,390 @@
+{
+  "attack_charge_series": [
+    77,
+    77,
+    77
+  ],
+  "attack_gy_usage_series": [
+    2097688,
+    2097688,
+    2097688
+  ],
+  "baseline_charge_series": [
+    7,
+    7,
+    7
+  ],
+  "baseline_gy_usage_series": [
+    1048844,
+    1048844,
+    1048844
+  ],
+  "cell": "T4-INS",
+  "claim_boundary": "This is a Gy/SigScale semantic analogue of native Nchf simultaneous supported charging-unit insertion. The attack-only mutation adds a second valid monetized MSCC for Rating-Group 6 beside the baseline Rating-Group 9 MSCC. The tuples are distinct charging contexts, not identical duplicates. Native N40/Nchf CHF acceptance is not claimed. PFCP producer usage, exact workload, lifecycle, subscriber, tariff, and backend are fixed.",
+  "classification": "E2E",
+  "g1_mutated_object_accepted": true,
+  "g2_target_semantic_state": true,
+  "g3_persistent_backend_effect": true,
+  "global_failures": [],
+  "passed": true,
+  "runs": {
+    "attack": [
+      {
+        "application_bytes": 1048576,
+        "application_packets": 1024,
+        "built_mscc_update_trace": [
+          {
+            "dl": 0,
+            "index": 0,
+            "rating_group": 9,
+            "request_type": 2,
+            "ul": 1048844
+          },
+          {
+            "dl": 0,
+            "index": 1,
+            "rating_group": 6,
+            "request_type": 2,
+            "ul": 1048844
+          }
+        ],
+        "cca_u_granted_octets": [
+          5000000,
+          5000000
+        ],
+        "cca_u_rating_groups": [
+          9,
+          6
+        ],
+        "cca_u_result_codes": [
+          2001,
+          2001,
+          2001
+        ],
+        "charged_cents": 77,
+        "failures": [],
+        "gy_cca_u_2001": 1,
+        "gy_ccr_u": 1,
+        "gy_mscc_tuples": [
+          {
+            "dl": 0,
+            "rating_group": 9,
+            "ul": 1048844
+          },
+          {
+            "dl": 0,
+            "rating_group": 6,
+            "ul": 1048844
+          }
+        ],
+        "gy_usage_octets": {
+          "dl": 0,
+          "ul": 2097688
+        },
+        "mode": "attack",
+        "passed": true,
+        "run_id": "attack-run-1",
+        "session_report_response_accepted": 1,
+        "wire_usage_reports": [
+          {
+            "dl": 0,
+            "total": 1048844,
+            "ul": 1048844,
+            "ur_seqn": 0,
+            "urr_id": 1
+          }
+        ]
+      },
+      {
+        "application_bytes": 1048576,
+        "application_packets": 1024,
+        "built_mscc_update_trace": [
+          {
+            "dl": 0,
+            "index": 0,
+            "rating_group": 9,
+            "request_type": 2,
+            "ul": 1048844
+          },
+          {
+            "dl": 0,
+            "index": 1,
+            "rating_group": 6,
+            "request_type": 2,
+            "ul": 1048844
+          }
+        ],
+        "cca_u_granted_octets": [
+          5000000,
+          5000000
+        ],
+        "cca_u_rating_groups": [
+          9,
+          6
+        ],
+        "cca_u_result_codes": [
+          2001,
+          2001,
+          2001
+        ],
+        "charged_cents": 77,
+        "failures": [],
+        "gy_cca_u_2001": 1,
+        "gy_ccr_u": 1,
+        "gy_mscc_tuples": [
+          {
+            "dl": 0,
+            "rating_group": 9,
+            "ul": 1048844
+          },
+          {
+            "dl": 0,
+            "rating_group": 6,
+            "ul": 1048844
+          }
+        ],
+        "gy_usage_octets": {
+          "dl": 0,
+          "ul": 2097688
+        },
+        "mode": "attack",
+        "passed": true,
+        "run_id": "attack-run-2",
+        "session_report_response_accepted": 1,
+        "wire_usage_reports": [
+          {
+            "dl": 0,
+            "total": 1048844,
+            "ul": 1048844,
+            "ur_seqn": 0,
+            "urr_id": 1
+          }
+        ]
+      },
+      {
+        "application_bytes": 1048576,
+        "application_packets": 1024,
+        "built_mscc_update_trace": [
+          {
+            "dl": 0,
+            "index": 0,
+            "rating_group": 9,
+            "request_type": 2,
+            "ul": 1048844
+          },
+          {
+            "dl": 0,
+            "index": 1,
+            "rating_group": 6,
+            "request_type": 2,
+            "ul": 1048844
+          }
+        ],
+        "cca_u_granted_octets": [
+          5000000,
+          5000000
+        ],
+        "cca_u_rating_groups": [
+          9,
+          6
+        ],
+        "cca_u_result_codes": [
+          2001,
+          2001,
+          2001
+        ],
+        "charged_cents": 77,
+        "failures": [],
+        "gy_cca_u_2001": 1,
+        "gy_ccr_u": 1,
+        "gy_mscc_tuples": [
+          {
+            "dl": 0,
+            "rating_group": 9,
+            "ul": 1048844
+          },
+          {
+            "dl": 0,
+            "rating_group": 6,
+            "ul": 1048844
+          }
+        ],
+        "gy_usage_octets": {
+          "dl": 0,
+          "ul": 2097688
+        },
+        "mode": "attack",
+        "passed": true,
+        "run_id": "attack-run-3",
+        "session_report_response_accepted": 1,
+        "wire_usage_reports": [
+          {
+            "dl": 0,
+            "total": 1048844,
+            "ul": 1048844,
+            "ur_seqn": 0,
+            "urr_id": 1
+          }
+        ]
+      }
+    ],
+    "baseline": [
+      {
+        "application_bytes": 1048576,
+        "application_packets": 1024,
+        "built_mscc_update_trace": [
+          {
+            "dl": 0,
+            "index": 0,
+            "rating_group": 9,
+            "request_type": 2,
+            "ul": 1048844
+          }
+        ],
+        "cca_u_granted_octets": [
+          5000000
+        ],
+        "cca_u_rating_groups": [
+          9
+        ],
+        "cca_u_result_codes": [
+          2001,
+          2001
+        ],
+        "charged_cents": 7,
+        "failures": [],
+        "gy_cca_u_2001": 1,
+        "gy_ccr_u": 1,
+        "gy_mscc_tuples": [
+          {
+            "dl": 0,
+            "rating_group": 9,
+            "ul": 1048844
+          }
+        ],
+        "gy_usage_octets": {
+          "dl": 0,
+          "ul": 1048844
+        },
+        "mode": "baseline",
+        "passed": true,
+        "run_id": "baseline-run-1",
+        "session_report_response_accepted": 1,
+        "wire_usage_reports": [
+          {
+            "dl": 0,
+            "total": 1048844,
+            "ul": 1048844,
+            "ur_seqn": 0,
+            "urr_id": 1
+          }
+        ]
+      },
+      {
+        "application_bytes": 1048576,
+        "application_packets": 1024,
+        "built_mscc_update_trace": [
+          {
+            "dl": 0,
+            "index": 0,
+            "rating_group": 9,
+            "request_type": 2,
+            "ul": 1048844
+          }
+        ],
+        "cca_u_granted_octets": [
+          5000000
+        ],
+        "cca_u_rating_groups": [
+          9
+        ],
+        "cca_u_result_codes": [
+          2001,
+          2001
+        ],
+        "charged_cents": 7,
+        "failures": [],
+        "gy_cca_u_2001": 1,
+        "gy_ccr_u": 1,
+        "gy_mscc_tuples": [
+          {
+            "dl": 0,
+            "rating_group": 9,
+            "ul": 1048844
+          }
+        ],
+        "gy_usage_octets": {
+          "dl": 0,
+          "ul": 1048844
+        },
+        "mode": "baseline",
+        "passed": true,
+        "run_id": "baseline-run-2",
+        "session_report_response_accepted": 1,
+        "wire_usage_reports": [
+          {
+            "dl": 0,
+            "total": 1048844,
+            "ul": 1048844,
+            "ur_seqn": 0,
+            "urr_id": 1
+          }
+        ]
+      },
+      {
+        "application_bytes": 1048576,
+        "application_packets": 1024,
+        "built_mscc_update_trace": [
+          {
+            "dl": 0,
+            "index": 0,
+            "rating_group": 9,
+            "request_type": 2,
+            "ul": 1048844
+          }
+        ],
+        "cca_u_granted_octets": [
+          5000000
+        ],
+        "cca_u_rating_groups": [
+          9
+        ],
+        "cca_u_result_codes": [
+          2001,
+          2001
+        ],
+        "charged_cents": 7,
+        "failures": [],
+        "gy_cca_u_2001": 1,
+        "gy_ccr_u": 1,
+        "gy_mscc_tuples": [
+          {
+            "dl": 0,
+            "rating_group": 9,
+            "ul": 1048844
+          }
+        ],
+        "gy_usage_octets": {
+          "dl": 0,
+          "ul": 1048844
+        },
+        "mode": "baseline",
+        "passed": true,
+        "run_id": "baseline-run-3",
+        "session_report_response_accepted": 1,
+        "wire_usage_reports": [
+          {
+            "dl": 0,
+            "total": 1048844,
+            "ul": 1048844,
+            "ur_seqn": 0,
+            "urr_id": 1
+          }
+        ]
+      }
+    ]
+  },
+  "schema_version": "1.0",
+  "source_result_sha256": "96cf8e2985131d7a8e3996bfaa34420437d24515db030d75ac9461834073c0b4",
+  "verifier_revision": "t4-ins-predeclared-v1"
+}

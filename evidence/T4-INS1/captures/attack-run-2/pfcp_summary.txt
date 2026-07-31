@@ -1,0 +1,11 @@
+frame.number|pfcp.msg_type|pfcp.cause|pfcp.pdr_id|pfcp.precedence|pfcp.urr_id|pfcp.flow_desc|pfcp.ur_seqn|pfcp.volume_measurement.tovol|pfcp.volume_measurement.ulvol|pfcp.volume_measurement.dlvol
+5|50||1,2,3,4|65535,65535,255,255|1,1,1|permit out 58 from ff02::2/128 to assigned||||
+6|51|1|2,3,4|||||||
+7|52|||||||||
+8|53|1||||||||
+17|56||||1||0|1048844|1048844|0
+18|57|1||||||||
+19|52||||1|||||
+20|53|1||||||||
+33|54|||||||||
+34|55|1|||1||1|28404|28404|0

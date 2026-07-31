@@ -1,0 +1,12 @@
+diff --git a/src/smf/npcf-handler.c b/src/smf/npcf-handler.c
+--- a/src/smf/npcf-handler.c
++++ b/src/smf/npcf-handler.c
+@@ -83,7 +83,7 @@ static void create_t2_a17_charged_pdr(smf_sess_t *sess)
+     ogs_pfcp_pdr_associate_far(charged_ul_pdr, default_qos_flow->ul_far);
+     ogs_pfcp_pdr_associate_urr(charged_ul_pdr, default_qos_flow->urr);
+     ogs_pfcp_pdr_associate_qer(charged_ul_pdr, default_qos_flow->qer);
+-    ogs_pfcp_pdr_reorder_by_precedence(charged_ul_pdr, 100000);
++    ogs_pfcp_pdr_reorder_by_precedence(charged_ul_pdr, 1000);
+ 
+     ogs_warn("selected-standard-scenario fixture: charged pdr[%u] urr[%u] precedence[%u], "
+             "fallback pdr[%u] urr_count[%d]", charged_ul_pdr->id,

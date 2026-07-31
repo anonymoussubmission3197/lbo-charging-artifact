@@ -1,0 +1,57 @@
+diff --git a/lib/diameter/gy/message.h b/lib/diameter/gy/message.h
+--- a/lib/diameter/gy/message.h
++++ b/lib/diameter/gy/message.h
+@@ -94,6 +94,7 @@
+ #define OGS_DIAM_GY_REPORTING_REASON_POOL_EXHAUSTED             8
+ #define OGS_DIAM_GY_REPORTING_REASON_UNUSED_QUOTA_TIMER         9
+ extern struct dict_object *ogs_diam_gy_service_id;
++extern struct dict_object *ogs_diam_gy_rating_group;
+ extern struct dict_object *ogs_diam_gy_service_information;
+ extern struct dict_object *ogs_diam_gy_ps_information;
+ extern struct dict_object *ogs_diam_gy_3gpp_charging_id;
+diff --git a/lib/diameter/gy/message.c b/lib/diameter/gy/message.c
+--- a/lib/diameter/gy/message.c
++++ b/lib/diameter/gy/message.c
+@@ -45,6 +45,7 @@
+ struct dict_object *ogs_diam_gy_cc_service_specific_units = NULL;
+ struct dict_object *ogs_diam_gy_reporting_reason = NULL;
+ struct dict_object *ogs_diam_gy_service_id = NULL;
++struct dict_object *ogs_diam_gy_rating_group = NULL;
+ 
+ struct dict_object *ogs_diam_gy_service_information = NULL;
+ struct dict_object *ogs_diam_gy_ps_information = NULL;
+@@ -112,6 +113,7 @@
+     CHECK_dict_search(DICT_AVP, AVP_BY_NAME_ALL_VENDORS, "CC-Service-Specific-Units", &ogs_diam_gy_cc_service_specific_units);
+     CHECK_dict_search(DICT_AVP, AVP_BY_NAME_ALL_VENDORS, "Reporting-Reason", &ogs_diam_gy_reporting_reason);
+     CHECK_dict_search(DICT_AVP, AVP_BY_NAME_ALL_VENDORS, "Service-Identifier", &ogs_diam_gy_service_id);
++    CHECK_dict_search(DICT_AVP, AVP_BY_NAME_ALL_VENDORS, "Rating-Group", &ogs_diam_gy_rating_group);
+ 
+     CHECK_dict_search(DICT_AVP, AVP_BY_NAME_ALL_VENDORS, "Service-Information", &ogs_diam_gy_service_information);
+     CHECK_dict_search(DICT_AVP, AVP_BY_NAME_ALL_VENDORS, "PS-Information", &ogs_diam_gy_ps_information);
+diff --git a/src/smf/gy-path.c b/src/smf/gy-path.c
+--- a/src/smf/gy-path.c
++++ b/src/smf/gy-path.c
+@@ -290,6 +290,15 @@
+     ret = fd_msg_avp_new(ogs_diam_gy_multiple_services_cc, 0, &avp);
+     ogs_assert(ret == 0);
+ 
++    /* T1-1 fixture: carry the applied 5QI as the OCS charging key. */
++    ret = fd_msg_avp_new(ogs_diam_gy_rating_group, 0, &avpch1);
++    ogs_assert(ret == 0);
++    val.u32 = sess->session.qos.index;
++    ret = fd_msg_avp_setvalue(avpch1, &val);
++    ogs_assert(ret == 0);
++    ret = fd_msg_avp_add(avp, MSG_BRW_LAST_CHILD, avpch1);
++    ogs_assert(ret == 0);
++
+     /* Requested-Service-Unit, RFC4006 8.18 */
+     if (cc_request_type == OGS_DIAM_GY_CC_REQUEST_TYPE_INITIAL_REQUEST ||
+         cc_request_type == OGS_DIAM_GY_CC_REQUEST_TYPE_UPDATE_REQUEST)
+@@ -301,7 +310,6 @@
+         fill_used_service_unit(sess, cc_request_type, avp);
+ 
+         /* Service-Identifier, RFC4006 8.28. Not used in Gy. */
+-        /* Rating-Group */
+ 
+         /* Reporting-Reason, TS 32.299 7.2.175 */
+         /* "values QHT, FINAL, VALIDITY_TIME, FORCED_REAUTHORISATION,

@@ -1,0 +1,62 @@
+{
+  "schema_version": "1.0",
+  "run_id": "paired_baseline_T2-A22_LIVE_PUBLIC__attack_T2-A22_LIVE_PUBLIC",
+  "audit_id": "T2-A22",
+  "legacy_threat_id": "T2-1",
+  "experiment_kind": "clean_source_paired_live_reproduction",
+  "workload": "W3_EXACT_1MIB_UL_3MIB_DL",
+  "kernel": "6.17.0-40-generic",
+  "open5gs_commit": "26cbc33a418a292e3b3949be69155898d751bd6e",
+  "application_gtpu_packet_count_each": 4096,
+  "application_gtpu_payload_bytes_each": 4194304,
+  "total_gtpu_packet_count": {
+    "baseline": 4102,
+    "attack": 4098
+  },
+  "icmp_noise": {
+    "baseline_count": 6,
+    "attack_count": 2,
+    "baseline_bytes": 336,
+    "attack_bytes": 112
+  },
+  "baseline_urr_count": 1,
+  "attack_urr_count": 2,
+  "reports_per_attack_urr": 2,
+  "pfcp_usage_sum": {
+    "baseline": 4309328,
+    "attack": 8618208
+  },
+  "gy_usage_sum": {
+    "baseline": 1049124,
+    "attack": 2097912
+  },
+  "gy_usage_request_count": {
+    "baseline": 1,
+    "attack": 2
+  },
+  "baseline_charge_cents": 7,
+  "attack_charge_cents": 8,
+  "charge_delta_cents": 1,
+  "g1_wire_acceptance": true,
+  "g2_state_effect": true,
+  "g3_backend_effect": true,
+  "classification": "E2E",
+  "semantic_relations": {
+    "identical_exact_workload": true,
+    "identical_application_gtpu_flow": true,
+    "one_baseline_urr": true,
+    "two_attack_urrs": true,
+    "producer_trace_distinct_urrs": true,
+    "duplicate_pfcp_streams_equal": true,
+    "baseline_pfcp_updates_equal_gy": true,
+    "attack_pfcp_updates_equal_gy": true,
+    "attack_pfcp_responses_accepted": true,
+    "all_cca_accepted": true,
+    "backend_charge_increased": true
+  },
+  "input_checksum_counts": {
+    "baseline": 61,
+    "attack": 61
+  },
+  "claim_boundary": "This pair validates duplicate attribution for one exact application flow through the observed PFCP Session Report to CCR-U/CCA-U path in the documented Open5GS/Gy/SigScale testbed. Environmental ICMP is counted separately. CCR-I/T and terminal PFCP-to-Gy propagation are not claimed, nor is universal duplicate-URR pricing."
+}

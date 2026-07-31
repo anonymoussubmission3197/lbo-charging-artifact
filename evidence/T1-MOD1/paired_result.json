@@ -1,0 +1,63 @@
+{
+  "schema_version": "1.0",
+  "run_id": "paired_baseline_T1-A25_LIVE_PUBLIC__attack_T1-A25_LIVE_PUBLIC",
+  "audit_id": "T1-A25",
+  "legacy_threat_id": "T1-1",
+  "experiment_kind": "clean_source_paired_live_reproduction",
+  "workload": "W3_EXACT_1MIB_UL_3MIB_DL",
+  "kernel": "6.17.0-40-generic",
+  "open5gs_commit": "26cbc33a418a292e3b3949be69155898d751bd6e",
+  "baseline_5qi": 9,
+  "attack_5qi": 6,
+  "application_gtpu_packet_count_each": 4096,
+  "application_gtpu_payload_bytes_each": 4194304,
+  "total_gtpu_packet_count": {
+    "baseline": 4100,
+    "attack": 4102
+  },
+  "icmp_noise": {
+    "baseline_count": 4,
+    "attack_count": 6,
+    "baseline_bytes": 224,
+    "attack_bytes": 336
+  },
+  "pfcp_usage_report_count": 2,
+  "gy_ccr_update_count": 1,
+  "pfcp_usage_sum": {
+    "baseline": 4309216,
+    "attack": 4309328
+  },
+  "baseline_charge_cents": 7,
+  "attack_charge_cents": 70,
+  "charge_multiplier": 10,
+  "charge_delta_cents": 63,
+  "n7_policy_samples": {
+    "baseline": 4,
+    "attack": 4
+  },
+  "g1_wire_acceptance": true,
+  "g2_state_effect": true,
+  "g3_backend_effect": true,
+  "classification": "E2E",
+  "semantic_relations": {
+    "identical_exact_workload": true,
+    "identical_application_gtpu_flow": true,
+    "baseline_n7_9_to_9": true,
+    "attack_n7_9_to_6": true,
+    "producer_trace_9_to_6": true,
+    "identical_pfcp_uplink": true,
+    "pfcp_delta_explained_by_icmp_noise": true,
+    "baseline_pfcp_update_equals_gy": true,
+    "attack_pfcp_update_equals_gy": true,
+    "baseline_gy_identity_9": true,
+    "attack_gy_identity_6": true,
+    "successful_cca_u": true,
+    "identical_differentiated_tariffs": true,
+    "exact_10x_charge": true
+  },
+  "input_checksum_counts": {
+    "baseline": 64,
+    "attack": 64
+  },
+  "claim_boundary": "5QI has no universal monetary meaning. This result depends on the documented testbed mapping of Rating-Group 9 to 1 cent/MB and Rating-Group 6 to 10 cents/MB. The W3 4 MiB live pair must not be merged with the separate cumulative 16.05 MB result. The live pair validates the observed CCR-U/CCA-U path; it does not claim CCR-I/T capture or that terminal PFCP usage reached Gy."
+}

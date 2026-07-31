@@ -1,0 +1,10 @@
+# Scientific evidence and checksums require byte-for-byte checkout. Disable
+# Git line-ending normalization globally, including for CSV source ledgers.
+* -text
+*.pcap binary
+*.pcapng binary
+*.pdf binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.zip binary

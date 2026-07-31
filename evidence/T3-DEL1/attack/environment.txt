@@ -1,0 +1,11 @@
+case_id=T3-4
+audit_id=T3-A20
+baseline_or_attack=attack
+capture_time_utc=PUBLIC
+kernel=6.17.0-40-generic
+open5gs_commit=26cbc33a418a292e3b3949be69155898d751bd6e
+source_diff_sha256=52204cbc079a7ff45a96f02bf870695434cfd6ce3d735aad0f08ccec974ecdf1
+smf_sha256=76c22dae8717fa9b9478a705537dcce2196b8c177c6b91655ff85f5e2fad6d6e
+upf_sha256=44626e40288c4739f07bec7ccdb33a8e3a60f4136aed5c5b7435a94b90eca72d
+mutation_kind=ulvol_presence_suppression
+result_status=pending_semantic_import

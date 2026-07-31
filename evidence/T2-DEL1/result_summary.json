@@ -1,0 +1,443 @@
+{
+  "attack_charge_series": [
+    0,
+    0,
+    0
+  ],
+  "baseline_charge_series": [
+    7,
+    7,
+    7
+  ],
+  "cell": "T2-DEL",
+  "claim_boundary": "Both sides install the same charged PDR 5 and uncharged fallback PDR 2. The attack-only mutation is one accepted PFCP Session Modification Remove PDR IE for PDR 5; FAR, QER, exact workload, session lifecycle, and backend are otherwise fixed.",
+  "classification": "E2E",
+  "g1_mutated_object_accepted": true,
+  "g2_target_semantic_state": true,
+  "g3_persistent_backend_effect": true,
+  "global_failures": [],
+  "passed": true,
+  "runs": {
+    "attack": [
+      {
+        "application_bytes": 1048576,
+        "application_packets": 1024,
+        "charged_cents": 0,
+        "establishment_pdr_ids": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "failures": [],
+        "gy_cca_u_2001": 0,
+        "gy_ccr_u": 0,
+        "mode": "attack",
+        "passed": true,
+        "pfcp_modification_accepted": 1,
+        "pfcp_modification_requests": 1,
+        "pfcp_volume_report_frames": 0,
+        "removed_pdr_ids": [
+          5
+        ],
+        "run_id": "attack-run-1",
+        "selected_pdr_samples": [
+          [
+            2,
+            0
+          ],
+          [
+            2,
+            0
+          ],
+          [
+            2,
+            0
+          ],
+          [
+            2,
+            0
+          ],
+          [
+            2,
+            0
+          ],
+          [
+            2,
+            0
+          ],
+          [
+            2,
+            0
+          ],
+          [
+            2,
+            0
+          ],
+          [
+            2,
+            0
+          ],
+          [
+            2,
+            0
+          ],
+          [
+            2,
+            0
+          ]
+        ]
+      },
+      {
+        "application_bytes": 1048576,
+        "application_packets": 1024,
+        "charged_cents": 0,
+        "establishment_pdr_ids": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "failures": [],
+        "gy_cca_u_2001": 0,
+        "gy_ccr_u": 0,
+        "mode": "attack",
+        "passed": true,
+        "pfcp_modification_accepted": 1,
+        "pfcp_modification_requests": 1,
+        "pfcp_volume_report_frames": 0,
+        "removed_pdr_ids": [
+          5
+        ],
+        "run_id": "attack-run-2",
+        "selected_pdr_samples": [
+          [
+            2,
+            0
+          ],
+          [
+            2,
+            0
+          ],
+          [
+            2,
+            0
+          ],
+          [
+            2,
+            0
+          ],
+          [
+            2,
+            0
+          ],
+          [
+            2,
+            0
+          ],
+          [
+            2,
+            0
+          ],
+          [
+            2,
+            0
+          ],
+          [
+            2,
+            0
+          ],
+          [
+            2,
+            0
+          ],
+          [
+            2,
+            0
+          ]
+        ]
+      },
+      {
+        "application_bytes": 1048576,
+        "application_packets": 1024,
+        "charged_cents": 0,
+        "establishment_pdr_ids": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "failures": [],
+        "gy_cca_u_2001": 0,
+        "gy_ccr_u": 0,
+        "mode": "attack",
+        "passed": true,
+        "pfcp_modification_accepted": 1,
+        "pfcp_modification_requests": 1,
+        "pfcp_volume_report_frames": 0,
+        "removed_pdr_ids": [
+          5
+        ],
+        "run_id": "attack-run-3",
+        "selected_pdr_samples": [
+          [
+            2,
+            0
+          ],
+          [
+            2,
+            0
+          ],
+          [
+            2,
+            0
+          ],
+          [
+            2,
+            0
+          ],
+          [
+            2,
+            0
+          ],
+          [
+            2,
+            0
+          ],
+          [
+            2,
+            0
+          ],
+          [
+            2,
+            0
+          ],
+          [
+            2,
+            0
+          ],
+          [
+            2,
+            0
+          ],
+          [
+            2,
+            0
+          ]
+        ]
+      }
+    ],
+    "baseline": [
+      {
+        "application_bytes": 1048576,
+        "application_packets": 1024,
+        "charged_cents": 7,
+        "establishment_pdr_ids": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "failures": [],
+        "gy_cca_u_2001": 1,
+        "gy_ccr_u": 1,
+        "mode": "baseline",
+        "passed": true,
+        "pfcp_modification_accepted": 0,
+        "pfcp_modification_requests": 0,
+        "pfcp_volume_report_frames": 1,
+        "removed_pdr_ids": [],
+        "run_id": "baseline-run-1",
+        "selected_pdr_samples": [
+          [
+            5,
+            1
+          ],
+          [
+            5,
+            1
+          ],
+          [
+            5,
+            1
+          ],
+          [
+            5,
+            1
+          ],
+          [
+            5,
+            1
+          ],
+          [
+            5,
+            1
+          ],
+          [
+            5,
+            1
+          ],
+          [
+            5,
+            1
+          ],
+          [
+            5,
+            1
+          ],
+          [
+            5,
+            1
+          ],
+          [
+            5,
+            1
+          ]
+        ]
+      },
+      {
+        "application_bytes": 1048576,
+        "application_packets": 1024,
+        "charged_cents": 7,
+        "establishment_pdr_ids": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "failures": [],
+        "gy_cca_u_2001": 1,
+        "gy_ccr_u": 1,
+        "mode": "baseline",
+        "passed": true,
+        "pfcp_modification_accepted": 0,
+        "pfcp_modification_requests": 0,
+        "pfcp_volume_report_frames": 1,
+        "removed_pdr_ids": [],
+        "run_id": "baseline-run-2",
+        "selected_pdr_samples": [
+          [
+            5,
+            1
+          ],
+          [
+            5,
+            1
+          ],
+          [
+            5,
+            1
+          ],
+          [
+            5,
+            1
+          ],
+          [
+            5,
+            1
+          ],
+          [
+            5,
+            1
+          ],
+          [
+            5,
+            1
+          ],
+          [
+            5,
+            1
+          ],
+          [
+            5,
+            1
+          ],
+          [
+            5,
+            1
+          ],
+          [
+            5,
+            1
+          ]
+        ]
+      },
+      {
+        "application_bytes": 1048576,
+        "application_packets": 1024,
+        "charged_cents": 7,
+        "establishment_pdr_ids": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "failures": [],
+        "gy_cca_u_2001": 1,
+        "gy_ccr_u": 1,
+        "mode": "baseline",
+        "passed": true,
+        "pfcp_modification_accepted": 0,
+        "pfcp_modification_requests": 0,
+        "pfcp_volume_report_frames": 1,
+        "removed_pdr_ids": [],
+        "run_id": "baseline-run-3",
+        "selected_pdr_samples": [
+          [
+            5,
+            1
+          ],
+          [
+            5,
+            1
+          ],
+          [
+            5,
+            1
+          ],
+          [
+            5,
+            1
+          ],
+          [
+            5,
+            1
+          ],
+          [
+            5,
+            1
+          ],
+          [
+            5,
+            1
+          ],
+          [
+            5,
+            1
+          ],
+          [
+            5,
+            1
+          ],
+          [
+            5,
+            1
+          ],
+          [
+            5,
+            1
+          ]
+        ]
+      }
+    ]
+  },
+  "schema_version": "1.0",
+  "source_result_sha256": "4841dad35beb52575768d7a5d08af4ee36062888e5f9788fe97a7791003118ba",
+  "verifier_revision": "t2-del-predeclared-v1"
+}

@@ -1,0 +1,13 @@
+--- a/src/smf/n4-handler.c
++++ b/src/smf/n4-handler.c
+@@ -410,7 +410,9 @@
+     if ((flags & OGS_PFCP_MODIFY_CREATE) &&
+         (flags & OGS_PFCP_MODIFY_URR) &&
+         (flags & OGS_PFCP_MODIFY_NETWORK_REQUESTED)) {
+-        ogs_warn("selected-standard-scenario current operation response accepted");
++        ogs_warn("selected-standard-scenario current operation response accepted; "
++                "attack now replays stale charged operation");
++        ogs_assert(OGS_OK == smf_t2_a02_send_stale_replay(sess));
+         return;
+     }
+ 

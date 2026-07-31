@@ -1,0 +1,95 @@
+diff --git a/src/smf/context.c b/src/smf/context.c
+--- a/src/smf/context.c
++++ b/src/smf/context.c
+@@ -2322,6 +2322,7 @@ smf_bearer_t *smf_qos_flow_add(smf_sess_t *sess)
+     ogs_pfcp_far_t *dl_far = NULL;
+     ogs_pfcp_far_t *ul_far = NULL;
+     ogs_pfcp_urr_t *urr = NULL;
++    ogs_pfcp_urr_t *duplicate_urr = NULL;
+     ogs_pfcp_qer_t *qer = NULL;
+ 
+     ogs_assert(sess);
+@@ -2419,6 +2420,23 @@ smf_bearer_t *smf_qos_flow_add(smf_sess_t *sess)
+     ogs_pfcp_pdr_associate_urr(ul_pdr, urr); /* T2-1 test fixture */
+     ogs_pfcp_pdr_associate_urr(dl_pdr, urr);
+ 
++    /*
++     * T2-1: bind a second, same-purpose URR to the same bidirectional
++     * PDR pair so one application flow is attributed twice.
++     */
++    duplicate_urr = ogs_pfcp_urr_add(&sess->pfcp);
++    ogs_assert(duplicate_urr);
++    duplicate_urr->meas_method = OGS_PFCP_MEASUREMENT_METHOD_VOLUME;
++    duplicate_urr->rep_triggers.volume_threshold = 1;
++    duplicate_urr->vol_threshold.tovol = 1;
++    duplicate_urr->vol_threshold.total_volume = 1024*1024;
++    ogs_pfcp_pdr_associate_urr(ul_pdr, duplicate_urr);
++    ogs_pfcp_pdr_associate_urr(dl_pdr, duplicate_urr);
++
++    ogs_warn(
++        "T2-1 duplicate URR attribution: primary[%u] duplicate[%u]",
++        urr->id, duplicate_urr->id);
++
+     /* QER */
+     qer = ogs_pfcp_qer_add(&sess->pfcp);
+     ogs_assert(qer);
+diff --git a/src/smf/gy-handler.c b/src/smf/gy-handler.c
+--- a/src/smf/gy-handler.c
++++ b/src/smf/gy-handler.c
+@@ -178,6 +178,7 @@ uint32_t smf_gy_handle_cca_update_request(
+ {
+     ogs_pfcp_urr_t *urr = NULL;
+     smf_bearer_t *bearer;
++    int i;
+     int rv;
+     uint64_t modify_flags = 0;
+     ogs_pfcp_measurement_method_t prev_meas_method;
+@@ -220,8 +221,15 @@ uint32_t smf_gy_handle_cca_update_request(
+     prev_vol_threshold = urr->vol_threshold;
+     prev_time_threshold = urr->time_threshold;
+ 
+-    urr_update_time(sess, urr, gy_message);
+-    urr_update_volume(sess, urr, gy_message);
++    /* Keep every same-purpose URR active after each returned Gy quota. */
++    for (i = 0; i < bearer->ul_pdr->num_of_urr; i++) {
++        urr = bearer->ul_pdr->urr[i];
++        ogs_assert(urr);
++        urr_update_time(sess, urr, gy_message);
++        urr_update_volume(sess, urr, gy_message);
++    }
++    urr = bearer->urr;
++    ogs_assert(urr);
+     sess->gy.final_unit = gy_message->cca.final.cc_final_action_present;
+     /* Associate accounting URR each direction PDR: */
+     ogs_pfcp_pdr_associate_urr(bearer->ul_pdr, urr);
+diff --git a/src/smf/n4-handler.c b/src/smf/n4-handler.c
+--- a/src/smf/n4-handler.c
++++ b/src/smf/n4-handler.c
+@@ -1730,7 +1730,9 @@ uint8_t smf_n4_handle_session_report_request(
+         for (i = 0; i < OGS_ARRAY_SIZE(pfcp_req->usage_report); i++) {
+             ogs_pfcp_tlv_usage_report_session_report_request_t *use_rep =
+                 &pfcp_req->usage_report[i];
++            bool associated_urr = false;
+             uint32_t urr_id;
++            int j;
+             int16_t decoded;
+             ogs_pfcp_volume_measurement_t volume;
+             ogs_pfcp_usage_report_trigger_t rep_trig;
+@@ -1739,7 +1741,16 @@ uint8_t smf_n4_handle_session_report_request(
+             if (use_rep->urr_id.presence == 0)
+                 continue;
+             urr_id = use_rep->urr_id.u32;
+-            if (!bearer || !bearer->urr || bearer->urr->id != urr_id)
++            if (!bearer || !bearer->ul_pdr)
++                continue;
++            for (j = 0; j < bearer->ul_pdr->num_of_urr; j++) {
++                ogs_pfcp_urr_t *associated = bearer->ul_pdr->urr[j];
++                if (associated && associated->id == urr_id) {
++                    associated_urr = true;
++                    break;
++                }
++            }
++            if (!associated_urr)
+                 continue;
+             decoded = ogs_pfcp_parse_volume_measurement(
+                     &volume, &use_rep->volume_measurement);

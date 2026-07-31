@@ -1,0 +1,18 @@
+--- a/lib/sbi/conv.c
++++ b/lib/sbi/conv.c
+@@ -1508,9 +1508,12 @@
+      * refChgData, but the PCF does not populate it.  Bind the database PCC
+      * rule to the same-keyed ChargingData emitted by the create response.
+      */
+-    PccRule->ref_chg_data = OpenAPI_list_create();
+-    ogs_assert(PccRule->ref_chg_data);
+-    OpenAPI_list_add(PccRule->ref_chg_data, PccRule->pcc_rule_id);
++    /*
++     * selected-standard-scenario attack: delete the nullable charging reference on the N7 wire.
++     * The PCC rule, QoS reference, flow, and ChargingData remain intact.
++     */
++    ogs_warn("selected-standard-scenario attack: deleting refChgData from PCC rule [%s]",
++            PccRule->pcc_rule_id);
+ 
+     PccRule->is_precedence = true;
+     PccRule->precedence = pcc_rule->precedence;

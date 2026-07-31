@@ -1,0 +1,88 @@
+{
+  "schema_version": "1.0",
+  "run_id": "paired_baseline_T4G-A17_LIVE_PUBLIC__attack_T4G-A03_LIVE_PUBLIC",
+  "audit_id": "T4G-A03",
+  "legacy_threat_id": "T4-3",
+  "experiment_kind": "clean_source_paired_live_reproduction",
+  "implementation_profile": "Gy-semantic-analogue",
+  "validation": "E2E",
+  "classification": "E2E",
+  "kernel": "6.17.0-40-generic",
+  "open5gs_commit": "26cbc33a418a292e3b3949be69155898d751bd6e",
+  "gtpu_packet_count_each": 30400,
+  "pfcp_report_count": 5,
+  "semantic_replay_pair_count": 5,
+  "attack_ccr_update_count": 10,
+  "pair_relations": [
+    {
+      "request_number": 1,
+      "same_session": true,
+      "same_request_number": true,
+      "same_usage": true,
+      "fresh_hop_by_hop": true,
+      "fresh_end_to_end": true
+    },
+    {
+      "request_number": 2,
+      "same_session": true,
+      "same_request_number": true,
+      "same_usage": true,
+      "fresh_hop_by_hop": true,
+      "fresh_end_to_end": true
+    },
+    {
+      "request_number": 3,
+      "same_session": true,
+      "same_request_number": true,
+      "same_usage": true,
+      "fresh_hop_by_hop": true,
+      "fresh_end_to_end": true
+    },
+    {
+      "request_number": 4,
+      "same_session": true,
+      "same_request_number": true,
+      "same_usage": true,
+      "fresh_hop_by_hop": true,
+      "fresh_end_to_end": true
+    },
+    {
+      "request_number": 5,
+      "same_session": true,
+      "same_request_number": true,
+      "same_usage": true,
+      "fresh_hop_by_hop": true,
+      "fresh_end_to_end": true
+    }
+  ],
+  "original_usage_sum": 21050244,
+  "replayed_gy_usage_sum": 42100488,
+  "usage_multiplier": 2,
+  "baseline_charge_cents": 27,
+  "attack_charge_cents": 48,
+  "charge_delta_cents": 21,
+  "accepted_pfcp_responses": 5,
+  "accepted_cca_updates": 10,
+  "g1_wire_acceptance": true,
+  "g2_state_effect": true,
+  "g3_backend_effect": true,
+  "semantic_relations": {
+    "identical_gtpu_packet_count": true,
+    "identical_pfcp_report_count": true,
+    "identical_pfcp_aggregate": true,
+    "baseline_pfcp_equals_gy": true,
+    "attack_pfcp_equals_original_ccr": true,
+    "five_semantic_replay_pairs": true,
+    "attack_ten_single_usu_ccr": true,
+    "attack_gy_exact_x2": true,
+    "pfcp_reports_accepted": true,
+    "baseline_cca_success": true,
+    "attack_ten_cca_success": true,
+    "backend_charge_increased": true
+  },
+  "input_checksum_counts": {
+    "baseline": 58,
+    "attack": 58
+  },
+  "claim_boundary": "This paired live run validates semantic CCR-U replay with fresh Diameter transport identifiers and accepted Gy CCA-U responses. Native N40/Nchf CHF acceptance and CCR-I/T capture are not claimed."
+}

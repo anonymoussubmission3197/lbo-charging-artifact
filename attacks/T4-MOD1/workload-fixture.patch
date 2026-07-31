@@ -1,0 +1,15 @@
+diff --git a/src/smf/context.c b/src/smf/context.c
+index dde58c18b..93c85fd44 100644
+--- a/src/smf/context.c
++++ b/src/smf/context.c
+@@ -2415,8 +2415,9 @@ smf_bearer_t *smf_qos_flow_add(smf_sess_t *sess)
+     urr->meas_method = OGS_PFCP_MEASUREMENT_METHOD_VOLUME;
+     urr->rep_triggers.volume_threshold = 1;
+     urr->vol_threshold.tovol = 1;
+-    urr->vol_threshold.total_volume = 1024*1024*100;
++    urr->vol_threshold.total_volume = 1024*1024; /* T4-1 test fixture */
+ 
++    ogs_pfcp_pdr_associate_urr(ul_pdr, urr); /* T4-1 test fixture */
+     ogs_pfcp_pdr_associate_urr(dl_pdr, urr);
+ 
+     /* QER */

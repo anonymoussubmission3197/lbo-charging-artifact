@@ -1,0 +1,19 @@
+schema_version: "1.0"
+scope_name: selected-release-17-lbo-charging-artifacts
+counting_note: >
+  The count is eleven selected producer-to-consumer procedure/message contexts,
+  not every N7, N4, or N40 charging message. Repeated carriers that use the same
+  canonical schema do not multiply the terminal-field count.
+messages:
+  - {id: M-T1-01, surface: T1, interface: N7, producer: V-PCF, consumer: V-SMF, operation: "SM Policy Control Create response", artifact: SmPolicyDecision}
+  - {id: M-T1-02, surface: T1, interface: N7, producer: V-PCF, consumer: V-SMF, operation: "SM Policy Control Update response", artifact: SmPolicyDecision}
+  - {id: M-T1-03, surface: T1, interface: N7, producer: V-PCF, consumer: V-SMF, operation: "PCF-initiated UpdateNotify request", artifact: SmPolicyDecision}
+  - {id: M-T2-01, surface: T2, interface: N4, producer: V-SMF, consumer: V-UPF, operation: "PFCP Session Establishment Request", artifact: "PFCP rule graph"}
+  - {id: M-T2-02, surface: T2, interface: N4, producer: V-SMF, consumer: V-UPF, operation: "PFCP Session Modification Request", artifact: "PFCP rule graph"}
+  - {id: M-T3-01, surface: T3, interface: N4, producer: V-UPF, consumer: V-SMF, operation: "PFCP Session Modification Response", artifact: "PFCP Usage Report carrier"}
+  - {id: M-T3-02, surface: T3, interface: N4, producer: V-UPF, consumer: V-SMF, operation: "PFCP Session Deletion Response", artifact: "PFCP Usage Report carrier"}
+  - {id: M-T3-03, surface: T3, interface: N4, producer: V-UPF, consumer: V-SMF, operation: "PFCP Session Report Request", artifact: "PFCP Usage Report carrier"}
+  - {id: M-T4-01, surface: T4-Nchf, interface: N40, producer: V-SMF, consumer: CHF, operation: "Nchf ConvergedCharging Create request", artifact: ChargingDataRequest}
+  - {id: M-T4-02, surface: T4-Nchf, interface: N40, producer: V-SMF, consumer: CHF, operation: "Nchf ConvergedCharging Update request", artifact: ChargingDataRequest}
+  - {id: M-T4-03, surface: T4-Nchf, interface: N40, producer: V-SMF, consumer: CHF, operation: "Nchf ConvergedCharging Release request", artifact: ChargingDataRequest}
+

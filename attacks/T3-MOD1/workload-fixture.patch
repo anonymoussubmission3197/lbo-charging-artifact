@@ -1,0 +1,18 @@
+diff --git a/src/smf/context.c b/src/smf/context.c
+index dde58c18b..69182370a 100644
+--- a/src/smf/context.c
++++ b/src/smf/context.c
+@@ -2415,7 +2415,12 @@ smf_bearer_t *smf_qos_flow_add(smf_sess_t *sess)
+     urr->meas_method = OGS_PFCP_MEASUREMENT_METHOD_VOLUME;
+     urr->rep_triggers.volume_threshold = 1;
+     urr->vol_threshold.tovol = 1;
+-    urr->vol_threshold.total_volume = 1024*1024*100;
++    /*
++     * T3-1 test fixture: trigger reports during the bounded workload.
++     * This changes report cadence only; the attack remains exclusively
++     * in the UPF's encoded volume values.
++     */
++    urr->vol_threshold.total_volume = 1024*1024;
+ 
+     ogs_pfcp_pdr_associate_urr(dl_pdr, urr);
+ 

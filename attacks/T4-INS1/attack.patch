@@ -1,0 +1,18 @@
+--- a/src/smf/gy-path.c
++++ b/src/smf/gy-path.c
+@@ -288,8 +288,13 @@
+     uint32_t duration = 0;
+     uint64_t ul_octets = 0;
+     uint64_t dl_octets = 0;
+-    uint32_t rating_groups[2] = { sess->session.qos.index, 0 };
+-    unsigned int mscc_count = 1;
++    uint32_t rating_groups[2] = { sess->session.qos.index, 6 };
++    unsigned int mscc_count = 2;
++
++    ogs_assert(rating_groups[0] != rating_groups[1]);
++    ogs_warn("selected-standard-scenario inserted supported MSCC rating_group[%u] "
++            "alongside rating_group[%u]",
++            rating_groups[1], rating_groups[0]);
+ 
+     if (cc_request_type == OGS_DIAM_GY_CC_REQUEST_TYPE_UPDATE_REQUEST ||
+         cc_request_type == OGS_DIAM_GY_CC_REQUEST_TYPE_TERMINATION_REQUEST) {

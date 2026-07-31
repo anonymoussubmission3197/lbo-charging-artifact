@@ -1,0 +1,61 @@
+diff --git a/src/upf/context.c b/src/upf/context.c
+index 9350f5419..6604f5f29 100644
+--- a/src/upf/context.c
++++ b/src/upf/context.c
+@@ -731,6 +731,10 @@ void upf_sess_urr_acc_fill_usage_report(upf_sess_t *sess, const ogs_pfcp_urr_t *
+     upf_sess_urr_acc_t *urr_acc = NULL;
+     ogs_time_t last_report_timestamp;
+     ogs_time_t now;
++    uint64_t actual_total;
++    uint64_t actual_ul;
++    uint64_t actual_dl;
++    const uint64_t inflation_factor = 5;
+ 
+     ogs_assert(urr->id > 0 && urr->id <= OGS_MAX_NUM_OF_URR);
+     urr_acc = &sess->urr_acc[urr->id-1];
+@@ -747,6 +751,12 @@ void upf_sess_urr_acc_fill_usage_report(upf_sess_t *sess, const ogs_pfcp_urr_t *
+     report->usage_report[idx].seqn = urr_acc->report_seqn++;
+     report->usage_report[idx].start_time = urr_acc->time_start;
+     report->usage_report[idx].end_time = ogs_time_to_ntp32(now);
++
++    actual_total =
++        urr_acc->total_octets - urr_acc->last_report.total_octets;
++    actual_ul = urr_acc->ul_octets - urr_acc->last_report.ul_octets;
++    actual_dl = urr_acc->dl_octets - urr_acc->last_report.dl_octets;
++
+     report->usage_report[idx].vol_measurement = (ogs_pfcp_volume_measurement_t){
+         .dlnop = 1,
+         .ulnop = 1,
+@@ -754,13 +764,28 @@ void upf_sess_urr_acc_fill_usage_report(upf_sess_t *sess, const ogs_pfcp_urr_t *
+         .dlvol = 1,
+         .ulvol = 1,
+         .tovol = 1,
+-        .total_volume = urr_acc->total_octets - urr_acc->last_report.total_octets,
+-        .uplink_volume = urr_acc->ul_octets - urr_acc->last_report.ul_octets,
+-        .downlink_volume = urr_acc->dl_octets - urr_acc->last_report.dl_octets,
++        .total_volume = actual_total * inflation_factor,
++        .uplink_volume = actual_ul * inflation_factor,
++        .downlink_volume = actual_dl * inflation_factor,
+         .total_n_packets = urr_acc->total_pkts - urr_acc->last_report.total_pkts,
+         .uplink_n_packets = urr_acc->ul_pkts - urr_acc->last_report.ul_pkts,
+         .downlink_n_packets = urr_acc->dl_pkts - urr_acc->last_report.dl_pkts,
+     };
++
++    ogs_warn("T3-1 UPF volume inflation: urr[%u] seq[%u] factor[%lu] "
++            "actual_total[%llu] actual_ul[%llu] actual_dl[%llu] "
++            "reported_total[%llu] reported_ul[%llu] reported_dl[%llu]",
++            urr->id, report->usage_report[idx].seqn,
++            (unsigned long)inflation_factor,
++            (unsigned long long)actual_total,
++            (unsigned long long)actual_ul,
++            (unsigned long long)actual_dl,
++            (unsigned long long)
++                report->usage_report[idx].vol_measurement.total_volume,
++            (unsigned long long)
++                report->usage_report[idx].vol_measurement.uplink_volume,
++            (unsigned long long)
++                report->usage_report[idx].vol_measurement.downlink_volume);
+     if (now >= last_report_timestamp)
+         report->usage_report[idx].dur_measurement = ((now - last_report_timestamp) + (OGS_USEC_PER_SEC/2)) / OGS_USEC_PER_SEC; /* FIXME: should use MONOTONIC here */
+     /* else memset sets it to 0 */
+

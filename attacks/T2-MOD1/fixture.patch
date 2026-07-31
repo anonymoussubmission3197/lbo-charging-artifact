@@ -1,0 +1,186 @@
+diff --git a/lib/diameter/gy/message.c b/lib/diameter/gy/message.c
+index 4d282d397..dd66d93a3 100644
+--- a/lib/diameter/gy/message.c
++++ b/lib/diameter/gy/message.c
+@@ -45,6 +45,7 @@ struct dict_object *ogs_diam_gy_cc_output_octets = NULL;
+ struct dict_object *ogs_diam_gy_cc_service_specific_units = NULL;
+ struct dict_object *ogs_diam_gy_reporting_reason = NULL;
+ struct dict_object *ogs_diam_gy_service_id = NULL;
++struct dict_object *ogs_diam_gy_rating_group = NULL;
+ 
+ struct dict_object *ogs_diam_gy_service_information = NULL;
+ struct dict_object *ogs_diam_gy_ps_information = NULL;
+@@ -112,6 +113,7 @@ int ogs_diam_gy_init(void)
+     CHECK_dict_search(DICT_AVP, AVP_BY_NAME_ALL_VENDORS, "CC-Service-Specific-Units", &ogs_diam_gy_cc_service_specific_units);
+     CHECK_dict_search(DICT_AVP, AVP_BY_NAME_ALL_VENDORS, "Reporting-Reason", &ogs_diam_gy_reporting_reason);
+     CHECK_dict_search(DICT_AVP, AVP_BY_NAME_ALL_VENDORS, "Service-Identifier", &ogs_diam_gy_service_id);
++    CHECK_dict_search(DICT_AVP, AVP_BY_NAME_ALL_VENDORS, "Rating-Group", &ogs_diam_gy_rating_group);
+ 
+     CHECK_dict_search(DICT_AVP, AVP_BY_NAME_ALL_VENDORS, "Service-Information", &ogs_diam_gy_service_information);
+     CHECK_dict_search(DICT_AVP, AVP_BY_NAME_ALL_VENDORS, "PS-Information", &ogs_diam_gy_ps_information);
+diff --git a/lib/diameter/gy/message.h b/lib/diameter/gy/message.h
+index 5880ca59c..3e5d39979 100644
+--- a/lib/diameter/gy/message.h
++++ b/lib/diameter/gy/message.h
+@@ -94,6 +94,7 @@ extern struct dict_object *ogs_diam_gy_reporting_reason;
+ #define OGS_DIAM_GY_REPORTING_REASON_POOL_EXHAUSTED             8
+ #define OGS_DIAM_GY_REPORTING_REASON_UNUSED_QUOTA_TIMER         9
+ extern struct dict_object *ogs_diam_gy_service_id;
++extern struct dict_object *ogs_diam_gy_rating_group;
+ extern struct dict_object *ogs_diam_gy_service_information;
+ extern struct dict_object *ogs_diam_gy_ps_information;
+ extern struct dict_object *ogs_diam_gy_3gpp_charging_id;
+diff --git a/src/smf/context.c b/src/smf/context.c
+index dde58c18b..59208b50d 100644
+--- a/src/smf/context.c
++++ b/src/smf/context.c
+@@ -2415,8 +2415,9 @@ smf_bearer_t *smf_qos_flow_add(smf_sess_t *sess)
+     urr->meas_method = OGS_PFCP_MEASUREMENT_METHOD_VOLUME;
+     urr->rep_triggers.volume_threshold = 1;
+     urr->vol_threshold.tovol = 1;
+-    urr->vol_threshold.total_volume = 1024*1024*100;
++    urr->vol_threshold.total_volume = 1024*1024; /* T1-1 test fixture */
+ 
++    ogs_pfcp_pdr_associate_urr(ul_pdr, urr); /* T1-1 test fixture */
+     ogs_pfcp_pdr_associate_urr(dl_pdr, urr);
+ 
+     /* QER */
+diff --git a/src/smf/gy-path.c b/src/smf/gy-path.c
+index 4590091dc..d6030db22 100644
+--- a/src/smf/gy-path.c
++++ b/src/smf/gy-path.c
+@@ -290,6 +290,15 @@ static void fill_multiple_services_credit_control_ccr(smf_sess_t *sess,
+     ret = fd_msg_avp_new(ogs_diam_gy_multiple_services_cc, 0, &avp);
+     ogs_assert(ret == 0);
+ 
++    /* T1-1 fixture: carry the applied 5QI as the OCS charging key. */
++    ret = fd_msg_avp_new(ogs_diam_gy_rating_group, 0, &avpch1);
++    ogs_assert(ret == 0);
++    val.u32 = sess->session.qos.index;
++    ret = fd_msg_avp_setvalue(avpch1, &val);
++    ogs_assert(ret == 0);
++    ret = fd_msg_avp_add(avp, MSG_BRW_LAST_CHILD, avpch1);
++    ogs_assert(ret == 0);
++
+     /* Requested-Service-Unit, RFC4006 8.18 */
+     if (cc_request_type == OGS_DIAM_GY_CC_REQUEST_TYPE_INITIAL_REQUEST ||
+         cc_request_type == OGS_DIAM_GY_CC_REQUEST_TYPE_UPDATE_REQUEST)
+@@ -301,7 +310,6 @@ static void fill_multiple_services_credit_control_ccr(smf_sess_t *sess,
+         fill_used_service_unit(sess, cc_request_type, avp);
+ 
+         /* Service-Identifier, RFC4006 8.28. Not used in Gy. */
+-        /* Rating-Group */
+ 
+         /* Reporting-Reason, TS 32.299 7.2.175 */
+         /* "values QHT, FINAL, VALIDITY_TIME, FORCED_REAUTHORISATION,
+diff --git a/src/smf/npcf-handler.c b/src/smf/npcf-handler.c
+index a51a89384..e1ac749f7 100644
+--- a/src/smf/npcf-handler.c
++++ b/src/smf/npcf-handler.c
+@@ -25,6 +25,72 @@
+ 
+ #include "npcf-handler.h"
+ 
++/*
++ * selected-standard-scenario common fixture: a charged uplink PDR overlaps the normal broader
++ * uncharged forwarding fallback.  The matched pair changes only the charged
++ * PDR precedence value.
++ */
++static void create_t2_a17_charged_pdr(smf_sess_t *sess)
++{
++    smf_bearer_t *default_qos_flow = NULL;
++    ogs_pfcp_pdr_t *default_ul_pdr = NULL;
++    ogs_pfcp_pdr_t *charged_ul_pdr = NULL;
++    const char *flow_description = "permit out ip from any to assigned";
++    int i;
++
++    ogs_assert(sess);
++
++    default_qos_flow = smf_default_bearer_in_sess(sess);
++    ogs_assert(default_qos_flow);
++    default_ul_pdr = default_qos_flow->ul_pdr;
++    ogs_assert(default_ul_pdr);
++    ogs_assert(default_qos_flow->ul_far);
++    ogs_assert(default_qos_flow->urr);
++    ogs_assert(default_qos_flow->qer);
++
++    charged_ul_pdr = ogs_pfcp_pdr_add(&sess->pfcp);
++    ogs_assert(charged_ul_pdr);
++
++    ogs_assert(sess->session.name);
++    charged_ul_pdr->apn = ogs_strdup(sess->session.name);
++    ogs_assert(charged_ul_pdr->apn);
++
++    charged_ul_pdr->src_if = OGS_PFCP_INTERFACE_ACCESS;
++    charged_ul_pdr->src_if_type_presence = true;
++    if (HOME_ROUTED_ROAMING_IN_HSMF(sess))
++        charged_ul_pdr->src_if_type =
++            OGS_PFCP_3GPP_INTERFACE_TYPE_N9_FOR_ROAMING;
++    else
++        charged_ul_pdr->src_if_type =
++            OGS_PFCP_3GPP_INTERFACE_TYPE_N3_3GPP_ACCESS;
++
++    memcpy(&charged_ul_pdr->f_teid, &default_ul_pdr->f_teid,
++            sizeof(charged_ul_pdr->f_teid));
++    charged_ul_pdr->f_teid_len = default_ul_pdr->f_teid_len;
++    charged_ul_pdr->outer_header_removal_len = 1;
++    charged_ul_pdr->outer_header_removal.description =
++        OGS_PFCP_OUTER_HEADER_REMOVAL_GTPU_UDP_IP;
++    charged_ul_pdr->qfi = default_ul_pdr->qfi;
++    charged_ul_pdr->flow[0].fd = 1;
++    charged_ul_pdr->flow[0].description = ogs_strdup(flow_description);
++    ogs_assert(charged_ul_pdr->flow[0].description);
++    charged_ul_pdr->num_of_flow = 1;
++
++    for (i = 0; i < OGS_ARRAY_SIZE(default_ul_pdr->urr); i++)
++        default_ul_pdr->urr[i] = NULL;
++    default_ul_pdr->num_of_urr = 0;
++
++    ogs_pfcp_pdr_associate_far(charged_ul_pdr, default_qos_flow->ul_far);
++    ogs_pfcp_pdr_associate_urr(charged_ul_pdr, default_qos_flow->urr);
++    ogs_pfcp_pdr_associate_qer(charged_ul_pdr, default_qos_flow->qer);
++    ogs_pfcp_pdr_reorder_by_precedence(charged_ul_pdr, 100000);
++
++    ogs_warn("selected-standard-scenario fixture: charged pdr[%u] urr[%u] precedence[%u], "
++            "fallback pdr[%u] urr_count[%d]", charged_ul_pdr->id,
++            default_qos_flow->urr->id, charged_ul_pdr->precedence,
++            default_ul_pdr->id, default_ul_pdr->num_of_urr);
++}
++
+ static void update_authorized_pcc_rule_and_qos(
+         smf_sess_t *sess, OpenAPI_sm_policy_decision_t *SmPolicyDecision)
+ {
+@@ -763,6 +829,8 @@ bool smf_npcf_smpolicycontrol_handle_create(
+     cp2up_pdr->precedence = OGS_PFCP_CP2UP_PDR_PRECEDENCE;
+     up2cp_pdr->precedence = OGS_PFCP_UP2CP_PDR_PRECEDENCE;
+ 
++    create_t2_a17_charged_pdr(sess);
++
+     ogs_assert(OGS_OK ==
+             smf_5gc_pfcp_send_session_establishment_request(sess, stream, 0));
+ 
+diff --git a/src/upf/gtp-path.c b/src/upf/gtp-path.c
+index a8c920ce9..56d75aa50 100644
+--- a/src/upf/gtp-path.c
++++ b/src/upf/gtp-path.c
+@@ -510,6 +510,20 @@ static void _gtpv1_u_recv_cb(short when, ogs_socket_t fd, void *data)
+         ogs_assert(pdr->sess);
+         ogs_assert(pdr->sess->obj.type == OGS_PFCP_OBJ_SESS_TYPE);
+ 
++        {
++            static uint64_t t2_a17_selected_log_count = 0;
++
++            t2_a17_selected_log_count++;
++            if (t2_a17_selected_log_count <= 10 ||
++                    (t2_a17_selected_log_count % 1000) == 0) {
++                ogs_warn("selected-standard-scenario selected UL PDR: pdr[%u] urr_count[%d] "
++                        "teid[0x%x] len[%d] count[%lu]",
++                        pdr->id, pdr->num_of_urr, header_desc.teid,
++                        pkbuf->len,
++                        (unsigned long)t2_a17_selected_log_count);
++            }
++        }
++
+         sess = UPF_SESS(pdr->sess);
+         ogs_assert(sess);
+ 

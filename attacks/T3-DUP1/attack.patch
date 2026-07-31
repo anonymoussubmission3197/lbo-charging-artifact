@@ -1,0 +1,36 @@
+diff --git a/src/upf/context.c b/src/upf/context.c
+index 9350f5419..4bc09d661 100644
+--- a/src/upf/context.c
++++ b/src/upf/context.c
+@@ -24,6 +24,8 @@ static upf_context_t self;
+ 
+ int __upf_log_domain;
+ 
++#define T3_2_DUP_USAGE_REPORTS 2
++
+ static OGS_POOL(upf_sess_pool, upf_sess_t);
+ static OGS_POOL(upf_n4_seid_pool, ogs_pool_id_t);
+ 
+@@ -714,6 +716,22 @@ void upf_sess_urr_acc_add(upf_sess_t *sess, ogs_pfcp_urr_t *urr, size_t size, bo
+         memset(&report, 0, sizeof(report));
+         upf_sess_urr_acc_fill_usage_report(sess, urr, &report, 0);
+         report.num_of_usage_report = 1;
++#if T3_2_DUP_USAGE_REPORTS > 1
++        ogs_assert(T3_2_DUP_USAGE_REPORTS <=
++                OGS_ARRAY_SIZE(report.usage_report));
++        report.usage_report[1] = report.usage_report[0];
++        report.num_of_usage_report = T3_2_DUP_USAGE_REPORTS;
++        ogs_warn("T3-2 duplicate Usage Report IEs: urr=%u seq=%u copies=%u "
++                "total=%llu ul=%llu dl=%llu",
++                urr->id, report.usage_report[0].seqn,
++                report.num_of_usage_report,
++                (unsigned long long)
++                    report.usage_report[0].vol_measurement.total_volume,
++                (unsigned long long)
++                    report.usage_report[0].vol_measurement.uplink_volume,
++                (unsigned long long)
++                    report.usage_report[0].vol_measurement.downlink_volume);
++#endif
+         upf_sess_urr_acc_snapshot(sess, urr);
+ 
+         ogs_assert(OGS_OK ==

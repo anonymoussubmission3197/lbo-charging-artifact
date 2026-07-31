@@ -1,0 +1,443 @@
+{
+  "attack_charge_series": [
+    7,
+    7,
+    7
+  ],
+  "baseline_charge_series": [
+    0,
+    0,
+    0
+  ],
+  "cell": "T2-MOD",
+  "claim_boundary": "Both sides install the same charged PDR 5 and uncharged fallback PDR 2. The attack-only mutation changes only existing PDR 5 Precedence from 100000 to 1000; PDR/URR/FAR/QER objects, selectors, exact workload, lifecycle, and backend are fixed.",
+  "classification": "E2E",
+  "g1_mutated_object_accepted": true,
+  "g2_target_semantic_state": true,
+  "g3_persistent_backend_effect": true,
+  "global_failures": [],
+  "passed": true,
+  "runs": {
+    "attack": [
+      {
+        "application_bytes": 1048576,
+        "application_packets": 1024,
+        "candidate_precedence": 1000,
+        "charged_cents": 7,
+        "establishment_pdr_ids": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "failures": [],
+        "gy_cca_u_2001": 1,
+        "gy_ccr_u": 1,
+        "mode": "attack",
+        "passed": true,
+        "pfcp_modification_accepted": 0,
+        "pfcp_modification_requests": 0,
+        "pfcp_volume_report_frames": 1,
+        "removed_pdr_ids": [],
+        "run_id": "attack-run-1",
+        "selected_pdr_samples": [
+          [
+            5,
+            1
+          ],
+          [
+            5,
+            1
+          ],
+          [
+            5,
+            1
+          ],
+          [
+            5,
+            1
+          ],
+          [
+            5,
+            1
+          ],
+          [
+            5,
+            1
+          ],
+          [
+            5,
+            1
+          ],
+          [
+            5,
+            1
+          ],
+          [
+            5,
+            1
+          ],
+          [
+            5,
+            1
+          ],
+          [
+            5,
+            1
+          ]
+        ]
+      },
+      {
+        "application_bytes": 1048576,
+        "application_packets": 1024,
+        "candidate_precedence": 1000,
+        "charged_cents": 7,
+        "establishment_pdr_ids": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "failures": [],
+        "gy_cca_u_2001": 1,
+        "gy_ccr_u": 1,
+        "mode": "attack",
+        "passed": true,
+        "pfcp_modification_accepted": 0,
+        "pfcp_modification_requests": 0,
+        "pfcp_volume_report_frames": 1,
+        "removed_pdr_ids": [],
+        "run_id": "attack-run-2",
+        "selected_pdr_samples": [
+          [
+            5,
+            1
+          ],
+          [
+            5,
+            1
+          ],
+          [
+            5,
+            1
+          ],
+          [
+            5,
+            1
+          ],
+          [
+            5,
+            1
+          ],
+          [
+            5,
+            1
+          ],
+          [
+            5,
+            1
+          ],
+          [
+            5,
+            1
+          ],
+          [
+            5,
+            1
+          ],
+          [
+            5,
+            1
+          ],
+          [
+            5,
+            1
+          ]
+        ]
+      },
+      {
+        "application_bytes": 1048576,
+        "application_packets": 1024,
+        "candidate_precedence": 1000,
+        "charged_cents": 7,
+        "establishment_pdr_ids": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "failures": [],
+        "gy_cca_u_2001": 1,
+        "gy_ccr_u": 1,
+        "mode": "attack",
+        "passed": true,
+        "pfcp_modification_accepted": 0,
+        "pfcp_modification_requests": 0,
+        "pfcp_volume_report_frames": 1,
+        "removed_pdr_ids": [],
+        "run_id": "attack-run-3",
+        "selected_pdr_samples": [
+          [
+            5,
+            1
+          ],
+          [
+            5,
+            1
+          ],
+          [
+            5,
+            1
+          ],
+          [
+            5,
+            1
+          ],
+          [
+            5,
+            1
+          ],
+          [
+            5,
+            1
+          ],
+          [
+            5,
+            1
+          ],
+          [
+            5,
+            1
+          ],
+          [
+            5,
+            1
+          ],
+          [
+            5,
+            1
+          ],
+          [
+            5,
+            1
+          ]
+        ]
+      }
+    ],
+    "baseline": [
+      {
+        "application_bytes": 1048576,
+        "application_packets": 1024,
+        "candidate_precedence": 100000,
+        "charged_cents": 0,
+        "establishment_pdr_ids": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "failures": [],
+        "gy_cca_u_2001": 0,
+        "gy_ccr_u": 0,
+        "mode": "baseline",
+        "passed": true,
+        "pfcp_modification_accepted": 0,
+        "pfcp_modification_requests": 0,
+        "pfcp_volume_report_frames": 0,
+        "removed_pdr_ids": [],
+        "run_id": "baseline-run-1",
+        "selected_pdr_samples": [
+          [
+            2,
+            0
+          ],
+          [
+            2,
+            0
+          ],
+          [
+            2,
+            0
+          ],
+          [
+            2,
+            0
+          ],
+          [
+            2,
+            0
+          ],
+          [
+            2,
+            0
+          ],
+          [
+            2,
+            0
+          ],
+          [
+            2,
+            0
+          ],
+          [
+            2,
+            0
+          ],
+          [
+            2,
+            0
+          ],
+          [
+            2,
+            0
+          ]
+        ]
+      },
+      {
+        "application_bytes": 1048576,
+        "application_packets": 1024,
+        "candidate_precedence": 100000,
+        "charged_cents": 0,
+        "establishment_pdr_ids": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "failures": [],
+        "gy_cca_u_2001": 0,
+        "gy_ccr_u": 0,
+        "mode": "baseline",
+        "passed": true,
+        "pfcp_modification_accepted": 0,
+        "pfcp_modification_requests": 0,
+        "pfcp_volume_report_frames": 0,
+        "removed_pdr_ids": [],
+        "run_id": "baseline-run-2",
+        "selected_pdr_samples": [
+          [
+            2,
+            0
+          ],
+          [
+            2,
+            0
+          ],
+          [
+            2,
+            0
+          ],
+          [
+            2,
+            0
+          ],
+          [
+            2,
+            0
+          ],
+          [
+            2,
+            0
+          ],
+          [
+            2,
+            0
+          ],
+          [
+            2,
+            0
+          ],
+          [
+            2,
+            0
+          ],
+          [
+            2,
+            0
+          ],
+          [
+            2,
+            0
+          ]
+        ]
+      },
+      {
+        "application_bytes": 1048576,
+        "application_packets": 1024,
+        "candidate_precedence": 100000,
+        "charged_cents": 0,
+        "establishment_pdr_ids": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "failures": [],
+        "gy_cca_u_2001": 0,
+        "gy_ccr_u": 0,
+        "mode": "baseline",
+        "passed": true,
+        "pfcp_modification_accepted": 0,
+        "pfcp_modification_requests": 0,
+        "pfcp_volume_report_frames": 0,
+        "removed_pdr_ids": [],
+        "run_id": "baseline-run-3",
+        "selected_pdr_samples": [
+          [
+            2,
+            0
+          ],
+          [
+            2,
+            0
+          ],
+          [
+            2,
+            0
+          ],
+          [
+            2,
+            0
+          ],
+          [
+            2,
+            0
+          ],
+          [
+            2,
+            0
+          ],
+          [
+            2,
+            0
+          ],
+          [
+            2,
+            0
+          ],
+          [
+            2,
+            0
+          ],
+          [
+            2,
+            0
+          ],
+          [
+            2,
+            0
+          ]
+        ]
+      }
+    ]
+  },
+  "schema_version": "1.0",
+  "source_result_sha256": "e9692d83d1d62f51aa594c59574ea803bb287433af32f35de0e5644b29baa3aa",
+  "verifier_revision": "t2-mod-t2-a17-predeclared-v1"
+}

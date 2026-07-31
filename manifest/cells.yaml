@@ -1,0 +1,324 @@
+schema_version: "2.0"
+model: "T1--T4 surfaces by MOD/INS/DEL/DUP/SEQ manipulation"
+native_scenario_total: 232
+runnable_cells: 19
+note: >
+  The reviewer-facing artifact uses these twenty cell identifiers exclusively.
+  Observed OCS balance debits are reproduced by the selected public PoC data,
+  not values copied from an earlier paper draft. T1-INS is intentionally N/A
+  because no retained T1 scenario has insertion as its primary manipulation.
+cells:
+  - id: T1-MOD
+    representative_id: T1-MOD1
+    surface: T1
+    manipulation: MOD
+    native_scenario_count: 34
+    title: "5QI tariff rewrite"
+    summary: "Change an existing policy value so the same usage is rated under a different tariff."
+    paper_mutation: "authDefQos.5qi 9 -> 6 and Rating Group 9 -> 6."
+    measured_effect: "The same testbed workload changed the OCS balance debit from 7 to 70 cents."
+    status: E2E
+    implementation_profile: Open5GS-SigScale
+    claim_boundary: "native T1/N7"
+    baseline_charge_cents: 7
+    attack_charge_cents: 70
+    repetitions: 1
+
+  - id: T1-INS
+    representative_id: null
+    surface: T1
+    manipulation: INS
+    native_scenario_count: 0
+    title: "No retained insertion scenario"
+    summary: "Inserting an additional T1 field produced no charging difference at the CHF, so no representative attack is retained."
+    status: N/A
+    implementation_profile: N/A
+    claim_boundary: "native T1/N7"
+
+  - id: T1-DEL
+    representative_id: T1-DEL1
+    surface: T1
+    manipulation: DEL
+    native_scenario_count: 3
+    title: "Charging-reference deletion"
+    summary: "Delete the charging reference while forwarding remains available."
+    paper_mutation: "Delete refChgData while preserving forwarding."
+    measured_effect: "The OCS balance debit changed from 7 to 0 cents."
+    status: E2E
+    implementation_profile: Open5GS-SigScale
+    claim_boundary: "native T1/N7; disclosed support fixture"
+    baseline_charge_cents: 7
+    attack_charge_cents: 0
+    repetitions: 3
+
+  - id: T1-DUP
+    representative_id: T1-DUP1
+    surface: T1
+    manipulation: DUP
+    native_scenario_count: 3
+    title: "Duplicate charging attribution"
+    summary: "Attach a second valid charging attribution to the same policy flow."
+    paper_mutation: "Duplicate a valid ChargingData attribution; Gy-accounted bytes doubled."
+    measured_effect: "The OCS balance debit changed from 7 to 8 cents."
+    status: E2E
+    implementation_profile: Open5GS-SigScale
+    claim_boundary: "native T1/N7; disclosed support fixture"
+    baseline_charge_cents: 7
+    attack_charge_cents: 8
+    repetitions: 3
+
+  - id: T1-SEQ
+    representative_id: T1-SEQ1
+    surface: T1
+    manipulation: SEQ
+    native_scenario_count: 1
+    title: "Stale policy replay"
+    summary: "Replay an older valid policy decision after a newer decision."
+    paper_mutation: "Replay a stale policy decision with two charging attributions; Gy-accounted bytes doubled."
+    measured_effect: "The OCS balance debit changed from 7 to 8 cents."
+    status: E2E
+    implementation_profile: Open5GS-SigScale
+    claim_boundary: "native T1/N7; disclosed support fixture"
+    baseline_charge_cents: 7
+    attack_charge_cents: 8
+    repetitions: 3
+
+  - id: T2-MOD
+    representative_id: T2-MOD1
+    surface: T2
+    manipulation: MOD
+    native_scenario_count: 47
+    title: "PDR precedence manipulation"
+    summary: "Change an existing charged PDR precedence so the same traffic selects a different rule."
+    paper_mutation: "Change PDR precedence 100000 -> 1000 while delivering the same 1 MiB workload."
+    measured_effect: "The OCS balance debit changed from 0 to 7 cents."
+    status: E2E
+    implementation_profile: Open5GS-SigScale
+    claim_boundary: "native T2/N4"
+    baseline_charge_cents: 0
+    attack_charge_cents: 7
+    repetitions: 3
+
+  - id: T2-INS
+    representative_id: T2-INS1
+    surface: T2
+    manipulation: INS
+    native_scenario_count: 4
+    title: "Additional URR insertion"
+    summary: "Insert an additional same-purpose URR attribution for the same traffic."
+    paper_mutation: "Add a second same-purpose URR reference for the same forwarded traffic."
+    measured_effect: "The OCS balance debit changed from 7 to 8 cents."
+    status: E2E
+    implementation_profile: Open5GS-SigScale
+    claim_boundary: "native T2/N4"
+    baseline_charge_cents: 7
+    attack_charge_cents: 8
+    repetitions: 1
+
+  - id: T2-DEL
+    representative_id: T2-DEL1
+    surface: T2
+    manipulation: DEL
+    native_scenario_count: 4
+    title: "Charged-PDR deletion"
+    summary: "Remove the charged PDR while an unmetered forwarding fallback remains."
+    paper_mutation: "Delete the charged PDR while retaining an unmetered forwarding fallback."
+    measured_effect: "The OCS balance debit changed from 7 to 0 cents."
+    status: E2E
+    implementation_profile: Open5GS-SigScale
+    claim_boundary: "native T2/N4"
+    baseline_charge_cents: 7
+    attack_charge_cents: 0
+    repetitions: 3
+
+  - id: T2-DUP
+    representative_id: T2-DUP1
+    surface: T2
+    manipulation: DUP
+    native_scenario_count: 6
+    title: "Repeated same-ID PDR"
+    summary: "Repeat a same-ID Create PDR so the accepted final rule loses its URR relation."
+    paper_mutation: "Repeat a same-ID Create PDR; the retained URR count changed from 1 to 0."
+    measured_effect: "The OCS balance debit changed from 7 to 0 cents."
+    status: E2E
+    implementation_profile: Open5GS-SigScale
+    claim_boundary: "native T2/N4"
+    baseline_charge_cents: 7
+    attack_charge_cents: 0
+    repetitions: 3
+
+  - id: T2-SEQ
+    representative_id: T2-SEQ1
+    surface: T2
+    manipulation: SEQ
+    native_scenario_count: 4
+    title: "PFCP rule-operation replay"
+    summary: "Replay a stale charged rule operation in a fresh PFCP transaction."
+    paper_mutation: "Replay a stale charged Create PDR in a fresh PFCP transaction."
+    measured_effect: "The OCS balance debit changed from 0 to 7 cents."
+    status: E2E
+    implementation_profile: Open5GS-SigScale
+    claim_boundary: "native T2/N4"
+    baseline_charge_cents: 0
+    attack_charge_cents: 7
+    repetitions: 3
+
+  - id: T3-MOD
+    representative_id: T3-MOD1
+    surface: T3
+    manipulation: MOD
+    native_scenario_count: 27
+    title: "Usage-volume inflation"
+    summary: "Inflate the reported UL, DL, and total usage while keeping the UE workload unchanged."
+    paper_mutation: "Multiply UL, DL, and total usage by five while preserving total = UL + DL."
+    measured_effect: "Reported usage changed from 11.05 to 55.25 MB and the OCS balance debit from 17 to 61 cents."
+    status: E2E
+    implementation_profile: Open5GS-SigScale
+    claim_boundary: "native T3/N4"
+    baseline_charge_cents: 17
+    attack_charge_cents: 61
+    repetitions: 1
+
+  - id: T3-INS
+    representative_id: T3-INS1
+    surface: T3
+    manipulation: INS
+    native_scenario_count: 3
+    title: "Near-duplicate report insertion"
+    summary: "Insert a second same-identity Usage Report carrying additional octets."
+    paper_mutation: "Insert a near-duplicate same-identity Usage Report carrying 4,096 additional octets."
+    measured_effect: "The OCS balance debit changed from 7 to 8 cents."
+    status: E2E
+    implementation_profile: Open5GS-SigScale
+    claim_boundary: "native T3/N4"
+    baseline_charge_cents: 7
+    attack_charge_cents: 8
+    repetitions: 3
+
+  - id: T3-DEL
+    representative_id: T3-DEL1
+    surface: T3
+    manipulation: DEL
+    native_scenario_count: 3
+    title: "Directional-volume deletion"
+    summary: "Omit one reported direction while the receiver accepts the remaining usage."
+    paper_mutation: "Delete one directional volume from the accepted Usage Report."
+    measured_effect: "Reported usage changed from 21.05 to 10.53 MB and the OCS balance debit from 27 to 16 cents."
+    status: E2E
+    implementation_profile: Open5GS-SigScale
+    claim_boundary: "native T3/N4"
+    baseline_charge_cents: 27
+    attack_charge_cents: 16
+    repetitions: 1
+
+  - id: T3-DUP
+    representative_id: T3-DUP1
+    surface: T3
+    manipulation: DUP
+    native_scenario_count: 4
+    title: "Usage Report duplication"
+    summary: "Duplicate an identical Usage Report IE inside one PFCP request."
+    paper_mutation: "Duplicate an identical Usage Report IE."
+    measured_effect: "Reported usage changed from 11.05 to 22.10 MB and the OCS balance debit from 17 to 28 cents."
+    status: E2E
+    implementation_profile: Open5GS-SigScale
+    claim_boundary: "native T3/N4"
+    baseline_charge_cents: 17
+    attack_charge_cents: 28
+    repetitions: 1
+
+  - id: T3-SEQ
+    representative_id: T3-SEQ1
+    surface: T3
+    manipulation: SEQ
+    native_scenario_count: 14
+    title: "Usage Report replay"
+    summary: "Replay the same semantic Usage Report using fresh PFCP transaction metadata."
+    paper_mutation: "Replay the same semantic Usage Report using fresh PFCP transaction metadata."
+    measured_effect: "Accepted usage changed from 11.05 to 22.10 MB and the OCS balance debit from 17 to 28 cents."
+    status: E2E
+    implementation_profile: Open5GS-SigScale
+    claim_boundary: "native T3/N4"
+    baseline_charge_cents: 17
+    attack_charge_cents: 28
+    repetitions: 1
+
+  - id: T4-MOD
+    representative_id: T4-MOD1
+    surface: T4
+    manipulation: MOD
+    native_scenario_count: 54
+    title: "Charging-volume inflation"
+    summary: "Inflate the outgoing charging volume while accepted PFCP usage remains unchanged."
+    paper_mutation: "Multiply Gy CC-Input-Octets by four while preserving PFCP usage and CC-Output-Octets."
+    measured_effect: "Charged volume changed from 21.05 to 52.62 MB and the OCS balance debit from 27 to 58 cents."
+    status: E2E
+    implementation_profile: Open5GS-SigScale-Gy
+    claim_boundary: "Gy analogue; not native N40/CHF acceptance proof"
+    baseline_charge_cents: 27
+    attack_charge_cents: 58
+    repetitions: 1
+
+  - id: T4-INS
+    representative_id: T4-INS1
+    surface: T4
+    manipulation: INS
+    native_scenario_count: 2
+    title: "Charging-context insertion"
+    summary: "Insert a second supported monetized charging context into one request."
+    paper_mutation: "Insert a Rating Group 6 MSCC beside the existing Rating Group 9 MSCC."
+    measured_effect: "The OCS balance debit changed from 7 to 77 cents."
+    status: E2E
+    implementation_profile: Open5GS-SigScale-Gy
+    claim_boundary: "Gy analogue; not native N40/CHF acceptance proof"
+    baseline_charge_cents: 7
+    attack_charge_cents: 77
+    repetitions: 3
+
+  - id: T4-DEL
+    representative_id: T4-DEL1
+    surface: T4
+    manipulation: DEL
+    native_scenario_count: 1
+    title: "Rating-group deletion"
+    summary: "Delete the supported differentiated rating group and observe accepted fallback rating."
+    paper_mutation: "Delete Rating Group 6; the accepted request falls back to Rating Group 9."
+    measured_effect: "The OCS balance debit changed from 70 to 7 cents."
+    status: E2E
+    implementation_profile: Open5GS-SigScale-Gy
+    claim_boundary: "Gy analogue; not native N40/CHF acceptance proof"
+    baseline_charge_cents: 70
+    attack_charge_cents: 7
+    repetitions: 3
+
+  - id: T4-DUP
+    representative_id: T4-DUP1
+    surface: T4
+    manipulation: DUP
+    native_scenario_count: 8
+    title: "Charging-tuple duplication"
+    summary: "Duplicate an identical MSCC/USU charging tuple inside one request."
+    paper_mutation: "Duplicate an identical MSCC/USU charging tuple."
+    measured_effect: "Charged usage changed from 21.05 to 42.10 MB and the OCS balance debit from 27 to 48 cents."
+    status: E2E
+    implementation_profile: Open5GS-SigScale-Gy
+    claim_boundary: "Gy analogue; not native N40/CHF acceptance proof"
+    baseline_charge_cents: 27
+    attack_charge_cents: 48
+    repetitions: 1
+
+  - id: T4-SEQ
+    representative_id: T4-SEQ1
+    surface: T4
+    manipulation: SEQ
+    native_scenario_count: 10
+    title: "Charging-request replay"
+    summary: "Replay the same semantic charging request using fresh Diameter transport identifiers."
+    paper_mutation: "Replay the same semantic CCR-Update using fresh Diameter transport identifiers."
+    measured_effect: "Charged usage changed from 21.05 to 42.10 MB and the OCS balance debit from 27 to 48 cents."
+    status: E2E
+    implementation_profile: Open5GS-SigScale-Gy
+    claim_boundary: "Gy analogue; not native N40/CHF acceptance proof"
+    baseline_charge_cents: 27
+    attack_charge_cents: 48
+    repetitions: 1

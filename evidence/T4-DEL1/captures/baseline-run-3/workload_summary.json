@@ -1,0 +1,7 @@
+{
+  "workload_id": "W1_EXACT_1MIB_UL",
+  "ul_application_bytes": 1048576,
+  "dl_application_bytes": 0,
+  "total_application_bytes": 1048576,
+  "datagram_payload_bytes": 1024
+}

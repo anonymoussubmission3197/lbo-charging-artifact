@@ -1,0 +1,20 @@
+--- baseline/lib/sbi/conv.c
++++ attack/lib/sbi/conv.c
+@@ -1512,6 +1512,17 @@
+     ogs_assert(PccRule->ref_chg_data);
+     OpenAPI_list_add(PccRule->ref_chg_data, PccRule->pcc_rule_id);
+ 
++    /*
++     * selected-standard-scenario attack: add a second valid charging attribution for the same
++     * PCC rule and flow.  The primary attribution remains unchanged.
++     */
++    char *duplicate_chg_id =
++        ogs_msprintf("%s-duplicate", PccRule->pcc_rule_id);
++    ogs_assert(duplicate_chg_id);
++    OpenAPI_list_add(PccRule->ref_chg_data, duplicate_chg_id);
++    ogs_warn("selected-standard-scenario attack: duplicated ChargingData attribution [%s,%s]",
++            PccRule->pcc_rule_id, duplicate_chg_id);
++
+     PccRule->is_precedence = true;
+     PccRule->precedence = pcc_rule->precedence;
+ 

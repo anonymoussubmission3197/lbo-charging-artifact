@@ -1,0 +1,13 @@
+case_id=T4-2
+audit_id=T4G-A12
+implementation_profile=Gy-semantic-analogue
+baseline_or_attack=attack
+capture_time_utc=PUBLIC
+kernel=6.17.0-40-generic
+open5gs_commit=26cbc33a418a292e3b3949be69155898d751bd6e
+source_diff_sha256=8d858a0710c85ea91a47b4ace5aebbae782a436bdfbe8c57f5227498eb606741
+smf_sha256=e933fc27445c7f0866b65b59d1b356a25fbd3dd059e495755c6c7febde36e0da
+upf_sha256=10e0cad3d3990015ccaa247a12f81b01e3bd7c289d61a89319ecadbd1f0812f6
+mutation_kind=intra_request_mscc_usu_duplication
+claim_boundary=Gy analogue; native CHF acceptance not claimed
+result_status=pending_semantic_import

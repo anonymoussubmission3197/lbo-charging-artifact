@@ -1,0 +1,186 @@
+{
+  "schema_version": "1.0",
+  "legacy_threat_id": "T3-4",
+  "audit_id": "T3-A20",
+  "experiment_kind": "clean_source_paired_live_reproduction",
+  "validation": "E2E",
+  "kernel": "6.17.0-40-generic",
+  "open5gs_commit": "26cbc33a418a292e3b3949be69155898d751bd6e",
+  "report_count": 5,
+  "gtpu_packet_count_each": 30400,
+  "volume_ie_length": 41,
+  "flags": {
+    "tovol": true,
+    "ulvol": false,
+    "dlvol": true
+  },
+  "baseline_actual_usage": [
+    [
+      1049076,
+      525780,
+      523296
+    ],
+    [
+      5000292,
+      2500560,
+      2499732
+    ],
+    [
+      5000292,
+      2499732,
+      2500560
+    ],
+    [
+      5000292,
+      2498904,
+      2501388
+    ],
+    [
+      5000292,
+      2499732,
+      2500560
+    ]
+  ],
+  "attack_wire_reports": [
+    {
+      "tovol": true,
+      "ulvol": false,
+      "dlvol": true,
+      "ie_length": 41,
+      "total": 1049076,
+      "uplink_present": false,
+      "downlink": 523296,
+      "inferred_omitted_uplink": 525780
+    },
+    {
+      "tovol": true,
+      "ulvol": false,
+      "dlvol": true,
+      "ie_length": 41,
+      "total": 5000292,
+      "uplink_present": false,
+      "downlink": 2499732,
+      "inferred_omitted_uplink": 2500560
+    },
+    {
+      "tovol": true,
+      "ulvol": false,
+      "dlvol": true,
+      "ie_length": 41,
+      "total": 5000292,
+      "uplink_present": false,
+      "downlink": 2500560,
+      "inferred_omitted_uplink": 2499732
+    },
+    {
+      "tovol": true,
+      "ulvol": false,
+      "dlvol": true,
+      "ie_length": 41,
+      "total": 5000292,
+      "uplink_present": false,
+      "downlink": 2501388,
+      "inferred_omitted_uplink": 2498904
+    },
+    {
+      "tovol": true,
+      "ulvol": false,
+      "dlvol": true,
+      "ie_length": 41,
+      "total": 5000292,
+      "uplink_present": false,
+      "downlink": 2500560,
+      "inferred_omitted_uplink": 2499732
+    }
+  ],
+  "attack_inferred_actual_usage": [
+    [
+      1049076,
+      525780,
+      523296
+    ],
+    [
+      5000292,
+      2500560,
+      2499732
+    ],
+    [
+      5000292,
+      2499732,
+      2500560
+    ],
+    [
+      5000292,
+      2498904,
+      2501388
+    ],
+    [
+      5000292,
+      2499732,
+      2500560
+    ]
+  ],
+  "baseline_gy_usage": [
+    [
+      1049076,
+      525780,
+      523296
+    ],
+    [
+      5000292,
+      2500560,
+      2499732
+    ],
+    [
+      5000292,
+      2499732,
+      2500560
+    ],
+    [
+      5000292,
+      2498904,
+      2501388
+    ],
+    [
+      5000292,
+      2499732,
+      2500560
+    ]
+  ],
+  "attack_gy_usage": [
+    [
+      523296,
+      0,
+      523296
+    ],
+    [
+      2499732,
+      0,
+      2499732
+    ],
+    [
+      2500560,
+      0,
+      2500560
+    ],
+    [
+      2501388,
+      0,
+      2501388
+    ],
+    [
+      2500560,
+      0,
+      2500560
+    ]
+  ],
+  "omitted_uplink_bytes": 10524708,
+  "baseline_charge_cents": 27,
+  "attack_charge_cents": 16,
+  "accepted_pfcp_responses": 5,
+  "accepted_cca_updates": 5,
+  "source_run_checksums": {
+    "baseline": 58,
+    "attack": 58
+  }
+}

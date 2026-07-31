@@ -1,0 +1,29 @@
+# Local configuration and secrets
+.env
+.env.*
+*.key
+*.pem
+*.p12
+*.pfx
+id_rsa*
+id_ed25519*
+
+# Local work areas
+local/
+work/
+tmp/
+
+# Build and test output
+build/
+dist/
+.pytest_cache/
+__pycache__/
+*.pyc
+coverage/
+
+# Editor and OS files
+.DS_Store
+*.swp
+*.swo
+*~
+

@@ -1,0 +1,59 @@
+diff --git a/lib/pfcp/build.c b/lib/pfcp/build.c
+index 3698306c9..798e5900a 100644
+--- a/lib/pfcp/build.c
++++ b/lib/pfcp/build.c
+@@ -936,7 +936,7 @@ void ogs_pfcp_build_create_bar(
+ 
+ static struct {
+     ogs_pfcp_volume_measurement_t vol_meas;
+-} usage_report_buf;
++} usage_report_buf[OGS_MAX_NUM_OF_URR];
+ 
+ ogs_pkbuf_t *ogs_pfcp_build_session_report_request(
+         uint8_t type, ogs_pfcp_user_plane_report_t *report)
+@@ -1035,8 +1035,8 @@ ogs_pkbuf_t *ogs_pfcp_build_session_report_request(
+                 ogs_pfcp_build_volume_measurement(
+                         &req->usage_report[i].volume_measurement,
+                         &report->usage_report[i].vol_measurement,
+-                        &usage_report_buf.vol_meas,
+-                        sizeof(usage_report_buf.vol_meas));
++                        &usage_report_buf[i].vol_meas,
++                        sizeof(usage_report_buf[i].vol_meas));
+             }
+ 
+             if (report->usage_report[i].dur_measurement) {
+@@ -1156,8 +1156,8 @@ ogs_pkbuf_t *ogs_pfcp_build_session_deletion_response( uint8_t type, uint8_t cau
+                 ogs_pfcp_build_volume_measurement(
+                         &rsp->usage_report[i].volume_measurement,
+                         &report->usage_report[i].vol_measurement,
+-                        &usage_report_buf.vol_meas,
+-                        sizeof(usage_report_buf.vol_meas));
++                        &usage_report_buf[i].vol_meas,
++                        sizeof(usage_report_buf[i].vol_meas));
+             }
+ 
+             rsp->usage_report[i].duration_measurement.presence = 1;
+diff --git a/src/upf/context.c b/src/upf/context.c
+index 9350f5419..e1b26b40b 100644
+--- a/src/upf/context.c
++++ b/src/upf/context.c
+@@ -714,6 +714,19 @@ void upf_sess_urr_acc_add(upf_sess_t *sess, ogs_pfcp_urr_t *urr, size_t size, bo
+         memset(&report, 0, sizeof(report));
+         upf_sess_urr_acc_fill_usage_report(sess, urr, &report, 0);
+         report.num_of_usage_report = 1;
++        ogs_assert(OGS_ARRAY_SIZE(report.usage_report) >= 2);
++        report.usage_report[1] = report.usage_report[0];
++        report.usage_report[1].vol_measurement.total_volume += 4096;
++        report.usage_report[1].vol_measurement.uplink_volume += 4096;
++        report.num_of_usage_report = 2;
++        ogs_warn("selected-standard-scenario inserted near-duplicate Usage Report "
++                "urr[%u] ur_seqn[%u] primary_total[%llu] "
++                "inserted_total[%llu]",
++                urr->id, report.usage_report[0].seqn,
++                (unsigned long long)
++                    report.usage_report[0].vol_measurement.total_volume,
++                (unsigned long long)
++                    report.usage_report[1].vol_measurement.total_volume);
+         upf_sess_urr_acc_snapshot(sess, urr);
+ 
+         ogs_assert(OGS_OK ==

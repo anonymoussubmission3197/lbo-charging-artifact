@@ -1,0 +1,336 @@
+{
+  "attack_charge_series": [
+    8,
+    8,
+    8
+  ],
+  "attack_gy_usage_series": [
+    2101784,
+    2101784,
+    2101784
+  ],
+  "baseline_charge_series": [
+    7,
+    7,
+    7
+  ],
+  "baseline_gy_usage_series": [
+    1048844,
+    1048844,
+    1048844
+  ],
+  "cell": "T3-INS",
+  "claim_boundary": "The attack-only mutation inserts a second Usage Report IE into the same PFCP Session Report Request. It preserves the primary report's URR ID and UR-SEQN but declares 4,096 additional uplink and total octets, so it is a distinct near-duplicate rather than an exact copy. The SMF accepts and accumulates both reports into one successful Gy CCR-U. The exact workload, lifecycle, subscriber, tariff, and backend are otherwise fixed.",
+  "classification": "E2E",
+  "g1_mutated_object_accepted": true,
+  "g2_target_semantic_state": true,
+  "g3_persistent_backend_effect": true,
+  "global_failures": [],
+  "passed": true,
+  "runs": {
+    "attack": [
+      {
+        "accepted_usage_reports_trace": [
+          {
+            "dl": 0,
+            "index": 0,
+            "total": 1048844,
+            "ul": 1048844,
+            "ur_seqn": 0,
+            "urr_id": 1
+          },
+          {
+            "dl": 0,
+            "index": 1,
+            "total": 1052940,
+            "ul": 1052940,
+            "ur_seqn": 0,
+            "urr_id": 1
+          }
+        ],
+        "accumulated_usage_trace": [
+          {
+            "count": 2,
+            "gy_dl": 0,
+            "gy_ul": 2101784
+          }
+        ],
+        "application_bytes": 1048576,
+        "application_packets": 1024,
+        "charged_cents": 8,
+        "failures": [],
+        "gy_cca_u_2001": 1,
+        "gy_ccr_u": 1,
+        "gy_usage_octets": {
+          "dl": 0,
+          "ul": 2101784
+        },
+        "mode": "attack",
+        "passed": true,
+        "run_id": "attack-run-1",
+        "session_report_response_accepted": 1,
+        "wire_usage_reports": [
+          {
+            "dl": 0,
+            "total": 1048844,
+            "ul": 1048844,
+            "ur_seqn": 0,
+            "urr_id": 1
+          },
+          {
+            "dl": 0,
+            "total": 1052940,
+            "ul": 1052940,
+            "ur_seqn": 0,
+            "urr_id": 1
+          }
+        ]
+      },
+      {
+        "accepted_usage_reports_trace": [
+          {
+            "dl": 0,
+            "index": 0,
+            "total": 1048844,
+            "ul": 1048844,
+            "ur_seqn": 0,
+            "urr_id": 1
+          },
+          {
+            "dl": 0,
+            "index": 1,
+            "total": 1052940,
+            "ul": 1052940,
+            "ur_seqn": 0,
+            "urr_id": 1
+          }
+        ],
+        "accumulated_usage_trace": [
+          {
+            "count": 2,
+            "gy_dl": 0,
+            "gy_ul": 2101784
+          }
+        ],
+        "application_bytes": 1048576,
+        "application_packets": 1024,
+        "charged_cents": 8,
+        "failures": [],
+        "gy_cca_u_2001": 1,
+        "gy_ccr_u": 1,
+        "gy_usage_octets": {
+          "dl": 0,
+          "ul": 2101784
+        },
+        "mode": "attack",
+        "passed": true,
+        "run_id": "attack-run-2",
+        "session_report_response_accepted": 1,
+        "wire_usage_reports": [
+          {
+            "dl": 0,
+            "total": 1048844,
+            "ul": 1048844,
+            "ur_seqn": 0,
+            "urr_id": 1
+          },
+          {
+            "dl": 0,
+            "total": 1052940,
+            "ul": 1052940,
+            "ur_seqn": 0,
+            "urr_id": 1
+          }
+        ]
+      },
+      {
+        "accepted_usage_reports_trace": [
+          {
+            "dl": 0,
+            "index": 0,
+            "total": 1048844,
+            "ul": 1048844,
+            "ur_seqn": 0,
+            "urr_id": 1
+          },
+          {
+            "dl": 0,
+            "index": 1,
+            "total": 1052940,
+            "ul": 1052940,
+            "ur_seqn": 0,
+            "urr_id": 1
+          }
+        ],
+        "accumulated_usage_trace": [
+          {
+            "count": 2,
+            "gy_dl": 0,
+            "gy_ul": 2101784
+          }
+        ],
+        "application_bytes": 1048576,
+        "application_packets": 1024,
+        "charged_cents": 8,
+        "failures": [],
+        "gy_cca_u_2001": 1,
+        "gy_ccr_u": 1,
+        "gy_usage_octets": {
+          "dl": 0,
+          "ul": 2101784
+        },
+        "mode": "attack",
+        "passed": true,
+        "run_id": "attack-run-3",
+        "session_report_response_accepted": 1,
+        "wire_usage_reports": [
+          {
+            "dl": 0,
+            "total": 1048844,
+            "ul": 1048844,
+            "ur_seqn": 0,
+            "urr_id": 1
+          },
+          {
+            "dl": 0,
+            "total": 1052940,
+            "ul": 1052940,
+            "ur_seqn": 0,
+            "urr_id": 1
+          }
+        ]
+      }
+    ],
+    "baseline": [
+      {
+        "accepted_usage_reports_trace": [
+          {
+            "dl": 0,
+            "index": 0,
+            "total": 1048844,
+            "ul": 1048844,
+            "ur_seqn": 0,
+            "urr_id": 1
+          }
+        ],
+        "accumulated_usage_trace": [
+          {
+            "count": 1,
+            "gy_dl": 0,
+            "gy_ul": 1048844
+          }
+        ],
+        "application_bytes": 1048576,
+        "application_packets": 1024,
+        "charged_cents": 7,
+        "failures": [],
+        "gy_cca_u_2001": 1,
+        "gy_ccr_u": 1,
+        "gy_usage_octets": {
+          "dl": 0,
+          "ul": 1048844
+        },
+        "mode": "baseline",
+        "passed": true,
+        "run_id": "baseline-run-1",
+        "session_report_response_accepted": 1,
+        "wire_usage_reports": [
+          {
+            "dl": 0,
+            "total": 1048844,
+            "ul": 1048844,
+            "ur_seqn": 0,
+            "urr_id": 1
+          }
+        ]
+      },
+      {
+        "accepted_usage_reports_trace": [
+          {
+            "dl": 0,
+            "index": 0,
+            "total": 1048844,
+            "ul": 1048844,
+            "ur_seqn": 0,
+            "urr_id": 1
+          }
+        ],
+        "accumulated_usage_trace": [
+          {
+            "count": 1,
+            "gy_dl": 0,
+            "gy_ul": 1048844
+          }
+        ],
+        "application_bytes": 1048576,
+        "application_packets": 1024,
+        "charged_cents": 7,
+        "failures": [],
+        "gy_cca_u_2001": 1,
+        "gy_ccr_u": 1,
+        "gy_usage_octets": {
+          "dl": 0,
+          "ul": 1048844
+        },
+        "mode": "baseline",
+        "passed": true,
+        "run_id": "baseline-run-2",
+        "session_report_response_accepted": 1,
+        "wire_usage_reports": [
+          {
+            "dl": 0,
+            "total": 1048844,
+            "ul": 1048844,
+            "ur_seqn": 0,
+            "urr_id": 1
+          }
+        ]
+      },
+      {
+        "accepted_usage_reports_trace": [
+          {
+            "dl": 0,
+            "index": 0,
+            "total": 1048844,
+            "ul": 1048844,
+            "ur_seqn": 0,
+            "urr_id": 1
+          }
+        ],
+        "accumulated_usage_trace": [
+          {
+            "count": 1,
+            "gy_dl": 0,
+            "gy_ul": 1048844
+          }
+        ],
+        "application_bytes": 1048576,
+        "application_packets": 1024,
+        "charged_cents": 7,
+        "failures": [],
+        "gy_cca_u_2001": 1,
+        "gy_ccr_u": 1,
+        "gy_usage_octets": {
+          "dl": 0,
+          "ul": 1048844
+        },
+        "mode": "baseline",
+        "passed": true,
+        "run_id": "baseline-run-3",
+        "session_report_response_accepted": 1,
+        "wire_usage_reports": [
+          {
+            "dl": 0,
+            "total": 1048844,
+            "ul": 1048844,
+            "ur_seqn": 0,
+            "urr_id": 1
+          }
+        ]
+      }
+    ]
+  },
+  "schema_version": "1.0",
+  "source_result_sha256": "b551d7cf095860d6491f4e97cf814bd648b68dbc4890f89db555b0a3b442af21",
+  "verifier_revision": "t3-ins-predeclared-v1"
+}

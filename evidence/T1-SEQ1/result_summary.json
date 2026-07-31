@@ -1,0 +1,241 @@
+{
+  "attack_charge_series": [
+    8,
+    8,
+    8
+  ],
+  "attack_gy_input_octet_series": [
+    2097688,
+    2097688,
+    2097688
+  ],
+  "attack_pfcp_octet_series": [
+    1048844,
+    1048844,
+    1048844
+  ],
+  "baseline_charge_series": [
+    7,
+    7,
+    7
+  ],
+  "baseline_gy_input_octet_series": [
+    1048844,
+    1048844,
+    1048844
+  ],
+  "baseline_pfcp_octet_series": [
+    1048844,
+    1048844,
+    1048844
+  ],
+  "cell": "T1-SEQ",
+  "claim_boundary": "This result uses a disclosed common support fixture because pinned Open5GS models refChgData/chgDecs but does not natively consume charging associations for accounting. Baseline and attack source and policy snapshots are identical; the only attack edit is delivery order, ending with a fresh-transaction replay of the older valid decision.",
+  "classification": "E2E",
+  "g1_mutated_object_accepted": true,
+  "g2_target_semantic_state": true,
+  "g3_persistent_backend_effect": true,
+  "global_failures": [],
+  "passed": true,
+  "runs": {
+    "attack": [
+      {
+        "application_bytes": 1048576,
+        "application_packets": 1024,
+        "charged_cents": 8,
+        "failures": [],
+        "gy_cca_u_2001": 1,
+        "gy_ccr_u": 1,
+        "gy_input_octets": [
+          2097688
+        ],
+        "gy_input_octets_sum": 2097688,
+        "gy_rating_groups": [
+          9
+        ],
+        "mode": "attack",
+        "passed": true,
+        "pfcp_establishment": {
+          "far_id_count": 7,
+          "pdr_id_count": 4,
+          "qer_id_count": 3,
+          "unique_urr_ids": [
+            1
+          ],
+          "urr_id_count": 3
+        },
+        "pfcp_report_total_octets": [
+          1048844
+        ],
+        "pfcp_report_total_octets_sum": 1048844,
+        "pfcp_volume_report_frames": 1,
+        "run_id": "attack-run-1"
+      },
+      {
+        "application_bytes": 1048576,
+        "application_packets": 1024,
+        "charged_cents": 8,
+        "failures": [],
+        "gy_cca_u_2001": 1,
+        "gy_ccr_u": 1,
+        "gy_input_octets": [
+          2097688
+        ],
+        "gy_input_octets_sum": 2097688,
+        "gy_rating_groups": [
+          9
+        ],
+        "mode": "attack",
+        "passed": true,
+        "pfcp_establishment": {
+          "far_id_count": 7,
+          "pdr_id_count": 4,
+          "qer_id_count": 3,
+          "unique_urr_ids": [
+            1
+          ],
+          "urr_id_count": 3
+        },
+        "pfcp_report_total_octets": [
+          1048844
+        ],
+        "pfcp_report_total_octets_sum": 1048844,
+        "pfcp_volume_report_frames": 1,
+        "run_id": "attack-run-2"
+      },
+      {
+        "application_bytes": 1048576,
+        "application_packets": 1024,
+        "charged_cents": 8,
+        "failures": [],
+        "gy_cca_u_2001": 1,
+        "gy_ccr_u": 1,
+        "gy_input_octets": [
+          2097688
+        ],
+        "gy_input_octets_sum": 2097688,
+        "gy_rating_groups": [
+          9
+        ],
+        "mode": "attack",
+        "passed": true,
+        "pfcp_establishment": {
+          "far_id_count": 7,
+          "pdr_id_count": 4,
+          "qer_id_count": 3,
+          "unique_urr_ids": [
+            1
+          ],
+          "urr_id_count": 3
+        },
+        "pfcp_report_total_octets": [
+          1048844
+        ],
+        "pfcp_report_total_octets_sum": 1048844,
+        "pfcp_volume_report_frames": 1,
+        "run_id": "attack-run-3"
+      }
+    ],
+    "baseline": [
+      {
+        "application_bytes": 1048576,
+        "application_packets": 1024,
+        "charged_cents": 7,
+        "failures": [],
+        "gy_cca_u_2001": 1,
+        "gy_ccr_u": 1,
+        "gy_input_octets": [
+          1048844
+        ],
+        "gy_input_octets_sum": 1048844,
+        "gy_rating_groups": [
+          9
+        ],
+        "mode": "baseline",
+        "passed": true,
+        "pfcp_establishment": {
+          "far_id_count": 7,
+          "pdr_id_count": 4,
+          "qer_id_count": 3,
+          "unique_urr_ids": [
+            1
+          ],
+          "urr_id_count": 3
+        },
+        "pfcp_report_total_octets": [
+          1048844
+        ],
+        "pfcp_report_total_octets_sum": 1048844,
+        "pfcp_volume_report_frames": 1,
+        "run_id": "baseline-run-1"
+      },
+      {
+        "application_bytes": 1048576,
+        "application_packets": 1024,
+        "charged_cents": 7,
+        "failures": [],
+        "gy_cca_u_2001": 1,
+        "gy_ccr_u": 1,
+        "gy_input_octets": [
+          1048844
+        ],
+        "gy_input_octets_sum": 1048844,
+        "gy_rating_groups": [
+          9
+        ],
+        "mode": "baseline",
+        "passed": true,
+        "pfcp_establishment": {
+          "far_id_count": 7,
+          "pdr_id_count": 4,
+          "qer_id_count": 3,
+          "unique_urr_ids": [
+            1
+          ],
+          "urr_id_count": 3
+        },
+        "pfcp_report_total_octets": [
+          1048844
+        ],
+        "pfcp_report_total_octets_sum": 1048844,
+        "pfcp_volume_report_frames": 1,
+        "run_id": "baseline-run-2"
+      },
+      {
+        "application_bytes": 1048576,
+        "application_packets": 1024,
+        "charged_cents": 7,
+        "failures": [],
+        "gy_cca_u_2001": 1,
+        "gy_ccr_u": 1,
+        "gy_input_octets": [
+          1048844
+        ],
+        "gy_input_octets_sum": 1048844,
+        "gy_rating_groups": [
+          9
+        ],
+        "mode": "baseline",
+        "passed": true,
+        "pfcp_establishment": {
+          "far_id_count": 7,
+          "pdr_id_count": 4,
+          "qer_id_count": 3,
+          "unique_urr_ids": [
+            1
+          ],
+          "urr_id_count": 3
+        },
+        "pfcp_report_total_octets": [
+          1048844
+        ],
+        "pfcp_report_total_octets_sum": 1048844,
+        "pfcp_volume_report_frames": 1,
+        "run_id": "baseline-run-3"
+      }
+    ]
+  },
+  "schema_version": "1.0",
+  "source_result_sha256": "399f121e632bc47495140e947be7e418b6b8ecbcb37b8d686123c49d526caa54",
+  "verifier_revision": "t1-seq-predeclared-v1"
+}

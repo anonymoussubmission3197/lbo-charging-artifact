@@ -1,0 +1,88 @@
+{
+  "schema_version": "1.0",
+  "run_id": "paired_baseline_T3-A17_LIVE_PUBLIC__attack_T3-A17_LIVE_PUBLIC",
+  "audit_id": "T3-A17",
+  "legacy_threat_id": "T3-1",
+  "experiment_kind": "clean_source_paired_live_reproduction",
+  "kernel": "6.17.0-40-generic",
+  "open5gs_commit": "26cbc33a418a292e3b3949be69155898d751bd6e",
+  "mutation_factor": 5,
+  "gtpu_packet_count_each": 30399,
+  "report_count": 3,
+  "baseline_pfcp_usage": [
+    [
+      1049076,
+      0,
+      1049076
+    ],
+    [
+      5000292,
+      0,
+      5000292
+    ],
+    [
+      5000292,
+      0,
+      5000292
+    ]
+  ],
+  "attack_actual_usage": [
+    [
+      1049076,
+      0,
+      1049076
+    ],
+    [
+      5000292,
+      0,
+      5000292
+    ],
+    [
+      5000292,
+      0,
+      5000292
+    ]
+  ],
+  "attack_reported_usage": [
+    [
+      5245380,
+      0,
+      5245380
+    ],
+    [
+      25001460,
+      0,
+      25001460
+    ],
+    [
+      25001460,
+      0,
+      25001460
+    ]
+  ],
+  "baseline_usage_sum": 11049660,
+  "attack_reported_usage_sum": 55248300,
+  "baseline_charge_cents": 17,
+  "attack_charge_cents": 61,
+  "charge_delta_cents": 44,
+  "g1_wire_acceptance": true,
+  "g2_state_effect": true,
+  "g3_backend_effect": true,
+  "classification": "E2E",
+  "semantic_relations": {
+    "identical_gtpu_packet_count": true,
+    "baseline_pfcp_equals_gy": true,
+    "baseline_equals_attack_actual": true,
+    "attack_trace_exact_x5": true,
+    "attack_trace_equals_pfcp": true,
+    "attack_pfcp_equals_gy": true,
+    "pfcp_reports_accepted": true,
+    "cca_updates_accepted": true,
+    "backend_charge_increased": true
+  },
+  "input_checksum_counts": {
+    "baseline": 58,
+    "attack": 58
+  },
+  "claim_boundary": "This paired live run validates three accepted CCR-U/CCA-U exchanges. It does not claim that CCR-I/T were captured in this pair."
+}

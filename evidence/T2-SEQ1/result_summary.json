@@ -1,0 +1,407 @@
+{
+  "attack_charge_series": [
+    7,
+    7,
+    7
+  ],
+  "baseline_charge_series": [
+    0,
+    0,
+    0
+  ],
+  "cell": "T2-SEQ",
+  "claim_boundary": "Both modes accept a fresh current-state PFCP modification that changes uplink PDR 2 from one URR to zero URRs. The attack-only mutation replays the prior charged Create PDR 2 operation in a second, fresh PFCP transaction, rolling the installed relation back to one URR. FAR, QER, exact workload, lifecycle, and backend are otherwise fixed.",
+  "classification": "E2E",
+  "g1_mutated_object_accepted": true,
+  "g2_target_semantic_state": true,
+  "g3_persistent_backend_effect": true,
+  "global_failures": [],
+  "passed": true,
+  "runs": {
+    "attack": [
+      {
+        "accepted_modification_sequences": [
+          4,
+          5,
+          6,
+          8
+        ],
+        "application_bytes": 1048576,
+        "application_packets": 1024,
+        "charged_cents": 7,
+        "current_replay_operations": [
+          {
+            "sequence": 4,
+            "urr_ids": []
+          },
+          {
+            "sequence": 5,
+            "urr_ids": [
+              1
+            ]
+          }
+        ],
+        "establishment_pdr_ids_wire_order": [
+          1,
+          2,
+          3,
+          4
+        ],
+        "failures": [],
+        "gy_cca_u_2001": 1,
+        "gy_ccr_u": 1,
+        "mode": "attack",
+        "passed": true,
+        "pfcp_volume_report_frames": 1,
+        "receiver_create_pdr_states": [
+          [
+            1,
+            1
+          ],
+          [
+            2,
+            1
+          ],
+          [
+            3,
+            0
+          ],
+          [
+            4,
+            0
+          ],
+          [
+            2,
+            0
+          ],
+          [
+            2,
+            1
+          ]
+        ],
+        "run_id": "attack-run-1",
+        "selected_pdr_sample_count": 1024,
+        "selected_pdr_unique_states": [
+          [
+            2,
+            1
+          ]
+        ]
+      },
+      {
+        "accepted_modification_sequences": [
+          4,
+          5,
+          6,
+          8
+        ],
+        "application_bytes": 1048576,
+        "application_packets": 1024,
+        "charged_cents": 7,
+        "current_replay_operations": [
+          {
+            "sequence": 4,
+            "urr_ids": []
+          },
+          {
+            "sequence": 5,
+            "urr_ids": [
+              1
+            ]
+          }
+        ],
+        "establishment_pdr_ids_wire_order": [
+          1,
+          2,
+          3,
+          4
+        ],
+        "failures": [],
+        "gy_cca_u_2001": 1,
+        "gy_ccr_u": 1,
+        "mode": "attack",
+        "passed": true,
+        "pfcp_volume_report_frames": 1,
+        "receiver_create_pdr_states": [
+          [
+            1,
+            1
+          ],
+          [
+            2,
+            1
+          ],
+          [
+            3,
+            0
+          ],
+          [
+            4,
+            0
+          ],
+          [
+            2,
+            0
+          ],
+          [
+            2,
+            1
+          ]
+        ],
+        "run_id": "attack-run-2",
+        "selected_pdr_sample_count": 1024,
+        "selected_pdr_unique_states": [
+          [
+            2,
+            1
+          ]
+        ]
+      },
+      {
+        "accepted_modification_sequences": [
+          4,
+          5,
+          6,
+          8
+        ],
+        "application_bytes": 1048576,
+        "application_packets": 1024,
+        "charged_cents": 7,
+        "current_replay_operations": [
+          {
+            "sequence": 4,
+            "urr_ids": []
+          },
+          {
+            "sequence": 5,
+            "urr_ids": [
+              1
+            ]
+          }
+        ],
+        "establishment_pdr_ids_wire_order": [
+          1,
+          2,
+          3,
+          4
+        ],
+        "failures": [],
+        "gy_cca_u_2001": 1,
+        "gy_ccr_u": 1,
+        "mode": "attack",
+        "passed": true,
+        "pfcp_volume_report_frames": 1,
+        "receiver_create_pdr_states": [
+          [
+            1,
+            1
+          ],
+          [
+            2,
+            1
+          ],
+          [
+            3,
+            0
+          ],
+          [
+            4,
+            0
+          ],
+          [
+            2,
+            0
+          ],
+          [
+            2,
+            1
+          ]
+        ],
+        "run_id": "attack-run-3",
+        "selected_pdr_sample_count": 1024,
+        "selected_pdr_unique_states": [
+          [
+            2,
+            1
+          ]
+        ]
+      }
+    ],
+    "baseline": [
+      {
+        "accepted_modification_sequences": [
+          4,
+          5
+        ],
+        "application_bytes": 1048576,
+        "application_packets": 1024,
+        "charged_cents": 0,
+        "current_replay_operations": [
+          {
+            "sequence": 4,
+            "urr_ids": []
+          }
+        ],
+        "establishment_pdr_ids_wire_order": [
+          1,
+          2,
+          3,
+          4
+        ],
+        "failures": [],
+        "gy_cca_u_2001": 0,
+        "gy_ccr_u": 0,
+        "mode": "baseline",
+        "passed": true,
+        "pfcp_volume_report_frames": 0,
+        "receiver_create_pdr_states": [
+          [
+            1,
+            1
+          ],
+          [
+            2,
+            1
+          ],
+          [
+            3,
+            0
+          ],
+          [
+            4,
+            0
+          ],
+          [
+            2,
+            0
+          ]
+        ],
+        "run_id": "baseline-run-1",
+        "selected_pdr_sample_count": 1024,
+        "selected_pdr_unique_states": [
+          [
+            2,
+            0
+          ]
+        ]
+      },
+      {
+        "accepted_modification_sequences": [
+          4,
+          5
+        ],
+        "application_bytes": 1048576,
+        "application_packets": 1024,
+        "charged_cents": 0,
+        "current_replay_operations": [
+          {
+            "sequence": 4,
+            "urr_ids": []
+          }
+        ],
+        "establishment_pdr_ids_wire_order": [
+          1,
+          2,
+          3,
+          4
+        ],
+        "failures": [],
+        "gy_cca_u_2001": 0,
+        "gy_ccr_u": 0,
+        "mode": "baseline",
+        "passed": true,
+        "pfcp_volume_report_frames": 0,
+        "receiver_create_pdr_states": [
+          [
+            1,
+            1
+          ],
+          [
+            2,
+            1
+          ],
+          [
+            3,
+            0
+          ],
+          [
+            4,
+            0
+          ],
+          [
+            2,
+            0
+          ]
+        ],
+        "run_id": "baseline-run-2",
+        "selected_pdr_sample_count": 1024,
+        "selected_pdr_unique_states": [
+          [
+            2,
+            0
+          ]
+        ]
+      },
+      {
+        "accepted_modification_sequences": [
+          4,
+          5
+        ],
+        "application_bytes": 1048576,
+        "application_packets": 1024,
+        "charged_cents": 0,
+        "current_replay_operations": [
+          {
+            "sequence": 4,
+            "urr_ids": []
+          }
+        ],
+        "establishment_pdr_ids_wire_order": [
+          1,
+          2,
+          3,
+          4
+        ],
+        "failures": [],
+        "gy_cca_u_2001": 0,
+        "gy_ccr_u": 0,
+        "mode": "baseline",
+        "passed": true,
+        "pfcp_volume_report_frames": 0,
+        "receiver_create_pdr_states": [
+          [
+            1,
+            1
+          ],
+          [
+            2,
+            1
+          ],
+          [
+            3,
+            0
+          ],
+          [
+            4,
+            0
+          ],
+          [
+            2,
+            0
+          ]
+        ],
+        "run_id": "baseline-run-3",
+        "selected_pdr_sample_count": 1024,
+        "selected_pdr_unique_states": [
+          [
+            2,
+            0
+          ]
+        ]
+      }
+    ]
+  },
+  "schema_version": "1.0",
+  "source_result_sha256": "f1d0cb479a28686c115aa6d9affa1e2aadce0afd0eedbca6a5d8121f4529afff",
+  "verifier_revision": "t2-seq-predeclared-v1"
+}

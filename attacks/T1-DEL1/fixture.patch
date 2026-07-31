@@ -1,0 +1,317 @@
+diff --git a/lib/diameter/gy/message.c b/lib/diameter/gy/message.c
+index 4d282d397..dd66d93a3 100644
+--- a/lib/diameter/gy/message.c
++++ b/lib/diameter/gy/message.c
+@@ -45,6 +45,7 @@ struct dict_object *ogs_diam_gy_cc_output_octets = NULL;
+ struct dict_object *ogs_diam_gy_cc_service_specific_units = NULL;
+ struct dict_object *ogs_diam_gy_reporting_reason = NULL;
+ struct dict_object *ogs_diam_gy_service_id = NULL;
++struct dict_object *ogs_diam_gy_rating_group = NULL;
+ 
+ struct dict_object *ogs_diam_gy_service_information = NULL;
+ struct dict_object *ogs_diam_gy_ps_information = NULL;
+@@ -112,6 +113,7 @@ int ogs_diam_gy_init(void)
+     CHECK_dict_search(DICT_AVP, AVP_BY_NAME_ALL_VENDORS, "CC-Service-Specific-Units", &ogs_diam_gy_cc_service_specific_units);
+     CHECK_dict_search(DICT_AVP, AVP_BY_NAME_ALL_VENDORS, "Reporting-Reason", &ogs_diam_gy_reporting_reason);
+     CHECK_dict_search(DICT_AVP, AVP_BY_NAME_ALL_VENDORS, "Service-Identifier", &ogs_diam_gy_service_id);
++    CHECK_dict_search(DICT_AVP, AVP_BY_NAME_ALL_VENDORS, "Rating-Group", &ogs_diam_gy_rating_group);
+ 
+     CHECK_dict_search(DICT_AVP, AVP_BY_NAME_ALL_VENDORS, "Service-Information", &ogs_diam_gy_service_information);
+     CHECK_dict_search(DICT_AVP, AVP_BY_NAME_ALL_VENDORS, "PS-Information", &ogs_diam_gy_ps_information);
+diff --git a/lib/diameter/gy/message.h b/lib/diameter/gy/message.h
+index 5880ca59c..3e5d39979 100644
+--- a/lib/diameter/gy/message.h
++++ b/lib/diameter/gy/message.h
+@@ -94,6 +94,7 @@ extern struct dict_object *ogs_diam_gy_reporting_reason;
+ #define OGS_DIAM_GY_REPORTING_REASON_POOL_EXHAUSTED             8
+ #define OGS_DIAM_GY_REPORTING_REASON_UNUSED_QUOTA_TIMER         9
+ extern struct dict_object *ogs_diam_gy_service_id;
++extern struct dict_object *ogs_diam_gy_rating_group;
+ extern struct dict_object *ogs_diam_gy_service_information;
+ extern struct dict_object *ogs_diam_gy_ps_information;
+ extern struct dict_object *ogs_diam_gy_3gpp_charging_id;
+diff --git a/lib/proto/types.h b/lib/proto/types.h
+index a01006e61..c8ad25db4 100644
+--- a/lib/proto/types.h
++++ b/lib/proto/types.h
+@@ -607,6 +607,7 @@ typedef struct ogs_pcc_rule_s {
+         (__dST)->num_of_flow = (__sRC)->num_of_flow; \
+         (__dST)->flow_status = (__sRC)->flow_status; \
+         (__dST)->precedence = (__sRC)->precedence; \
++        (__dST)->rating_group = (__sRC)->rating_group; \
+         memcpy(&(__dST)->qos, &(__sRC)->qos, sizeof(ogs_qos_t)); \
+     } while(0)
+ 
+diff --git a/lib/sbi/conv.c b/lib/sbi/conv.c
+index 4e7942b7b..7fae0b700 100644
+--- a/lib/sbi/conv.c
++++ b/lib/sbi/conv.c
+@@ -1503,6 +1503,15 @@ OpenAPI_pcc_rule_t *ogs_sbi_build_pcc_rule(
+ 
+     OpenAPI_list_add(PccRule->ref_qos_data, PccRule->pcc_rule_id);
+ 
++    /*
++     * selected-standard-scenario common support fixture: Open5GS has generated support for
++     * refChgData, but the PCF does not populate it.  Bind the database PCC
++     * rule to the same-keyed ChargingData emitted by the create response.
++     */
++    PccRule->ref_chg_data = OpenAPI_list_create();
++    ogs_assert(PccRule->ref_chg_data);
++    OpenAPI_list_add(PccRule->ref_chg_data, PccRule->pcc_rule_id);
++
+     PccRule->is_precedence = true;
+     PccRule->precedence = pcc_rule->precedence;
+ 
+@@ -1555,6 +1564,8 @@ void ogs_sbi_free_pcc_rule(OpenAPI_pcc_rule_t *PccRule)
+ 
+     if (PccRule->ref_qos_data)
+         OpenAPI_list_free(PccRule->ref_qos_data);
++    if (PccRule->ref_chg_data)
++        OpenAPI_list_free(PccRule->ref_chg_data);
+     if (PccRule->flow_infos) {
+         OpenAPI_list_for_each(PccRule->flow_infos, node) {
+             FlowInformation = node->data;
+diff --git a/src/pcf/sbi-path.c b/src/pcf/sbi-path.c
+index 5072d0c56..3dbd54d9d 100644
+--- a/src/pcf/sbi-path.c
++++ b/src/pcf/sbi-path.c
+@@ -320,6 +320,10 @@ bool pcf_sbi_send_smpolicycontrol_create_response(
+     OpenAPI_map_t *QosDecisionMap = NULL;
+     OpenAPI_qos_data_t *QosData = NULL;
+ 
++    OpenAPI_list_t *ChargingDecisionList = NULL;
++    OpenAPI_map_t *ChargingDecisionMap = NULL;
++    OpenAPI_charging_data_t *ChargingData = NULL;
++
+     OpenAPI_list_t *PolicyCtrlReqTriggers = NULL;
+ 
+     ogs_assert(sess);
+@@ -487,6 +491,39 @@ bool pcf_sbi_send_smpolicycontrol_create_response(
+     QosDecisionList = OpenAPI_list_create();
+     ogs_assert(QosDecisionList);
+ 
++    ChargingDecisionList = OpenAPI_list_create();
++    ogs_assert(ChargingDecisionList);
++
++    /*
++     * selected-standard-scenario support: the lab PCF YAML policy for this exact subscriber and
++     * DNN takes precedence over MongoDB and intentionally has no PCC rule.
++     * Synthesize the one disclosed, non-workload matching rule needed to
++     * exercise refChgData without changing the shared runtime configuration.
++     */
++    if (!session_data.num_of_pcc_rule &&
++        !strcmp(pcf_ue_sm->supi, "imsi-001010000000001") &&
++        !strcmp(sess->dnn, "internet")) {
++        ogs_pcc_rule_t *pcc_rule = &session_data.pcc_rule[0];
++
++        pcc_rule->id = ogs_strdup("internet-n1");
++        ogs_assert(pcc_rule->id);
++        pcc_rule->name = ogs_strdup("internet-g1");
++        ogs_assert(pcc_rule->name);
++        pcc_rule->precedence = 1;
++        memcpy(&pcc_rule->qos, &session->qos, sizeof(ogs_qos_t));
++        pcc_rule->qos.index = 9;
++        pcc_rule->flow[0].direction = OGS_FLOW_DOWNLINK_ONLY;
++        pcc_rule->flow[0].description = ogs_strdup(
++                "permit out udp from 10.200.136.98/32 "
++                "23455 to assigned 1-65535");
++        ogs_assert(pcc_rule->flow[0].description);
++        pcc_rule->num_of_flow = 1;
++        session_data.num_of_pcc_rule = 1;
++
++        ogs_info("selected-standard-scenario support: synthesized PCC rule [internet-n1] "
++                "for [%s:%s]", pcf_ue_sm->supi, sess->dnn);
++    }
++
+     for (i = 0; i < session_data.num_of_pcc_rule; i++) {
+         ogs_pcc_rule_t *pcc_rule = &session_data.pcc_rule[i];
+ 
+@@ -514,6 +551,27 @@ bool pcf_sbi_send_smpolicycontrol_create_response(
+         ogs_assert(QosDecisionMap);
+ 
+         OpenAPI_list_add(QosDecisionList, QosDecisionMap);
++
++        /*
++         * selected-standard-scenario common support fixture: provide the charging object named by
++         * refChgData.  QoS index 9 is the lab's documented OCS rating group.
++         */
++        ChargingData = ogs_calloc(1, sizeof(*ChargingData));
++        ogs_assert(ChargingData);
++        ChargingData->chg_id = ogs_strdup(pcc_rule->id);
++        ogs_assert(ChargingData->chg_id);
++        ChargingData->metering_method = OpenAPI_metering_method_VOLUME;
++        ChargingData->is_online = true;
++        ChargingData->online = true;
++        ChargingData->is_rating_group = true;
++        ChargingData->rating_group = pcc_rule->qos.index;
++        ChargingData->reporting_level =
++            OpenAPI_reporting_level_RAT_GR_LEVEL;
++
++        ChargingDecisionMap =
++            OpenAPI_map_create(ChargingData->chg_id, ChargingData);
++        ogs_assert(ChargingDecisionMap);
++        OpenAPI_list_add(ChargingDecisionList, ChargingDecisionMap);
+     }
+ 
+     if (PccRuleList->count)
+@@ -522,6 +580,9 @@ bool pcf_sbi_send_smpolicycontrol_create_response(
+     if (QosDecisionList->count)
+         SmPolicyDecision.qos_decs = QosDecisionList;
+ 
++    if (ChargingDecisionList->count)
++        SmPolicyDecision.chg_decs = ChargingDecisionList;
++
+     /* Policy Control Request Triggers */
+     if (PolicyCtrlReqTriggers->count)
+         SmPolicyDecision.policy_ctrl_req_triggers = PolicyCtrlReqTriggers;
+@@ -594,6 +655,17 @@ bool pcf_sbi_send_smpolicycontrol_create_response(
+     }
+     OpenAPI_list_free(QosDecisionList);
+ 
++    OpenAPI_list_for_each(ChargingDecisionList, node) {
++        ChargingDecisionMap = node->data;
++        if (ChargingDecisionMap) {
++            ChargingData = ChargingDecisionMap->value;
++            if (ChargingData)
++                OpenAPI_charging_data_free(ChargingData);
++            ogs_free(ChargingDecisionMap);
++        }
++    }
++    OpenAPI_list_free(ChargingDecisionList);
++
+     OpenAPI_list_free(PolicyCtrlReqTriggers);
+ 
+     if (SmPolicyDecision.supp_feat)
+diff --git a/src/smf/context.c b/src/smf/context.c
+index dde58c18b..a3826a03a 100644
+--- a/src/smf/context.c
++++ b/src/smf/context.c
+@@ -2407,17 +2407,31 @@ smf_bearer_t *smf_qos_flow_add(smf_sess_t *sess)
+ 
+     ul_far->apply_action = OGS_PFCP_APPLY_ACTION_FORW;
+ 
+-    /* URR */
+-    urr = ogs_pfcp_urr_add(&sess->pfcp);
+-    ogs_assert(urr);
+-    qos_flow->urr = urr;
++    /*
++     * selected-standard-scenario common support fixture: derive online metering only when an
++     * accepted PCC rule resolves to ChargingData.  Forwarding is independent
++     * and remains present when the nullable charging reference is absent.
++     */
++    for (int i = 0; i < sess->policy.num_of_pcc_rule; i++) {
++        ogs_pcc_rule_t *pcc_rule = &sess->policy.pcc_rule[i];
++
++        if (pcc_rule->type != OGS_PCC_RULE_TYPE_INSTALL ||
++            !pcc_rule->rating_group)
++            continue;
+ 
+-    urr->meas_method = OGS_PFCP_MEASUREMENT_METHOD_VOLUME;
+-    urr->rep_triggers.volume_threshold = 1;
+-    urr->vol_threshold.tovol = 1;
+-    urr->vol_threshold.total_volume = 1024*1024*100;
++        urr = ogs_pfcp_urr_add(&sess->pfcp);
++        ogs_assert(urr);
++        qos_flow->urr = urr;
+ 
+-    ogs_pfcp_pdr_associate_urr(dl_pdr, urr);
++        urr->meas_method = OGS_PFCP_MEASUREMENT_METHOD_VOLUME;
++        urr->rep_triggers.volume_threshold = 1;
++        urr->vol_threshold.tovol = 1;
++        urr->vol_threshold.total_volume = 1024*1024;
++
++        ogs_pfcp_pdr_associate_urr(ul_pdr, urr);
++        ogs_pfcp_pdr_associate_urr(dl_pdr, urr);
++        break;
++    }
+ 
+     /* QER */
+     qer = ogs_pfcp_qer_add(&sess->pfcp);
+diff --git a/src/smf/gy-path.c b/src/smf/gy-path.c
+index 4590091dc..9200875e4 100644
+--- a/src/smf/gy-path.c
++++ b/src/smf/gy-path.c
+@@ -290,6 +290,25 @@ static void fill_multiple_services_credit_control_ccr(smf_sess_t *sess,
+     ret = fd_msg_avp_new(ogs_diam_gy_multiple_services_cc, 0, &avp);
+     ogs_assert(ret == 0);
+ 
++    /*
++     * selected-standard-scenario common support fixture: carry the rating group resolved from
++     * refChgData rather than inferring the charging key from default 5QI.
++     */
++    ret = fd_msg_avp_new(ogs_diam_gy_rating_group, 0, &avpch1);
++    ogs_assert(ret == 0);
++    val.u32 = 0;
++    for (int i = 0; i < sess->policy.num_of_pcc_rule; i++) {
++        if (sess->policy.pcc_rule[i].rating_group) {
++            val.u32 = sess->policy.pcc_rule[i].rating_group;
++            break;
++        }
++    }
++    ogs_assert(val.u32);
++    ret = fd_msg_avp_setvalue(avpch1, &val);
++    ogs_assert(ret == 0);
++    ret = fd_msg_avp_add(avp, MSG_BRW_LAST_CHILD, avpch1);
++    ogs_assert(ret == 0);
++
+     /* Requested-Service-Unit, RFC4006 8.18 */
+     if (cc_request_type == OGS_DIAM_GY_CC_REQUEST_TYPE_INITIAL_REQUEST ||
+         cc_request_type == OGS_DIAM_GY_CC_REQUEST_TYPE_UPDATE_REQUEST)
+@@ -301,7 +320,6 @@ static void fill_multiple_services_credit_control_ccr(smf_sess_t *sess,
+         fill_used_service_unit(sess, cc_request_type, avp);
+ 
+         /* Service-Identifier, RFC4006 8.28. Not used in Gy. */
+-        /* Rating-Group */
+ 
+         /* Reporting-Reason, TS 32.299 7.2.175 */
+         /* "values QHT, FINAL, VALIDITY_TIME, FORCED_REAUTHORISATION,
+diff --git a/src/smf/npcf-handler.c b/src/smf/npcf-handler.c
+index a51a89384..e564e40a2 100644
+--- a/src/smf/npcf-handler.c
++++ b/src/smf/npcf-handler.c
+@@ -194,6 +194,45 @@ static void update_authorized_pcc_rule_and_qos(
+             ogs_assert(pcc_rule->id);
+             pcc_rule->precedence = PccRule->precedence;
+ 
++            /*
++             * selected-standard-scenario common support fixture: resolve the charging reference
++             * without making it mandatory for PCC-rule acceptance.  A missing
++             * reference leaves forwarding policy installed but unmetered.
++             */
++            if (PccRule->ref_chg_data &&
++                PccRule->ref_chg_data->first &&
++                PccRule->ref_chg_data->first->data &&
++                SmPolicyDecision->chg_decs) {
++                char *ChgId = PccRule->ref_chg_data->first->data;
++                OpenAPI_map_t *ChargingDecisionMap = NULL;
++                OpenAPI_charging_data_t *ChargingData = NULL;
++
++                OpenAPI_list_for_each(SmPolicyDecision->chg_decs, node2) {
++                    ChargingDecisionMap = node2->data;
++                    if (!ChargingDecisionMap ||
++                        !ChargingDecisionMap->key ||
++                        strcmp(ChgId, ChargingDecisionMap->key) != 0)
++                        continue;
++
++                    ChargingData = ChargingDecisionMap->value;
++                    if (ChargingData && ChargingData->is_online &&
++                        ChargingData->online &&
++                        ChargingData->is_rating_group &&
++                        ChargingData->rating_group > 0) {
++                        pcc_rule->rating_group =
++                            ChargingData->rating_group;
++                        ogs_info("selected-standard-scenario support: PCC rule [%s] resolved "
++                            "online charging reference [%s] rating-group [%u]",
++                            pcc_rule->id, ChgId, pcc_rule->rating_group);
++                    }
++                    break;
++                }
++            }
++
++            if (!pcc_rule->rating_group)
++                ogs_info("selected-standard-scenario support: PCC rule [%s] retained without "
++                    "an online charging reference", pcc_rule->id);
++
+             if (PccRule->flow_infos) {
+                 ogs_assert(pcc_rule->num_of_flow == 0);
+                 OpenAPI_list_for_each(PccRule->flow_infos, node2) {

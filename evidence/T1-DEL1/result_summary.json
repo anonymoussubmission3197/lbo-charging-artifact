@@ -1,0 +1,149 @@
+{
+  "attack_charge_series": [
+    0,
+    0,
+    0
+  ],
+  "baseline_charge_series": [
+    7,
+    7,
+    7
+  ],
+  "cell": "T1-DEL",
+  "claim_boundary": "This result uses a disclosed common support fixture because pinned Open5GS models refChgData/chgDecs but does not natively emit or consume that association. The attack-only edit is the wire deletion of refChgData; forwarding and ChargingData remain.",
+  "classification": "E2E",
+  "g1_mutated_object_accepted": true,
+  "g2_target_semantic_state": true,
+  "g3_persistent_backend_effect": true,
+  "global_failures": [],
+  "passed": true,
+  "runs": {
+    "attack": [
+      {
+        "application_bytes": 1048576,
+        "application_packets": 1024,
+        "charged_cents": 0,
+        "failures": [],
+        "gy_cca_u_2001": 0,
+        "gy_ccr_u": 0,
+        "gy_rating_groups": [],
+        "mode": "attack",
+        "passed": true,
+        "pfcp_establishment": {
+          "far_id_count": 7,
+          "pdr_id_count": 4,
+          "qer_id_count": 3,
+          "urr_id_count": 0
+        },
+        "pfcp_volume_report_frames": 0,
+        "run_id": "attack-run-1"
+      },
+      {
+        "application_bytes": 1048576,
+        "application_packets": 1024,
+        "charged_cents": 0,
+        "failures": [],
+        "gy_cca_u_2001": 0,
+        "gy_ccr_u": 0,
+        "gy_rating_groups": [],
+        "mode": "attack",
+        "passed": true,
+        "pfcp_establishment": {
+          "far_id_count": 7,
+          "pdr_id_count": 4,
+          "qer_id_count": 3,
+          "urr_id_count": 0
+        },
+        "pfcp_volume_report_frames": 0,
+        "run_id": "attack-run-2"
+      },
+      {
+        "application_bytes": 1048576,
+        "application_packets": 1024,
+        "charged_cents": 0,
+        "failures": [],
+        "gy_cca_u_2001": 0,
+        "gy_ccr_u": 0,
+        "gy_rating_groups": [],
+        "mode": "attack",
+        "passed": true,
+        "pfcp_establishment": {
+          "far_id_count": 7,
+          "pdr_id_count": 4,
+          "qer_id_count": 3,
+          "urr_id_count": 0
+        },
+        "pfcp_volume_report_frames": 0,
+        "run_id": "attack-run-3"
+      }
+    ],
+    "baseline": [
+      {
+        "application_bytes": 1048576,
+        "application_packets": 1024,
+        "charged_cents": 7,
+        "failures": [],
+        "gy_cca_u_2001": 1,
+        "gy_ccr_u": 1,
+        "gy_rating_groups": [
+          9
+        ],
+        "mode": "baseline",
+        "passed": true,
+        "pfcp_establishment": {
+          "far_id_count": 7,
+          "pdr_id_count": 4,
+          "qer_id_count": 3,
+          "urr_id_count": 3
+        },
+        "pfcp_volume_report_frames": 2,
+        "run_id": "baseline-run-1"
+      },
+      {
+        "application_bytes": 1048576,
+        "application_packets": 1024,
+        "charged_cents": 7,
+        "failures": [],
+        "gy_cca_u_2001": 1,
+        "gy_ccr_u": 1,
+        "gy_rating_groups": [
+          9
+        ],
+        "mode": "baseline",
+        "passed": true,
+        "pfcp_establishment": {
+          "far_id_count": 7,
+          "pdr_id_count": 4,
+          "qer_id_count": 3,
+          "urr_id_count": 3
+        },
+        "pfcp_volume_report_frames": 2,
+        "run_id": "baseline-run-2"
+      },
+      {
+        "application_bytes": 1048576,
+        "application_packets": 1024,
+        "charged_cents": 7,
+        "failures": [],
+        "gy_cca_u_2001": 1,
+        "gy_ccr_u": 1,
+        "gy_rating_groups": [
+          9
+        ],
+        "mode": "baseline",
+        "passed": true,
+        "pfcp_establishment": {
+          "far_id_count": 7,
+          "pdr_id_count": 4,
+          "qer_id_count": 3,
+          "urr_id_count": 3
+        },
+        "pfcp_volume_report_frames": 2,
+        "run_id": "baseline-run-3"
+      }
+    ]
+  },
+  "schema_version": "1.0",
+  "source_result_sha256": "4568048cd953da51414711bfdfa255e1839f452498718a97e15389ba75ac6d3e",
+  "verifier_revision": "t1-del-predeclared-v1"
+}

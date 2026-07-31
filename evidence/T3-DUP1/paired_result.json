@@ -1,0 +1,120 @@
+{
+  "schema_version": "1.0",
+  "legacy_threat_id": "T3-2",
+  "audit_id": "T3-A08",
+  "experiment_kind": "clean_source_paired_live_reproduction",
+  "validation": "E2E",
+  "kernel": "6.17.0-40-generic",
+  "open5gs_commit": "26cbc33a418a292e3b3949be69155898d751bd6e",
+  "report_count": 3,
+  "usage_report_ies_per_baseline_request": 1,
+  "usage_report_ies_per_attack_request": 2,
+  "baseline_original_usage": [
+    [
+      1049076,
+      0,
+      1049076
+    ],
+    [
+      5000292,
+      0,
+      5000292
+    ],
+    [
+      5000292,
+      0,
+      5000292
+    ]
+  ],
+  "attack_duplicate_usage": [
+    [
+      [
+        1049076,
+        0,
+        1049076
+      ],
+      [
+        1049076,
+        0,
+        1049076
+      ]
+    ],
+    [
+      [
+        5000292,
+        0,
+        5000292
+      ],
+      [
+        5000292,
+        0,
+        5000292
+      ]
+    ],
+    [
+      [
+        5000292,
+        0,
+        5000292
+      ],
+      [
+        5000292,
+        0,
+        5000292
+      ]
+    ]
+  ],
+  "baseline_gy_usage": [
+    [
+      1049076,
+      0,
+      1049076
+    ],
+    [
+      5000292,
+      0,
+      5000292
+    ],
+    [
+      5000292,
+      0,
+      5000292
+    ]
+  ],
+  "attack_gy_usage": [
+    [
+      2098152,
+      0,
+      2098152
+    ],
+    [
+      10000584,
+      0,
+      10000584
+    ],
+    [
+      10000584,
+      0,
+      10000584
+    ]
+  ],
+  "baseline_usage_sum": 11049660,
+  "attack_gy_usage_sum": 22099320,
+  "baseline_charge_cents": 17,
+  "attack_charge_cents": 28,
+  "baseline_icmp": {
+    "echo_request": 15200,
+    "echo_reply": 15199
+  },
+  "attack_icmp": {
+    "echo_request": 15200,
+    "echo_reply": 15200
+  },
+  "capture_noise": "baseline missed one echo reply; intended requests and PFCP producer usage are identical",
+  "accepted_pfcp_responses": 3,
+  "accepted_cca_updates": 3,
+  "source_run_checksums": {
+    "baseline": 58,
+    "attack": 58
+  }
+}

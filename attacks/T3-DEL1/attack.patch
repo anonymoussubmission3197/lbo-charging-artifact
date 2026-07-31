@@ -1,0 +1,13 @@
+diff --git a/src/upf/context.c b/src/upf/context.c
+--- a/src/upf/context.c
++++ b/src/upf/context.c
+@@ -751,8 +751,8 @@ void upf_sess_urr_acc_fill_usage_report(upf_sess_t *sess, const ogs_pfcp_urr_t *
+         .dlnop = 1,
+         .ulnop = 1,
+         .tonop = 1,
+         .dlvol = 1,
+-        .ulvol = 1,
++        .ulvol = 0,
+         .tovol = 1,
+         .total_volume = urr_acc->total_octets - urr_acc->last_report.total_octets,
+         .uplink_volume = urr_acc->ul_octets - urr_acc->last_report.ul_octets,

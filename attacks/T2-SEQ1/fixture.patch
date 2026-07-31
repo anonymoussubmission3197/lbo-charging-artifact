@@ -1,0 +1,308 @@
+diff --git a/lib/diameter/gy/message.c b/lib/diameter/gy/message.c
+index 4d282d397..dd66d93a3 100644
+--- a/lib/diameter/gy/message.c
++++ b/lib/diameter/gy/message.c
+@@ -45,6 +45,7 @@ struct dict_object *ogs_diam_gy_cc_output_octets = NULL;
+ struct dict_object *ogs_diam_gy_cc_service_specific_units = NULL;
+ struct dict_object *ogs_diam_gy_reporting_reason = NULL;
+ struct dict_object *ogs_diam_gy_service_id = NULL;
++struct dict_object *ogs_diam_gy_rating_group = NULL;
+ 
+ struct dict_object *ogs_diam_gy_service_information = NULL;
+ struct dict_object *ogs_diam_gy_ps_information = NULL;
+@@ -112,6 +113,7 @@ int ogs_diam_gy_init(void)
+     CHECK_dict_search(DICT_AVP, AVP_BY_NAME_ALL_VENDORS, "CC-Service-Specific-Units", &ogs_diam_gy_cc_service_specific_units);
+     CHECK_dict_search(DICT_AVP, AVP_BY_NAME_ALL_VENDORS, "Reporting-Reason", &ogs_diam_gy_reporting_reason);
+     CHECK_dict_search(DICT_AVP, AVP_BY_NAME_ALL_VENDORS, "Service-Identifier", &ogs_diam_gy_service_id);
++    CHECK_dict_search(DICT_AVP, AVP_BY_NAME_ALL_VENDORS, "Rating-Group", &ogs_diam_gy_rating_group);
+ 
+     CHECK_dict_search(DICT_AVP, AVP_BY_NAME_ALL_VENDORS, "Service-Information", &ogs_diam_gy_service_information);
+     CHECK_dict_search(DICT_AVP, AVP_BY_NAME_ALL_VENDORS, "PS-Information", &ogs_diam_gy_ps_information);
+diff --git a/lib/diameter/gy/message.h b/lib/diameter/gy/message.h
+index 5880ca59c..3e5d39979 100644
+--- a/lib/diameter/gy/message.h
++++ b/lib/diameter/gy/message.h
+@@ -94,6 +94,7 @@ extern struct dict_object *ogs_diam_gy_reporting_reason;
+ #define OGS_DIAM_GY_REPORTING_REASON_POOL_EXHAUSTED             8
+ #define OGS_DIAM_GY_REPORTING_REASON_UNUSED_QUOTA_TIMER         9
+ extern struct dict_object *ogs_diam_gy_service_id;
++extern struct dict_object *ogs_diam_gy_rating_group;
+ extern struct dict_object *ogs_diam_gy_service_information;
+ extern struct dict_object *ogs_diam_gy_ps_information;
+ extern struct dict_object *ogs_diam_gy_3gpp_charging_id;
+diff --git a/lib/pfcp/handler.c b/lib/pfcp/handler.c
+index 9968fe207..ab939ee41 100644
+--- a/lib/pfcp/handler.c
++++ b/lib/pfcp/handler.c
+@@ -820,6 +820,12 @@ ogs_pfcp_pdr_t *ogs_pfcp_handle_create_pdr(ogs_pfcp_sess_t *sess,
+         ogs_pfcp_pdr_associate_qer(pdr, qer);
+     }
+ 
++    ogs_warn("selected-standard-scenario receiver applied Create PDR id[%u] src_if[%u] "
++            "precedence[%u] urr_count[%d] far[%u] qer[%u]",
++            pdr->id, pdr->src_if, pdr->precedence, pdr->num_of_urr,
++            pdr->far ? pdr->far->id : 0,
++            pdr->qer ? pdr->qer->id : 0);
++
+     return pdr;
+ }
+ 
+diff --git a/src/smf/context.c b/src/smf/context.c
+index dde58c18b..59208b50d 100644
+--- a/src/smf/context.c
++++ b/src/smf/context.c
+@@ -2415,8 +2415,9 @@ smf_bearer_t *smf_qos_flow_add(smf_sess_t *sess)
+     urr->meas_method = OGS_PFCP_MEASUREMENT_METHOD_VOLUME;
+     urr->rep_triggers.volume_threshold = 1;
+     urr->vol_threshold.tovol = 1;
+-    urr->vol_threshold.total_volume = 1024*1024*100;
++    urr->vol_threshold.total_volume = 1024*1024; /* T1-1 test fixture */
+ 
++    ogs_pfcp_pdr_associate_urr(ul_pdr, urr); /* T1-1 test fixture */
+     ogs_pfcp_pdr_associate_urr(dl_pdr, urr);
+ 
+     /* QER */
+diff --git a/src/smf/gsm-sm.c b/src/smf/gsm-sm.c
+index 78eee612a..7429c4fda 100644
+--- a/src/smf/gsm-sm.c
++++ b/src/smf/gsm-sm.c
+@@ -852,6 +852,8 @@ void smf_gsm_state_wait_pfcp_establishment(ogs_fsm_t *s, smf_event_t *e)
+                     OGS_FSM_TRAN(s, smf_gsm_state_5gc_n1_n2_reject);
+                     return;
+                 }
++                ogs_assert(OGS_OK ==
++                        smf_t2_a02_send_current_operation(sess));
+                 if (HOME_ROUTED_ROAMING_IN_VSMF(sess)) {
+                     r = smf_sbi_discover_and_send(
+                             OGS_SBI_SERVICE_TYPE_NSMF_PDUSESSION, NULL,
+diff --git a/src/smf/gy-path.c b/src/smf/gy-path.c
+index 4590091dc..d6030db22 100644
+--- a/src/smf/gy-path.c
++++ b/src/smf/gy-path.c
+@@ -290,6 +290,15 @@ static void fill_multiple_services_credit_control_ccr(smf_sess_t *sess,
+     ret = fd_msg_avp_new(ogs_diam_gy_multiple_services_cc, 0, &avp);
+     ogs_assert(ret == 0);
+ 
++    /* T1-1 fixture: carry the applied 5QI as the OCS charging key. */
++    ret = fd_msg_avp_new(ogs_diam_gy_rating_group, 0, &avpch1);
++    ogs_assert(ret == 0);
++    val.u32 = sess->session.qos.index;
++    ret = fd_msg_avp_setvalue(avpch1, &val);
++    ogs_assert(ret == 0);
++    ret = fd_msg_avp_add(avp, MSG_BRW_LAST_CHILD, avpch1);
++    ogs_assert(ret == 0);
++
+     /* Requested-Service-Unit, RFC4006 8.18 */
+     if (cc_request_type == OGS_DIAM_GY_CC_REQUEST_TYPE_INITIAL_REQUEST ||
+         cc_request_type == OGS_DIAM_GY_CC_REQUEST_TYPE_UPDATE_REQUEST)
+@@ -301,7 +310,6 @@ static void fill_multiple_services_credit_control_ccr(smf_sess_t *sess,
+         fill_used_service_unit(sess, cc_request_type, avp);
+ 
+         /* Service-Identifier, RFC4006 8.28. Not used in Gy. */
+-        /* Rating-Group */
+ 
+         /* Reporting-Reason, TS 32.299 7.2.175 */
+         /* "values QHT, FINAL, VALIDITY_TIME, FORCED_REAUTHORISATION,
+diff --git a/src/smf/n4-build.c b/src/smf/n4-build.c
+index 53dc865ce..215a50830 100644
+--- a/src/smf/n4-build.c
++++ b/src/smf/n4-build.c
+@@ -180,6 +180,78 @@ ogs_pkbuf_t *smf_n4_build_session_establishment_request(
+     return pkbuf;
+ }
+ 
++static ogs_pfcp_pdr_t *find_t2_a02_charged_uplink_pdr(smf_sess_t *sess)
++{
++    ogs_pfcp_pdr_t *pdr = NULL;
++
++    ogs_assert(sess);
++
++    ogs_list_for_each(&sess->pfcp.pdr_list, pdr) {
++        if (pdr->src_if == OGS_PFCP_INTERFACE_ACCESS &&
++            pdr->num_of_urr > 0)
++            return pdr;
++    }
++
++    return NULL;
++}
++
++static ogs_pkbuf_t *build_t2_a02_create_pdr(
++        uint8_t type, smf_sess_t *sess, bool include_urr,
++        const char *operation)
++{
++    ogs_pfcp_message_t *pfcp_message = NULL;
++    ogs_pfcp_session_modification_request_t *req = NULL;
++    ogs_pfcp_pdr_t *pdr = NULL;
++    ogs_pkbuf_t *pkbuf = NULL;
++    int i;
++
++    pdr = find_t2_a02_charged_uplink_pdr(sess);
++    if (!pdr) {
++        ogs_error("selected-standard-scenario charged uplink PDR not found");
++        return NULL;
++    }
++
++    pfcp_message = ogs_calloc(1, sizeof(*pfcp_message));
++    if (!pfcp_message) {
++        ogs_error("ogs_calloc() failed");
++        return NULL;
++    }
++    req = &pfcp_message->pfcp_session_modification_request;
++
++    ogs_pfcp_pdrbuf_init();
++    ogs_pfcp_build_create_pdr(&req->create_pdr[0], 0, pdr);
++    if (!include_urr) {
++        for (i = 0; i < OGS_ARRAY_SIZE(req->create_pdr[0].urr_id); i++)
++            memset(&req->create_pdr[0].urr_id[i], 0,
++                    sizeof(req->create_pdr[0].urr_id[i]));
++    }
++
++    pfcp_message->h.type = type;
++    pkbuf = ogs_pfcp_build_msg(pfcp_message);
++    ogs_expect(pkbuf);
++
++    ogs_warn("selected-standard-scenario %s emitted Create PDR id[%u] urr_count[%d]",
++            operation, pdr->id, include_urr ? pdr->num_of_urr : 0);
++
++    ogs_pfcp_pdrbuf_clear();
++    ogs_free(pfcp_message);
++    return pkbuf;
++}
++
++ogs_pkbuf_t *smf_n4_build_t2_a02_current_operation(
++        uint8_t type, smf_sess_t *sess, ogs_pfcp_xact_t *xact)
++{
++    ogs_assert(xact);
++    return build_t2_a02_create_pdr(type, sess, false, "current operation");
++}
++
++ogs_pkbuf_t *smf_n4_build_t2_a02_stale_replay(
++        uint8_t type, smf_sess_t *sess, ogs_pfcp_xact_t *xact)
++{
++    ogs_assert(xact);
++    return build_t2_a02_create_pdr(type, sess, true, "stale replay");
++}
++
+ ogs_pkbuf_t *smf_n4_build_pdr_to_modify_list(
+         uint8_t type, smf_sess_t *sess, ogs_pfcp_xact_t *xact)
+ {
+diff --git a/src/smf/n4-build.h b/src/smf/n4-build.h
+index 49e9c89df..44edd54e5 100644
+--- a/src/smf/n4-build.h
++++ b/src/smf/n4-build.h
+@@ -28,6 +28,10 @@ extern "C" {
+ 
+ ogs_pkbuf_t *smf_n4_build_session_establishment_request(
+         uint8_t type, smf_sess_t *sess, ogs_pfcp_xact_t *xact);
++ogs_pkbuf_t *smf_n4_build_t2_a02_current_operation(
++        uint8_t type, smf_sess_t *sess, ogs_pfcp_xact_t *xact);
++ogs_pkbuf_t *smf_n4_build_t2_a02_stale_replay(
++        uint8_t type, smf_sess_t *sess, ogs_pfcp_xact_t *xact);
+ ogs_pkbuf_t *smf_n4_build_pdr_to_modify_list(
+         uint8_t type, smf_sess_t *sess, ogs_pfcp_xact_t *xact);
+ ogs_pkbuf_t *smf_n4_build_qos_flow_to_modify_list(
+diff --git a/src/smf/n4-handler.c b/src/smf/n4-handler.c
+index ee048f6fc..2c68dbd1f 100644
+--- a/src/smf/n4-handler.c
++++ b/src/smf/n4-handler.c
+@@ -407,6 +407,20 @@ void smf_5gc_n4_handle_session_modification_response(
+         return;
+     }
+ 
++    if ((flags & OGS_PFCP_MODIFY_CREATE) &&
++        (flags & OGS_PFCP_MODIFY_URR) &&
++        (flags & OGS_PFCP_MODIFY_NETWORK_REQUESTED)) {
++        ogs_warn("selected-standard-scenario current operation response accepted");
++        return;
++    }
++
++    if ((flags & OGS_PFCP_MODIFY_CREATE) &&
++        (flags & OGS_PFCP_MODIFY_URR) &&
++        (flags & OGS_PFCP_MODIFY_UE_REQUESTED)) {
++        ogs_warn("selected-standard-scenario stale replay response accepted");
++        return;
++    }
++
+     if (flags & OGS_PFCP_MODIFY_HOME_ROUTED_ROAMING) {
+         if (flags & OGS_PFCP_MODIFY_ACTIVATE) {
+             if ((flags & OGS_PFCP_MODIFY_XN_HANDOVER) ||
+diff --git a/src/smf/pfcp-path.c b/src/smf/pfcp-path.c
+index d768082a2..485003d5d 100644
+--- a/src/smf/pfcp-path.c
++++ b/src/smf/pfcp-path.c
+@@ -609,6 +609,48 @@ int smf_5gc_pfcp_send_session_establishment_request(
+     return rv;
+ }
+ 
++static int send_t2_a02_operation(
++        smf_sess_t *sess,
++        ogs_pkbuf_t *(*builder)(
++            uint8_t type, smf_sess_t *sess, ogs_pfcp_xact_t *xact),
++        uint64_t discriminator)
++{
++    ogs_pfcp_xact_t *xact = NULL;
++
++    ogs_assert(sess);
++    ogs_assert(builder);
++
++    xact = ogs_pfcp_xact_local_create(
++            sess->pfcp_node, sess_5gc_timeout, OGS_UINT_TO_POINTER(sess->id));
++    if (!xact) {
++        ogs_error("ogs_pfcp_xact_local_create() failed");
++        return OGS_ERROR;
++    }
++
++    xact->local_seid = sess->smf_n4_seid;
++    xact->modify_flags =
++        OGS_PFCP_MODIFY_SESSION |
++        OGS_PFCP_MODIFY_CREATE |
++        OGS_PFCP_MODIFY_URR |
++        discriminator;
++
++    return smf_pfcp_send_modify_list(sess, builder, xact, 0);
++}
++
++int smf_t2_a02_send_current_operation(smf_sess_t *sess)
++{
++    return send_t2_a02_operation(
++            sess, smf_n4_build_t2_a02_current_operation,
++            OGS_PFCP_MODIFY_NETWORK_REQUESTED);
++}
++
++int smf_t2_a02_send_stale_replay(smf_sess_t *sess)
++{
++    return send_t2_a02_operation(
++            sess, smf_n4_build_t2_a02_stale_replay,
++            OGS_PFCP_MODIFY_UE_REQUESTED);
++}
++
+ int smf_5gc_pfcp_send_all_pdr_modification_request(
+         smf_sess_t *sess, ogs_sbi_stream_t *stream,
+         uint64_t flags, int trigger, ogs_time_t duration)
+diff --git a/src/smf/pfcp-path.h b/src/smf/pfcp-path.h
+index 9c1a0c346..7ea179712 100644
+--- a/src/smf/pfcp-path.h
++++ b/src/smf/pfcp-path.h
+@@ -37,6 +37,8 @@ int smf_pfcp_send_modify_list(
+ 
+ int smf_5gc_pfcp_send_session_establishment_request(
+         smf_sess_t *sess, ogs_sbi_stream_t *stream, uint64_t flags);
++int smf_t2_a02_send_current_operation(smf_sess_t *sess);
++int smf_t2_a02_send_stale_replay(smf_sess_t *sess);
+ int smf_5gc_pfcp_send_all_pdr_modification_request(
+         smf_sess_t *sess, ogs_sbi_stream_t *stream,
+         uint64_t flags, int trigger, ogs_time_t duration);
+diff --git a/src/upf/gtp-path.c b/src/upf/gtp-path.c
+index a8c920ce9..011892f0c 100644
+--- a/src/upf/gtp-path.c
++++ b/src/upf/gtp-path.c
+@@ -722,6 +722,9 @@ static void _gtpv1_u_recv_cb(short when, ogs_socket_t fd, void *data)
+             ogs_assert(dev);
+ 
+             /* Increment total & ul octets + pkts */
++            ogs_warn("selected-standard-scenario selected UL PDR id[%u] urr_count[%d] "
++                    "packet_bytes[%u]",
++                    pdr->id, pdr->num_of_urr, pkbuf->len);
+             for (i = 0; i < pdr->num_of_urr; i++)
+                 upf_sess_urr_acc_add(sess, pdr->urr[i], pkbuf->len, true);
+ 

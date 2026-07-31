@@ -1,0 +1,14 @@
+LBO Charging Reproduction Artifact
+Copyright 2026 Anonymous Artifact Authors
+
+Project-authored software is licensed under the Apache License, Version 2.0.
+Research documentation and evidence are licensed under CC BY 4.0.
+Open5GS-derived patch files are separately licensed under AGPL-3.0-only.
+
+Open5GS-derived patch files under attacks/ are based on:
+  Project: Open5GS
+  Repository: https://github.com/open5gs/open5gs
+  Evaluated commit: 26cbc33a418a292e3b3949be69155898d751bd6e
+  Upstream license: GNU Affero General Public License v3
+
+See LICENSES.md and ATTRIBUTION.md.

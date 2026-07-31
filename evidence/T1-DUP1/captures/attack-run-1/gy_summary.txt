@@ -1,0 +1,5 @@
+frame.number|diameter.flags.request|diameter.CC-Request-Type|diameter.CC-Request-Number|diameter.Result-Code|diameter.Rating-Group|diameter.CC-Input-Octets|diameter.CC-Output-Octets
+1|True|2|1||9|1048844|0
+2|False|2|1|2001,2001|9||
+3|True|2|2||9|1048844|0
+4|False|2|2|2001,2001|9||
