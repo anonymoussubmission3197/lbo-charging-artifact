@@ -105,7 +105,7 @@ class ArtifactCliTests(unittest.TestCase):
         self.assertRegex(result.stdout, r"native scenarios\s+PASS\s+232")
 
     def test_four_step_demo_remains_reviewer_readable(self):
-        for representative in ("T2-MOD1", "T4-SEQ1"):
+        for representative in ("T2-MOD1", "T3-MOD1", "T4-MOD1", "T4-SEQ1"):
             with self.subTest(representative=representative):
                 result = run_cli(
                     "demo", representative, "--non-interactive", columns=140
@@ -116,6 +116,16 @@ class ArtifactCliTests(unittest.TestCase):
                     self.assertIn(f"STEP {step}/4", result.stdout)
                 self.assertIn("BENIGN", result.stdout)
                 self.assertIn("ATTACK", result.stdout)
+                self.assertIn(
+                    f"wireshark pcaps/{representative}_pfcp.pcap",
+                    result.stdout,
+                )
+                self.assertIn(
+                    f"wireshark pcaps/{representative}_gy.pcap",
+                    result.stdout,
+                )
+                self.assertNotIn("GUIDED DEMO COMPLETE", result.stdout)
+                self.assertNotIn("trace case", result.stdout)
 
     def test_verify_all_passes_nineteen_and_marks_na(self):
         result = run_cli("verify", "--all")
