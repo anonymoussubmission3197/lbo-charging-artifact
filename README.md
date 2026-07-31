@@ -54,7 +54,8 @@ The full-screen demo accepts a mouse click or Up/Down plus Enter. After a PoC
 finishes, Enter returns to the twenty-cell menu. `T1-INS` is visible but cannot
 be opened. Each runnable PoC presents the standard-derived position, the
 whole-system attack location, the measured benign-versus-attack outcome, and
-the corresponding paper defense predicate.
+the corresponding paper defense predicate. The final screen also prints two
+copyable Wireshark commands for the selected PFCP and Gy captures.
 
 To inspect one verifier in detail:
 

@@ -634,666 +634,6 @@ def _print_demo_foundation(color: bool, case_id: str) -> None:
         print(f"Question: {selected['summary']}")
 
 
-def _print_t3_1_topology(result: dict, color: bool) -> None:
-    actual = _format_count(result["baseline_usage_sum"])
-    reported = _format_count(result["attack_reported_usage_sum"])
-    attack_charge = result["attack_charge_cents"]
-    print("=" * 72)
-    print("STEP 2/4 | WHOLE SYSTEM AND ATTACK LOCATION")
-    print("=" * 72)
-    width = shutil.get_terminal_size(fallback=(100, 24)).columns
-    if width >= 104:
-        topology: list[tuple[str, list[str]]] = [
-            ("                         FIG. 2-ALIGNED LBO WORKFLOW", []),
-            ("", []),
-            (" HPLMN BILLING                              VPLMN CONTROL PLANE", []),
-            (
-                " ┌─────────┐      T4 / N40*-Gy             ┌─────────┐      "
-                "T1 / N7 POLICY      ┌─────────┐",
-                [],
-            ),
-            (
-                " │ OCS/CHF │ ◀──────────────────────────── │  V-SMF  │ "
-                "◀─────────────────────── │  V-PCF  │",
-                [],
-            ),
-            (
-                " └─────────┘                               └─────────┘ "
-                "                          └─────────┘",
-                [],
-            ),
-            (_positioned_line((47, "▲"), (49, "│")), ["▲"]),
-            (_positioned_line((47, "│"), (49, "│")), ["│"]),
-            (
-                _positioned_line(
-                    (12, "T3 / N4 USAGE REPORTS"),
-                    (47, "│"),
-                    (49, "│"),
-                    (54, "T2 / N4 RULES"),
-                ),
-                ["T3 / N4 USAGE REPORTS", "│"],
-            ),
-            (
-                _positioned_line(
-                    (17, "UPF  ->  SMF  [T3-MOD1]"),
-                    (47, "│"),
-                    (49, "│"),
-                    (57, "SMF  ->  UPF"),
-                ),
-                ["UPF  ->  SMF  [T3-MOD1]", "│"],
-            ),
-            (_positioned_line((47, "│"), (49, "│")), ["│"]),
-            (_positioned_line((47, "│"), (49, "▼")), ["│"]),
-            (
-                " ┌─────────┐    RADIO    ┌─────────┐ GTP-U ┌─────────┐   "
-                "N6   ┌──────────┐",
-                [],
-            ),
-            (
-                " │   UE    │ ──────────▶ │ gNB/RAN │ ────▶ │  V-UPF  │ "
-                "─────▶ │ Internet │",
-                [],
-            ),
-            (
-                " └─────────┘             └─────────┘       └─────────┘ "
-                "       └──────────┘",
-                [],
-            ),
-        ]
-    else:
-        topology = [
-            (" [OCS/CHF] ◀─T4─ [SMF] ◀─T1/N7─ [PCF]", []),
-            (_positioned_line((18, "▲"), (20, "│"), width=72), ["▲"]),
-            (
-                _positioned_line(
-                    (0, "T3 UPF  ->  SMF"),
-                    (18, "│"),
-                    (20, "│"),
-                    (23, "T2 SMF  ->  UPF"),
-                    width=72,
-                ),
-                ["T3 UPF  ->  SMF", "│"],
-            ),
-            (
-                _positioned_line(
-                    (0, "[T3-MOD1]"),
-                    (18, "│"),
-                    (20, "▼"),
-                    width=72,
-                ),
-                ["[T3-MOD1]", "│"],
-            ),
-            ("", []),
-            (" [UE] ──▶ [gNB] ──▶ [UPF] ──N6──▶ [Internet]", []),
-            ("       RADIO    GTP-U", []),
-        ]
-    # Use the same NF-box topology as the other 17 runnable representatives;
-    # the measured propagation panel below remains scenario-specific.
-    topology = []
-    _print_topology_frame("T3", color)
-    for line, red_fragments in topology:
-        print(_paint_fragments(line, red_fragments, color))
-    print()
-    print(_paint(
-        "SELECTED ATTACK T3-MOD1 (category T3-MOD): "
-        "V-UPF -> V-SMF PFCP Usage Report",
-        "1;31",
-        color,
-    ))
-    print("Mutation: Inflate UL, DL, and total usage by five while preserving "
-          "total = UL + DL.")
-    if width >= 80:
-        print("* OCS* denotes the measured Gy prototype; CHF denotes the native design.")
-    else:
-        print("* OCS* denotes the measured Gy prototype;")
-        print("  CHF denotes the native design.")
-    print()
-    print("Only the selected surface is highlighted; the other links provide context.")
-    print()
-    print(_paint("T3-MOD1 ATTACK PROPAGATION", "1;31", color))
-    print()
-    ue = _visual_panel("UE", ["30,399 packets", "[SAME]"], 16)
-    upf = _visual_panel(
-        "UPF / MUTATION",
-        [f"measured {actual} B", f"reported {reported} B [x5]"],
-        32,
-    )
-    smf = _visual_panel(
-        "SMF / PROPAGATED",
-        [f"Gy {reported} B", "[PFCP -> Gy]"],
-        25,
-    )
-    ocs = _visual_panel(
-        "OCS / RESULT",
-        [f"{attack_charge} cents", "[+44 cents]"],
-        18,
-    )
-    width = shutil.get_terminal_size(fallback=(100, 24)).columns
-    if width >= 116:
-        for index, rows in enumerate(zip(ue, upf, smf, ocs)):
-            connector = " ──▶ " if index == 2 else "     "
-            ue_row, upf_row, smf_row, ocs_row = rows
-            print(
-                _paint(ue_row, "1;36", color)
-                + _paint(connector, "1;37", color)
-                + _paint(upf_row, "1;31", color)
-                + _paint(connector, "1;31", color)
-                + _paint(smf_row, "1;33", color)
-                + _paint(connector, "1;33", color)
-                + _paint(ocs_row, "1;32", color)
-            )
-        print("LINKS: UE -> UPF same traffic | UPF -> SMF PFCP/T3 | SMF -> OCS Gy/T4")
-    else:
-        for index, panel in enumerate((ue, upf, smf, ocs)):
-            for row in panel:
-                panel_code = ("1;36", "1;31", "1;33", "1;32")[index]
-                print(_paint(row, panel_code, color))
-            if index != 3:
-                print(_paint("         │", "1;31", color))
-                print(_paint("         ▼", "1;31", color))
-    print()
-    print(_paint(
-        "MUTATION: UPF multiplies UL, DL, and total by five while preserving total = UL + DL.",
-        "1;31",
-        color,
-    ))
-
-
-def _print_t3_1_poc_dashboard(result: dict, color: bool) -> None:
-    packets = _format_count(result["gtpu_packet_count_each"])
-    actual = _format_count(result["baseline_usage_sum"])
-    reported = _format_count(result["attack_reported_usage_sum"])
-    factor = result["mutation_factor"]
-    baseline_charge = result["baseline_charge_cents"]
-    attack_charge = result["attack_charge_cents"]
-    charge_delta = result["charge_delta_cents"]
-    print("=" * 72)
-    print("STEP 3/4 | MEASURED UNPROTECTED BENIGN-VERSUS-ATTACK PoC")
-    print("=" * 72)
-    _print_visual_pair(
-        "UNPROTECTED BENIGN RUN",
-        [
-            f"[UE]  {packets} packets              [SAME]",
-            "  │",
-            "  ▼",
-            f"[UPF] measured  {actual} B",
-            f"      reported  {actual} B  [NORMAL]",
-            "  │ PFCP usage report",
-            "  ▼",
-            f"[SMF] Gy request {actual} B",
-            "  │",
-            "  ▼",
-            f"[OCS] balance debit {baseline_charge} cents",
-        ],
-        f"UNPROTECTED ATTACK / T3-MOD1 x{factor}",
-        [
-            f"[UE]  {packets} packets              [SAME]",
-            "  │",
-            "  ▼",
-            f"[UPF] measured  {actual} B",
-            f"      reported  {reported} B  [CHANGED x{factor}]",
-            "  │ PFCP usage report",
-            "  ▼",
-            f"[SMF] Gy request {reported} B  [PROPAGATED]",
-            "  │",
-            "  ▼",
-            f"[OCS] balance debit {attack_charge} cents (+{charge_delta})",
-        ],
-        color=color,
-    )
-    print()
-    print(_paint("CAUSE → PROPAGATION → OUTCOME", "1;31", color))
-    width = shutil.get_terminal_size(fallback=(100, 24)).columns
-    if width >= 100:
-        print(
-            f"  UPF report x{factor}  ──▶  PFCP {reported} B  ──▶  "
-            f"Gy {reported} B  ──▶  OCS {attack_charge} cents"
-        )
-    else:
-        print(f"  [UPF report x{factor}]")
-        print(f"       └─ PFCP {reported} B ─▶ [SMF]")
-        print(f"              └─ Gy {reported} B ─▶ [OCS {attack_charge} cents]")
-    print()
-    print(_paint("TABLE II REPRESENTATIVE T3-MOD1", "1;31", color))
-    print("  UL, DL, and total usage x5; invariant preserved: total = UL + DL")
-    print("  Reported usage: 11.05 -> 55.25 MB")
-    print(f"  Observed OCS balance debit: {baseline_charge} -> {attack_charge} cents")
-    print()
-    for row in _visual_panel(
-        "PoC VALIDATION CHECKS",
-        [
-            "✓ Same UE packet workload",
-            "✓ Three accepted PFCP responses and CCR-U/CCA-U exchanges",
-            "✓ PFCP value propagated to Gy and the OCS result changed",
-            "! CCR-I/T capture is not claimed; tariff need not scale x5",
-        ],
-        69,
-    ):
-        print(row)
-
-
-def _print_t3_1_defense_preview(result: dict, color: bool) -> None:
-    actual = _format_count(result["baseline_usage_sum"])
-    reported = _format_count(result["attack_reported_usage_sum"])
-    print("=" * 72)
-    print("STEP 4/4 | PAPER DEFENSE MECHANISM MAPPING")
-    print("=" * 72)
-    print(_paint(
-        "PAPER-EVALUATED MECHANISM — NOT REPRODUCED IN THIS PACKAGE  ⚠",
-        "1;33",
-        color,
-    ))
-    print()
-    _print_visual_pair(
-        "BENIGN P3 CHECK",
-        [
-            f"TRUSTED METER  {actual} B ─┐",
-            "                              ├─▶ [TEE CHECK]",
-            f"REPORTED USAGE {actual} B ─┘",
-            "",
-            "session + URR + direction + sequence",
-            "all bindings and values match",
-            "",
-            "                    ✓ ACCEPT",
-        ],
-        "T3-MOD1 P3 CHECK",
-        [
-            f"TRUSTED METER  {actual} B ─┐",
-            "                              ├─▶ [TEE CHECK]",
-            f"REPORTED USAGE {reported} B ─┘",
-            "",
-            "same session, but volume mismatch",
-            f"{actual} B  ≠  {reported} B",
-            "",
-            "              ✗ P3 REJECTS (E2 -> E3)",
-        ],
-        color=color,
-        left_code="1;32",
-        right_code="1;33",
-    )
-    print()
-    print("Trusted invariant: bind the measurement to session, URR, direction,")
-    print("volume, and report sequence before accepting the charging update.")
-    print()
-    print(_paint(
-        "The paper reports this P3 decision; this package does not reproduce it.",
-        "1;33",
-        color,
-    ))
-    print("This package contains attack PoC data and a mechanism mapping, but not")
-    print("the Charging-TCB implementation or its raw defense evaluation data.")
-
-
-def run_t3_1_demo(case: dict, interactive: bool) -> None:
-    config = case.get("evidence") or {}
-    passed, observations = verify_t3_live_pair(case, config)
-    if not passed:
-        failures = [
-            item.removeprefix("FAIL ")
-            for item in observations
-            if item.startswith("FAIL ")
-        ]
-        raise ArtifactError(
-            "T3-MOD PoC data did not pass verification"
-            + (f": {'; '.join(failures)}" if failures else "")
-        )
-    result = load_json(ROOT / config["path"] / config["result"])
-
-    _print_demo_foundation(interactive, "T3-MOD")
-    if not _demo_pause(interactive, "the whole-system attack map"):
-        return
-    print()
-    _print_t3_1_topology(result, interactive)
-    if not _demo_pause(interactive, "the baseline-versus-attack PoC"):
-        return
-    print()
-    _print_t3_1_poc_dashboard(result, interactive)
-    if not _demo_pause(interactive, "the defense design preview"):
-        return
-    print()
-    _print_t3_1_defense_preview(result, interactive)
-    print()
-    print("GUIDED DEMO COMPLETE")
-    print("  Inspect standard-to-scenario mapping: "
-          "./bin/lbo-artifact trace case T3-MOD")
-    print("  Verify raw PoC data                 : "
-          "./bin/lbo-artifact verify T3-MOD")
-
-
-def _print_t4_1_topology(result: dict, color: bool) -> None:
-    actual = _format_count(result["baseline_actual_ul_sum"])
-    reported = _format_count(result["attack_reported_ul_sum"])
-    attack_charge = result["attack_charge_cents"]
-    charge_delta = result["charge_delta_cents"]
-    print("=" * 72)
-    print("STEP 2/4 | WHOLE SYSTEM AND ATTACK LOCATION")
-    print("=" * 72)
-    width = shutil.get_terminal_size(fallback=(100, 24)).columns
-    if width >= 104:
-        topology: list[tuple[str, list[str]]] = [
-            ("                         FIG. 2-ALIGNED LBO WORKFLOW", []),
-            ("", []),
-            (" HPLMN BILLING                              VPLMN CONTROL PLANE", []),
-            (
-                " ┌─────────┐   T4 / N40*-Gy [T4-MOD1]       ┌─────────┐      "
-                "T1 / N7 POLICY      ┌─────────┐",
-                ["T4 / N40*-Gy [T4-MOD1]"],
-            ),
-            (
-                " │ OCS/CHF │ ◀──────────────────────────── │  V-SMF  │ "
-                "◀─────────────────────── │  V-PCF  │",
-                ["◀────────────────────────────"],
-            ),
-            (
-                " └─────────┘                               └─────────┘ "
-                "                          └─────────┘",
-                [],
-            ),
-            (_positioned_line((47, "▲"), (49, "│")), []),
-            (_positioned_line((47, "│"), (49, "│")), []),
-            (
-                _positioned_line(
-                    (12, "T3 / N4 USAGE REPORTS"),
-                    (47, "│"),
-                    (49, "│"),
-                    (54, "T2 / N4 RULES"),
-                ),
-                [],
-            ),
-            (
-                _positioned_line(
-                    (21, "UPF  ->  SMF"),
-                    (47, "│"),
-                    (49, "│"),
-                    (57, "SMF  ->  UPF"),
-                ),
-                [],
-            ),
-            (_positioned_line((47, "│"), (49, "│")), []),
-            (_positioned_line((47, "│"), (49, "▼")), []),
-            (
-                " ┌─────────┐    RADIO    ┌─────────┐ GTP-U ┌─────────┐   "
-                "N6   ┌──────────┐",
-                [],
-            ),
-            (
-                " │   UE    │ ──────────▶ │ gNB/RAN │ ────▶ │  V-UPF  │ "
-                "─────▶ │ Internet │",
-                [],
-            ),
-            (
-                " └─────────┘             └─────────┘       └─────────┘ "
-                "       └──────────┘",
-                [],
-            ),
-        ]
-    else:
-        topology = [
-            (
-                " [OCS/CHF] ◀─T4 [T4-MOD1]─ [SMF] ◀─T1/N7─ [PCF]",
-                ["◀─T4 [T4-MOD1]─"],
-            ),
-            (_positioned_line((18, "▲"), (20, "│"), width=72), []),
-            (
-                _positioned_line(
-                    (0, "T3 UPF  ->  SMF"),
-                    (18, "│"),
-                    (20, "│"),
-                    (23, "T2 SMF  ->  UPF"),
-                    width=72,
-                ),
-                [],
-            ),
-            (_positioned_line((18, "│"), (20, "▼"), width=72), []),
-            ("", []),
-            (" [UE] ──▶ [gNB] ──▶ [UPF] ──N6──▶ [Internet]", []),
-            ("       RADIO    GTP-U", []),
-        ]
-    # Use the common reviewer-facing shell while preserving the T4-specific
-    # measured propagation panel below.
-    topology = []
-    _print_topology_frame("T4", color)
-    for line, red_fragments in topology:
-        print(_paint_fragments(line, red_fragments, color))
-    print()
-    print(_paint(
-        "SELECTED ATTACK T4-MOD1 (category T4-MOD): "
-        "V-SMF -> OCS*/CHF charging request",
-        "1;31",
-        color,
-    ))
-    print("Mutation: Preserve the accepted PFCP usage but multiply the outgoing "
-          "Gy CC-Input-Octets by four.")
-    if width >= 80:
-        print("* OCS* denotes the measured Gy prototype; CHF denotes the native design.")
-    else:
-        print("* OCS* denotes the measured Gy prototype;")
-        print("  CHF denotes the native design.")
-    print()
-    print("Only the selected surface is highlighted; the other links provide context.")
-    print()
-    print(_paint("T4-MOD1 ATTACK PROPAGATION", "1;31", color))
-    print()
-    panels = (
-        (
-            _visual_panel("UE", ["30,400 packets", "[SAME]"], 16),
-            "1;36",
-        ),
-        (
-            _visual_panel(
-                "UPF / SAME",
-                [f"PFCP UL {actual} B", "[UNCHANGED]"],
-                27,
-            ),
-            "1;36",
-        ),
-        (
-            _visual_panel(
-                "SMF / MUTATION",
-                [f"Gy UL {reported} B [x4]", "CC-Input-Octets"],
-                30,
-            ),
-            "1;31",
-        ),
-        (
-            _visual_panel(
-                "OCS / RESULT",
-                [f"{attack_charge} cents", f"[+{charge_delta} cents]"],
-                18,
-            ),
-            "1;32",
-        ),
-    )
-    if width >= 116:
-        for index, rows in enumerate(zip(*(panel for panel, _ in panels))):
-            connector = " ──▶ " if index == 2 else "     "
-            for panel_index, row in enumerate(rows):
-                print(_paint(row, panels[panel_index][1], color), end="")
-                if panel_index != len(rows) - 1:
-                    connector_code = (
-                        "1;31" if panel_index >= 1 else "1;37"
-                    )
-                    print(_paint(connector, connector_code, color), end="")
-            print()
-        print("LINKS: UE -> UPF same traffic | UPF -> SMF PFCP/T3 | "
-              "SMF -> OCS Gy/T4")
-    else:
-        for index, (panel, panel_code) in enumerate(panels):
-            for row in panel:
-                print(_paint(row, panel_code, color))
-            if index != len(panels) - 1:
-                print(_paint("         │", "1;31", color))
-                print(_paint("         ▼", "1;31", color))
-    print()
-    print(_paint(
-        "MUTATION: SMF keeps the PFCP value but changes Gy CC-Input-Octets.",
-        "1;31",
-        color,
-    ))
-
-
-def _print_t4_1_poc_dashboard(result: dict, color: bool) -> None:
-    packets = _format_count(result["gtpu_packet_count_each"])
-    actual = _format_count(result["baseline_actual_ul_sum"])
-    reported = _format_count(result["attack_reported_ul_sum"])
-    factor = result["mutation_factor"]
-    baseline_charge = result["baseline_charge_cents"]
-    attack_charge = result["attack_charge_cents"]
-    charge_delta = result["charge_delta_cents"]
-    baseline_total = sum(row[0] for row in result["baseline_pfcp_usage"])
-    attack_dl = sum(row[2] for row in result["attack_pfcp_usage"])
-    attack_total = result["attack_reported_ul_sum"] + attack_dl
-    print("=" * 72)
-    print("STEP 3/4 | MEASURED UNPROTECTED BENIGN-VERSUS-ATTACK PoC")
-    print("=" * 72)
-    _print_visual_pair(
-        "UNPROTECTED BENIGN RUN",
-        [
-            f"[UE]  {packets} packets              [SAME]",
-            "  │",
-            "  ▼",
-            f"[UPF] PFCP actual UL {actual} B",
-            "  │ accepted PFCP usage report",
-            "  ▼",
-            f"[SMF] Gy request UL {actual} B  [NORMAL]",
-            "  │",
-            "  ▼",
-            f"[OCS] balance debit {baseline_charge} cents",
-        ],
-        f"UNPROTECTED ATTACK / T4-MOD1 x{factor}",
-        [
-            f"[UE]  {packets} packets              [SAME]",
-            "  │",
-            "  ▼",
-            f"[UPF] PFCP actual UL {actual} B  [SAME]",
-            "  │ accepted PFCP usage report",
-            "  ▼",
-            f"[SMF] Gy request UL {reported} B  [CHANGED x{factor}]",
-            "  │",
-            "  ▼",
-            f"[OCS] balance debit {attack_charge} cents (+{charge_delta})",
-        ],
-        color=color,
-    )
-    print()
-    print(_paint("CAUSE → PROPAGATION → OUTCOME", "1;31", color))
-    width = shutil.get_terminal_size(fallback=(100, 24)).columns
-    if width >= 100:
-        print(
-            f"  SMF serializer x{factor}  ──▶  Gy {reported} B  ──▶  "
-            f"OCS {attack_charge} cents"
-        )
-    else:
-        print(f"  [SMF serializer x{factor}]")
-        print(f"       └─ Gy {reported} B ─▶ [OCS {attack_charge} cents]")
-    print()
-    print(_paint("TABLE II REPRESENTATIVE T4-MOD1", "1;31", color))
-    print("  Gy CC-Input-Octets x4; PFCP usage and CC-Output-Octets preserved")
-    print(f"  Charged volume: {baseline_total / 1_000_000:.2f} -> {attack_total / 1_000_000:.2f} MB")
-    print(f"  Observed OCS balance debit: {baseline_charge} -> {attack_charge} cents")
-    print()
-    for row in _visual_panel(
-        "PoC VALIDATION CHECKS",
-        [
-            "✓ Same UE packet workload and five PFCP reports",
-            "✓ PFCP actual UL remains unchanged",
-            "✓ Five x4 Gy CCR-U values and accepted CCA-U responses",
-            "✓ Paired OCS result increases",
-            "! Gy/SigScale analogue; native N40/CHF is not claimed",
-        ],
-        69,
-    ):
-        print(row)
-
-
-def _print_t4_1_defense_preview(result: dict, color: bool) -> None:
-    actual = _format_count(result["baseline_actual_ul_sum"])
-    reported = _format_count(result["attack_reported_ul_sum"])
-    print("=" * 72)
-    print("STEP 4/4 | PAPER DEFENSE MECHANISM MAPPING")
-    print("=" * 72)
-    print(_paint(
-        "PAPER-EVALUATED MECHANISM — NOT REPRODUCED IN THIS PACKAGE  ⚠",
-        "1;33",
-        color,
-    ))
-    print()
-    _print_visual_pair(
-        "BENIGN P4 CHECK",
-        [
-            f"ACCEPTED PFCP UL {actual} B ─┐",
-            "                               ├─▶ [TEE CHECK]",
-            f"OUTGOING Gy UL   {actual} B ─┘",
-            "",
-            "session + URR + direction + sequence",
-            "source and serialized values match",
-            "",
-            "                    ✓ ACCEPT",
-        ],
-        "T4-MOD1 P4 CHECK",
-        [
-            f"ACCEPTED PFCP UL {actual} B ─┐",
-            "                               ├─▶ [TEE CHECK]",
-            f"OUTGOING Gy UL   {reported} B ─┘",
-            "",
-            "same reports, but serializer output mismatch",
-            f"{actual} B  ≠  {reported} B",
-            "",
-            "              ✗ P4 REJECTS (E3 -> E4)",
-        ],
-        color=color,
-        left_code="1;32",
-        right_code="1;33",
-    )
-    print()
-    print("Trusted invariant: bind accepted PFCP usage to the outgoing charging")
-    print("request before the SMF sends it to the charging backend.")
-    print()
-    print(_paint(
-        "The paper reports this P4 decision; this package does not reproduce it.",
-        "1;33",
-        color,
-    ))
-    print("This package contains attack PoC data and a mechanism mapping, but not")
-    print("the Charging-TCB implementation or its raw defense evaluation data.")
-
-
-def run_t4_1_demo(case: dict, interactive: bool) -> None:
-    config = case.get("evidence") or {}
-    passed, observations = verify_t4_live_pair(case, config)
-    if not passed:
-        failures = [
-            item.removeprefix("FAIL ")
-            for item in observations
-            if item.startswith("FAIL ")
-        ]
-        raise ArtifactError(
-            "T4-MOD PoC data did not pass verification"
-            + (f": {'; '.join(failures)}" if failures else "")
-        )
-    result = load_json(ROOT / config["path"] / config["result"])
-
-    _print_demo_foundation(interactive, "T4-MOD")
-    if not _demo_pause(interactive, "the whole-system attack map"):
-        return
-    print()
-    _print_t4_1_topology(result, interactive)
-    if not _demo_pause(interactive, "the baseline-versus-attack PoC"):
-        return
-    print()
-    _print_t4_1_poc_dashboard(result, interactive)
-    if not _demo_pause(interactive, "the defense design preview"):
-        return
-    print()
-    _print_t4_1_defense_preview(result, interactive)
-    print()
-    print("GUIDED DEMO COMPLETE")
-    print("  Inspect standard-to-scenario mapping: "
-          "./bin/lbo-artifact trace case T4-MOD")
-    print("  Verify raw PoC data                 : "
-          "./bin/lbo-artifact verify T4-MOD")
-
-
 def _labelled_left_arrow(label: str, width: int) -> str:
     label = f" {label} "
     fill = max(0, width - 1 - len(label))
@@ -1404,6 +744,15 @@ def _generic_demo_facts(case: dict, result: dict) -> dict[str, str]:
             "baseline_effect": "1,048,844 B",
             "attack_effect": "2,101,784 B",
         },
+        "T3-MOD": {
+            "workload": "30,399 packets",
+            "source": "V-UPF / USAGE REPORT",
+            "baseline": "11,049,660 B measured",
+            "attack": "55,248,300 B reported / x5",
+            "consumer": "V-SMF / Gy USAGE",
+            "baseline_effect": "11,049,660 B accepted",
+            "attack_effect": "55,248,300 B accepted",
+        },
         "T3-DEL": {
             "workload": "30,400 packets",
             "source": "V-UPF / USAGE REPORT",
@@ -1439,6 +788,15 @@ def _generic_demo_facts(case: dict, result: dict) -> dict[str, str]:
             "consumer": "V-SMF / Gy REQUEST",
             "baseline_effect": "Rating Group 9 MSCC",
             "attack_effect": "RG 9 + RG 6 MSCC",
+        },
+        "T4-MOD": {
+            "workload": "30,400 packets / same PFCP",
+            "source": "V-UPF / PFCP SOURCE",
+            "baseline": "21,050,244 B produced",
+            "attack": "21,050,244 B unchanged",
+            "consumer": "V-SMF / Gy REQUEST",
+            "baseline_effect": "21,050,244 B charged",
+            "attack_effect": "52,624,368 B charged / UL x4",
         },
         "T4-DEL": {
             "workload": "same PFCP producer usage",
@@ -1851,6 +1209,21 @@ def _print_generic_defense(
     print("the defense implementation or its raw evaluation data.")
 
 
+def _print_pcap_commands(case: dict, color: bool) -> None:
+    representative = _display_id(case)
+    captures = {
+        "PFCP": f"pcaps/{representative}_pfcp.pcap",
+        "Gy": f"pcaps/{representative}_gy.pcap",
+    }
+    for relative in captures.values():
+        if not (ROOT / relative).is_file():
+            raise ArtifactError(f"missing reviewer capture: {relative}")
+    print()
+    print(_paint("OPEN THE SELECTED ATTACK CAPTURES IN WIRESHARK", "1;36", color))
+    print(f"  PFCP : wireshark {captures['PFCP']} &")
+    print(f"  Gy   : wireshark {captures['Gy']} &")
+
+
 def run_generic_demo(case: dict, interactive: bool) -> None:
     if not verify_case(case, show_output=False):
         raise ArtifactError(f"{case['id']} PoC data did not pass verification")
@@ -1869,16 +1242,7 @@ def run_generic_demo(case: dict, interactive: bool) -> None:
         return
     print()
     _print_generic_defense(case, facts, interactive)
-    print()
-    print("GUIDED DEMO COMPLETE")
-    print(
-        f"  Inspect standard-to-scenario mapping: "
-        f"./bin/lbo-artifact trace case {case['id']}"
-    )
-    print(
-        f"  Verify raw PoC data                 : "
-        f"./bin/lbo-artifact verify {case['id']}"
-    )
+    _print_pcap_commands(case, interactive)
 
 
 def run_na_demo(case: dict) -> None:
@@ -1902,10 +1266,6 @@ def _run_selected_demo(
     case = cases[selected]
     if case["status"] == "N/A":
         run_na_demo(case)
-    elif selected == "T3-MOD":
-        run_t3_1_demo(cases[selected], interactive)
-    elif selected == "T4-MOD":
-        run_t4_1_demo(cases[selected], interactive)
     else:
         run_generic_demo(case, interactive)
 
