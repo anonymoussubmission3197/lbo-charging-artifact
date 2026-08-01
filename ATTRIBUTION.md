@@ -6,8 +6,8 @@
 - Creator: Anonymous Artifact Authors
 - License: Creative Commons Attribution 4.0 International
 - License URI: `https://creativecommons.org/licenses/by/4.0/`
-- Material: documentation, manifests, analysis data, packet
-  captures, and reduced laboratory results identified in `LICENSES.md`
+- Material: documentation, manifests, analysis data, demonstration media,
+  packet captures, and reduced laboratory results identified in `LICENSES.md`
 - Modifications: the public packet evidence was pseudonymized and selected N7
   traces were replaced by documented field-reduced derivatives
 

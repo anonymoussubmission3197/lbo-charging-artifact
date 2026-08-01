@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import csv
 import os
 from pathlib import Path
 import re
@@ -103,6 +104,76 @@ class ArtifactCliTests(unittest.TestCase):
         self.assertRegex(result.stdout, r"cells\s+PASS\s+20")
         self.assertRegex(result.stdout, r"runnable cells\s+PASS\s+19")
         self.assertRegex(result.stdout, r"native scenarios\s+PASS\s+232")
+        self.assertRegex(
+            result.stdout,
+            r"all-field dataset\s+PASS\s+2280 rows; English-only=yes",
+        )
+        self.assertRegex(
+            result.stdout,
+            r"scenario dataset\s+PASS\s+232 rows; English-only=yes",
+        )
+
+    def test_public_analysis_tables_are_complete_and_english_only(self):
+        expected = {
+            "all_field_positions_2280.csv": 2280,
+            "charging_relevant_fields_2050.csv": 2050,
+            "consistency_constraints_81.csv": 81,
+            "threat_scenarios_232.csv": 232,
+            "derivation_crosswalk.csv": 2050,
+        }
+        loaded = {}
+        for filename, expected_rows in expected.items():
+            with self.subTest(filename=filename):
+                with (ROOT / "analysis" / filename).open(
+                    encoding="utf-8", newline=""
+                ) as stream:
+                    rows = list(csv.DictReader(stream))
+                self.assertEqual(len(rows), expected_rows)
+                self.assertFalse(any(
+                    re.search(r"[\uac00-\ud7a3]", value or "")
+                    for row in rows
+                    for value in row.values()
+                ))
+                loaded[filename] = rows
+
+        all_ids = {
+            row["field_position_id"]
+            for row in loaded["all_field_positions_2280.csv"]
+        }
+        relevant_ids = {
+            row["field_position_id"]
+            for row in loaded["charging_relevant_fields_2050.csv"]
+        }
+        crosswalk_ids = {
+            row["field_position_id"]
+            for row in loaded["derivation_crosswalk.csv"]
+        }
+        self.assertTrue(relevant_ids < all_ids)
+        self.assertEqual(crosswalk_ids, relevant_ids)
+
+    def test_readme_uses_current_anonymous_repository_and_video(self):
+        readme = (ROOT / "README.md").read_text(encoding="utf-8")
+        self.assertIn("https://github.com/5g-lbo-tee/charging-artifact.git", readme)
+        self.assertIn("https://youtu.be/n1MCp5k2rZ8", readme)
+        self.assertIn("assets/t3-mod1-attack-demo.gif", readme)
+        self.assertGreater(
+            (ROOT / "assets/t3-mod1-attack-demo.gif").stat().st_size,
+            100_000,
+        )
+        self.assertNotIn("anonymoussubmission3197", readme)
+
+    def test_public_authored_text_contains_no_hangul(self):
+        text_suffixes = {".csv", ".json", ".md", ".patch", ".py", ".txt", ".yaml"}
+        for path in ROOT.rglob("*"):
+            if (
+                not path.is_file()
+                or ".git" in path.parts
+                or path.suffix.lower() not in text_suffixes
+            ):
+                continue
+            with self.subTest(path=path.relative_to(ROOT)):
+                content = path.read_text(encoding="utf-8")
+                self.assertIsNone(re.search(r"[\uac00-\ud7a3]", content))
 
     def test_four_step_demo_remains_reviewer_readable(self):
         for representative in ("T2-MOD1", "T3-MOD1", "T4-MOD1", "T4-SEQ1"):
