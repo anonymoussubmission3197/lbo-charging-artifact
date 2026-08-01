@@ -155,16 +155,16 @@ class ArtifactCliTests(unittest.TestCase):
         readme = (ROOT / "README.md").read_text(encoding="utf-8")
         self.assertIn("https://github.com/5g-lbo-tee/charging-artifact.git", readme)
         self.assertIn("https://youtu.be/n1MCp5k2rZ8", readme)
-        self.assertIn("assets/artifact-overview-t3-mod1.png", readme)
-        self.assertGreater(
-            (ROOT / "assets/artifact-overview-t3-mod1.png").stat().st_size,
-            100_000,
-        )
+        self.assertNotIn("assets/artifact-overview-t3-mod1.png", readme)
+        self.assertFalse((ROOT / "assets/artifact-overview-t3-mod1.png").exists())
         self.assertIn("assets/t3-mod1-attack-demo.gif", readme)
         self.assertGreater(
             (ROOT / "assets/t3-mod1-attack-demo.gif").stat().st_size,
             100_000,
         )
+        self.assertIn("## Live demo video", readme)
+        self.assertIn("doubles the reported usage", readme)
+        self.assertIn("TEE-based defense", readme)
         self.assertNotIn("anonymoussubmission3197", readme)
 
     def test_public_authored_text_contains_no_hangul(self):

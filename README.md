@@ -29,7 +29,7 @@ The analysis reported by the paper is:
 
 ## Guided artifact overview
 
-[![T3-MOD1 reviewer-guided artifact overview](assets/artifact-overview-t3-mod1.png)](assets/artifact-overview-t3-mod1.png)
+[![T3-MOD1 reviewer-guided artifact walkthrough](assets/t3-mod1-attack-demo.gif)](assets/t3-mod1-attack-demo.gif)
 
 The five panels follow one complete reviewer path: selecting T3-MOD1 from the
 twenty paper cells, tracing its standard-driven derivation, locating the T3/N4
@@ -37,21 +37,16 @@ mutation and propagation path, comparing the measured benign and unprotected
 attack runs, and mapping the mismatch to the paper-evaluated defense
 predicate.
 
-## Demo video
+## Live demo video
 
-The [T3-MOD1 live demonstration](https://youtu.be/n1MCp5k2rZ8) uses a
-twofold usage-inflation experiment and shows TEE-based rejection. The
-repository provides the public attack artifact, packet evidence, and offline
-verification; the TEE defense implementation and its raw evaluation data are
-not included in this package.
-
-[![T3-MOD1 usage-report inflation demo](assets/t3-mod1-attack-demo.gif)](https://youtu.be/n1MCp5k2rZ8)
-
-This animated preview shows the reviewer-facing public artifact, whose
-documented T3-MOD1 evidence uses a fivefold mutation: the UE generates the same
-controlled workload, the V-UPF inflates its measured usage, and the inflated
-value propagates through the V-SMF to charging. Select the preview to open the
-separate twofold live video, including the TEE-protected rejection run.
+The [T3-MOD1 live demonstration](https://youtu.be/n1MCp5k2rZ8) is organized
+into two parts. The first shows an unprotected attack in which the V-UPF
+doubles the reported usage and the inflated value propagates through the V-SMF
+to charging. The second enables the TEE-based defense, which detects and
+rejects the manipulated report before it can affect charging. The repository
+provides the public attack artifact, packet evidence, and offline verification;
+the TEE defense implementation and its raw evaluation data are not included in
+this package.
 
 ## quick start
 
@@ -127,7 +122,7 @@ rules, and claim boundaries.
   mappings;
 - `analysis/`: the 2,280 fields, 2,050 charging-relevant fields, 81
   constraints, 232 scenarios, their crosswalk, and aggregate counts;
-- `assets/`: the T3-MOD1 overview and animated artifact preview;
+- `assets/`: the T3-MOD1 animated artifact walkthrough;
 - `evidence/`: measured benign/attack evidence for the nineteen PoCs;
 - `attacks/`: Open5GS mutation patches, organized by current representative ID;
 - `pcaps/`: compact pseudonymized capture collection; and
