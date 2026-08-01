@@ -47,12 +47,12 @@ not included in this package.
 
 [![T3-MOD1 usage-report inflation demo](assets/t3-mod1-attack-demo.gif)](https://youtu.be/n1MCp5k2rZ8)
 
-The animation shows the unprotected T3-MOD1 run: the UE generates the same
-controlled workload, the V-UPF reports five times its measured usage, and the
+This video shows the unprotected T3-MOD1 run: the UE generates the same
+controlled workload, the V-UPF reports two times its measured usage, and the
 inflated value propagates through the V-SMF to charging. Select the image to
 open the complete video, including the TEE-protected rejection run.
 
-## Reviewer quick start
+## quick start
 
 The verifier requires Python 3.10 or later, PyYAML, and TShark 3.6 or later.
 It has been tested with Ubuntu 22.04 / Python 3.10 / TShark 3.6.2 and Ubuntu
@@ -80,14 +80,7 @@ The full-screen demo accepts a mouse click or Up/Down plus Enter. After a PoC
 finishes, Enter returns to the twenty-cell menu. `T1-INS` is visible but cannot
 be opened. Each runnable PoC presents the standard-derived position, the
 whole-system attack location, the measured benign-versus-attack outcome, and
-the corresponding paper defense predicate. The final screen also prints two
-copyable Wireshark commands for the selected PFCP and Gy captures.
-
-To inspect one verifier in detail:
-
-```bash
-./bin/lbo-artifact verify T3-DEL1
-```
+the corresponding paper defense predicate.
 
 All verification is offline and read-only. These commands do not start 5G
 network functions, modify a charging backend, or transmit traffic.
@@ -124,8 +117,7 @@ The row-level data behind the paper's analysis are published in `analysis/`:
 | `derivation_crosswalk.csv` | 2,050 | Field-to-constraint-to-scenario references |
 
 See `analysis/DATA_DICTIONARY.md` for schemas, per-surface counts, filtering
-rules, and claim boundaries. The tables are English-only and retain 3GPP
-document, version, and clause references.
+rules, and claim boundaries.
 
 ## What is included
 
@@ -134,7 +126,7 @@ document, version, and clause references.
   mappings;
 - `analysis/`: the 2,280 fields, 2,050 charging-relevant fields, 81
   constraints, 232 scenarios, their crosswalk, and aggregate counts;
-- `assets/`: the compact T3-MOD1 animated demonstration;
+- `assets/`: the compact T3-MOD1 video demonstration;
 - `evidence/`: measured benign/attack evidence for the nineteen PoCs;
 - `attacks/`: Open5GS mutation patches, organized by current representative ID;
 - `pcaps/`: compact pseudonymized capture collection; and
