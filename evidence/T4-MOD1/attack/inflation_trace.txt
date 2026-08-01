@@ -1,5 +1,5 @@
-[32m07/27 21:24:51.208[0m: [[33msmf[0m] [1;36mWARNING[0m: T4-1 SMF request inflation: request_type[2] factor[4] actual_ul[525780] reported_ul[2103120] (../src/smf/gy-path.c:183)
-[32m07/27 21:25:29.254[0m: [[33msmf[0m] [1;36mWARNING[0m: T4-1 SMF request inflation: request_type[2] factor[4] actual_ul[2499732] reported_ul[9998928] (../src/smf/gy-path.c:183)
-[32m07/27 21:26:06.584[0m: [[33msmf[0m] [1;36mWARNING[0m: T4-1 SMF request inflation: request_type[2] factor[4] actual_ul[2500560] reported_ul[10002240] (../src/smf/gy-path.c:183)
-[32m07/27 21:26:41.222[0m: [[33msmf[0m] [1;36mWARNING[0m: T4-1 SMF request inflation: request_type[2] factor[4] actual_ul[2498904] reported_ul[9995616] (../src/smf/gy-path.c:183)
-[32m07/27 21:27:14.786[0m: [[33msmf[0m] [1;36mWARNING[0m: T4-1 SMF request inflation: request_type[2] factor[4] actual_ul[2499732] reported_ul[9998928] (../src/smf/gy-path.c:183)
+request_type[2] factor[5] actual_ul[525780] reported_ul[2628900]
+request_type[2] factor[5] actual_ul[2500560] reported_ul[12502800]
+request_type[2] factor[5] actual_ul[2499732] reported_ul[12498660]
+request_type[2] factor[5] actual_ul[2498904] reported_ul[12494520]
+request_type[2] factor[5] actual_ul[2499732] reported_ul[12498660]

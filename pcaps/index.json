@@ -4,36 +4,36 @@
   "records": [
     {
       "attack_id": "T1-MOD1",
-      "bytes": 590,
+      "bytes": 32544,
       "capture_role": "attack",
       "category": "T1-MOD",
       "file": "T1-MOD1_n7.pcap",
       "interface": "N7",
       "sanitized": true,
-      "sha256": "d415e855a756fefb168c4e26b4e2542cb05212c4c1ae4770c44334cfd90b3f0a",
-      "source_package": "paired_public_attack"
+      "sha256": "1724c1e6f856c57f271a73556c05957553b20dec1b94f0e54ab7f478e048d940",
+      "source_package": "controlled_cumulative_attack_22_to_220_reduced_n7"
     },
     {
       "attack_id": "T1-MOD1",
-      "bytes": 4168,
+      "bytes": 13643,
       "capture_role": "attack",
       "category": "T1-MOD",
       "file": "T1-MOD1_pfcp.pcap",
       "interface": "pfcp",
       "sanitized": true,
-      "sha256": "64d659a7eb4785d93b456594c3f3480df8bb2485226902539ae0ba58e7204bf2",
-      "source_package": "paired_public_attack"
+      "sha256": "4c721ef2f7e74e6ad67dd895518d77a9b5002d6fd742bda01eb2c2bd7dd4a3bc",
+      "source_package": "controlled_cumulative_attack_22_to_220_public"
     },
     {
       "attack_id": "T1-MOD1",
-      "bytes": 1552,
+      "bytes": 10212,
       "capture_role": "attack",
       "category": "T1-MOD",
       "file": "T1-MOD1_gy.pcap",
       "interface": "gy",
       "sanitized": true,
-      "sha256": "9b44ede005056d9a89b17efd688bbf5354fb26998a1790e942082cd47744e4ff",
-      "source_package": "paired_public_attack"
+      "sha256": "9846b3f2254af6331afdb4d24359212f67451c4111c23d7fcceeadd1f09ae289",
+      "source_package": "controlled_cumulative_attack_22_to_220_public"
     },
     {
       "attack_id": "T1-DEL1",
@@ -323,25 +323,25 @@
     },
     {
       "attack_id": "T4-MOD1",
-      "bytes": 15083,
+      "bytes": 16968,
       "capture_role": "attack",
       "category": "T4-MOD",
       "file": "T4-MOD1_pfcp.pcap",
       "interface": "pfcp",
       "sanitized": true,
-      "sha256": "0fcbf95b5bedd2b207d87314c9d7108e81c79889103238817349a00d61c17ceb",
-      "source_package": "paired_public_attack"
+      "sha256": "70822f998a82b1d069a629b20b052ff5b105e0ebe40bbcfe127911ad252d81d6",
+      "source_package": "t4g_a17_x5_repetition_1_public"
     },
     {
       "attack_id": "T4-MOD1",
-      "bytes": 10996,
+      "bytes": 11856,
       "capture_role": "attack",
       "category": "T4-MOD",
       "file": "T4-MOD1_gy.pcap",
       "interface": "gy",
       "sanitized": true,
-      "sha256": "6341953f7a491f98a1bde3d16e519732865d835a37701a5c959d64ada1c7f47f",
-      "source_package": "paired_public_attack"
+      "sha256": "f22d4ad2d414a532d97ae5c72377a7c5d1a8eff86feeab050fd0a29a72a2de63",
+      "source_package": "t4g_a17_x5_repetition_1_public"
     },
     {
       "attack_id": "T4-INS1",

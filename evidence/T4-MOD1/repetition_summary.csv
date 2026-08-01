@@ -1,0 +1,4 @@
+index,baseline_charge_cents,attack_charge_cents,baseline_gy_total_bytes,attack_gy_total_bytes,baseline_session_alias,attack_session_alias,passed
+1,27,69,21050244,63149076,baseline-session-1,attack-session-1,true
+2,27,69,21050244,63149076,baseline-session-2,attack-session-2,true
+3,27,69,21050244,63149076,baseline-session-3,attack-session-3,true
