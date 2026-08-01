@@ -39,18 +39,19 @@ predicate.
 
 ## Demo video
 
-The [T3-MOD1 live demonstration](https://youtu.be/n1MCp5k2rZ8) shows the
-two-instance experiment, usage-report inflation, and TEE-based rejection. The
+The [T3-MOD1 live demonstration](https://youtu.be/n1MCp5k2rZ8) uses a
+twofold usage-inflation experiment and shows TEE-based rejection. The
 repository provides the public attack artifact, packet evidence, and offline
 verification; the TEE defense implementation and its raw evaluation data are
 not included in this package.
 
 [![T3-MOD1 usage-report inflation demo](assets/t3-mod1-attack-demo.gif)](https://youtu.be/n1MCp5k2rZ8)
 
-This video shows the unprotected T3-MOD1 run: the UE generates the same
-controlled workload, the V-UPF reports two times its measured usage, and the
-inflated value propagates through the V-SMF to charging. Select the image to
-open the complete video, including the TEE-protected rejection run.
+This animated preview shows the reviewer-facing public artifact, whose
+documented T3-MOD1 evidence uses a fivefold mutation: the UE generates the same
+controlled workload, the V-UPF inflates its measured usage, and the inflated
+value propagates through the V-SMF to charging. Select the preview to open the
+separate twofold live video, including the TEE-protected rejection run.
 
 ## quick start
 
@@ -126,7 +127,7 @@ rules, and claim boundaries.
   mappings;
 - `analysis/`: the 2,280 fields, 2,050 charging-relevant fields, 81
   constraints, 232 scenarios, their crosswalk, and aggregate counts;
-- `assets/`: the compact T3-MOD1 video demonstration;
+- `assets/`: the T3-MOD1 overview and animated artifact preview;
 - `evidence/`: measured benign/attack evidence for the nineteen PoCs;
 - `attacks/`: Open5GS mutation patches, organized by current representative ID;
 - `pcaps/`: compact pseudonymized capture collection; and
