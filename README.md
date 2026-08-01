@@ -41,6 +41,7 @@ git clone https://github.com/anonymoussubmission3197/lbo-charging-artifact.git
 cd lbo-charging-artifact
 ./bin/lbo-artifact doctor
 ./bin/lbo-artifact verify --all
+
 COLUMNS=140 ./bin/lbo-artifact demo
 ```
 
