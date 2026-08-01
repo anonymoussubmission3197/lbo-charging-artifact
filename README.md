@@ -27,6 +27,21 @@ The analysis reported by the paper is:
 → 19 representative PoCs
 ```
 
+## Demo video
+
+The [T3-MOD1 live demonstration](https://youtu.be/n1MCp5k2rZ8) shows the
+two-instance experiment, usage-report inflation, and TEE-based rejection. The
+repository provides the public attack artifact, packet evidence, and offline
+verification; the TEE defense implementation and its raw evaluation data are
+not included in this package.
+
+[![T3-MOD1 usage-report inflation demo](assets/t3-mod1-attack-demo.gif)](https://youtu.be/n1MCp5k2rZ8)
+
+The animation shows the unprotected T3-MOD1 run: the UE generates the same
+controlled workload, the V-UPF reports twice its measured usage, and the
+inflated value propagates through the V-SMF to charging. Select the image to
+open the complete video, including the TEE-protected rejection run.
+
 ## Reviewer quick start
 
 The verifier requires Python 3.10 or later, PyYAML, and TShark 3.6 or later.
@@ -37,8 +52,8 @@ It has been tested with Ubuntu 22.04 / Python 3.10 / TShark 3.6.2 and Ubuntu
 sudo apt update
 sudo apt install -y git python3 python3-yaml tshark
 
-git clone https://github.com/anonymoussubmission3197/lbo-charging-artifact.git
-cd lbo-charging-artifact
+git clone https://github.com/5g-lbo-tee/charging-artifact.git
+cd charging-artifact
 ./bin/lbo-artifact doctor
 ./bin/lbo-artifact verify --all
 
@@ -86,12 +101,30 @@ pseudonymized or reduced to remove identifying network and subscriber values.
 The larger `evidence/` packages are the checksum-protected inputs used by the
 offline verifier.
 
+## Standard-analysis dataset
+
+The row-level data behind the paper's analysis are published in `analysis/`:
+
+| File | Rows | Purpose |
+|---|---:|---|
+| `all_field_positions_2280.csv` | 2,280 | Complete native N7, N4, and N40 field inventory |
+| `charging_relevant_fields_2050.csv` | 2,050 | Charging-relevant subset of the inventory |
+| `consistency_constraints_81.csv` | 81 | Cross-field and cross-message constraints |
+| `threat_scenarios_232.csv` | 232 | Retained standard-derived threat scenarios |
+| `derivation_crosswalk.csv` | 2,050 | Field-to-constraint-to-scenario references |
+
+See `analysis/DATA_DICTIONARY.md` for schemas, per-surface counts, filtering
+rules, and claim boundaries. The tables are English-only and retain 3GPP
+document, version, and clause references.
+
 ## What is included
 
 - `bin/lbo-artifact`: reviewer entry point;
 - `manifest/`: the twenty cells, eleven-message scope, and nineteen evidence
   mappings;
-- `analysis/coverage_summary.json`: paper-aligned aggregate counts;
+- `analysis/`: the 2,280 fields, 2,050 charging-relevant fields, 81
+  constraints, 232 scenarios, their crosswalk, and aggregate counts;
+- `assets/`: the compact T3-MOD1 animated demonstration;
 - `evidence/`: measured benign/attack evidence for the nineteen PoCs;
 - `attacks/`: Open5GS mutation patches, organized by current representative ID;
 - `pcaps/`: compact pseudonymized capture collection; and

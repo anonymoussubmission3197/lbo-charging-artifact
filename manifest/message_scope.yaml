@@ -1,5 +1,5 @@
 schema_version: "1.0"
-scope_name: selected-release-17-lbo-charging-artifacts
+scope_name: selected-3gpp-release-17-lbo-charging-analysis
 counting_note: >
   The count is eleven selected producer-to-consumer procedure/message contexts,
   not every N7, N4, or N40 charging message. Repeated carriers that use the same
@@ -16,4 +16,3 @@ messages:
   - {id: M-T4-01, surface: T4-Nchf, interface: N40, producer: V-SMF, consumer: CHF, operation: "Nchf ConvergedCharging Create request", artifact: ChargingDataRequest}
   - {id: M-T4-02, surface: T4-Nchf, interface: N40, producer: V-SMF, consumer: CHF, operation: "Nchf ConvergedCharging Update request", artifact: ChargingDataRequest}
   - {id: M-T4-03, surface: T4-Nchf, interface: N40, producer: V-SMF, consumer: CHF, operation: "Nchf ConvergedCharging Release request", artifact: ChargingDataRequest}
-

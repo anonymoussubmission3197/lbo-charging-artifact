@@ -30,6 +30,7 @@ CC BY 4.0:
 
 - Markdown documentation;
 - `analysis/` and `manifest/` data;
+- demonstration media under `assets/`;
 - all material under `evidence/`, including PCAPs and reduced result records;
 - documentation under `attacks/`.
 

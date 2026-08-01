@@ -1,5 +1,5 @@
 {
-  "schema_version": "3.0",
+  "schema_version": "4.0",
   "counts": {
     "messages": 11,
     "native_fields": 2280,
@@ -11,5 +11,38 @@
     "runnable_cell_representatives": 19,
     "n_a_cells": 1
   },
-  "note": "Paper-aligned aggregate counts; T1-INS is N/A with zero retained scenarios."
+  "per_surface": {
+    "T1": {
+      "field_positions": 249,
+      "charging_relevant_fields": 201,
+      "consistency_constraints": 13,
+      "threat_scenarios": 41
+    },
+    "T2": {
+      "field_positions": 908,
+      "charging_relevant_fields": 802,
+      "consistency_constraints": 24,
+      "threat_scenarios": 65
+    },
+    "T3": {
+      "field_positions": 271,
+      "charging_relevant_fields": 201,
+      "consistency_constraints": 20,
+      "threat_scenarios": 51
+    },
+    "T4-Nchf": {
+      "field_positions": 852,
+      "charging_relevant_fields": 846,
+      "consistency_constraints": 24,
+      "threat_scenarios": 75
+    }
+  },
+  "files": {
+    "all_field_positions": "all_field_positions_2280.csv",
+    "charging_relevant_fields": "charging_relevant_fields_2050.csv",
+    "consistency_constraints": "consistency_constraints_81.csv",
+    "threat_scenarios": "threat_scenarios_232.csv",
+    "derivation_crosswalk": "derivation_crosswalk.csv"
+  },
+  "note": "Paper-aligned native N7, N4, and N40 counts. The separate T4-Gy measurement analogue is excluded. T1-INS is N/A with zero retained scenarios."
 }

@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import csv
 import hashlib
 import json
 from pathlib import Path
@@ -2502,6 +2503,24 @@ def _tshark_version() -> tuple[bool, str]:
     return version >= (3, 6, 0), ".".join(str(part) for part in version)
 
 
+def _analysis_csv_check(filename: str, expected_rows: int) -> tuple[bool, str]:
+    path = ANALYSIS / filename
+    try:
+        with path.open(encoding="utf-8", newline="") as stream:
+            reader = csv.DictReader(stream)
+            rows = list(reader)
+    except (OSError, csv.Error) as error:
+        return False, str(error)
+    has_hangul = any(
+        re.search(r"[\uac00-\ud7a3]", value or "")
+        for row in rows
+        for value in row.values()
+    )
+    passed = len(rows) == expected_rows and not has_hangul
+    detail = f"{len(rows)} rows; English-only={'yes' if not has_hangul else 'no'}"
+    return passed, detail
+
+
 def doctor(messages: list[dict], cases: dict[str, dict]) -> bool:
     checks: list[tuple[str, bool, str]] = []
     checks.append(("python", sys.version_info >= (3, 10), sys.version.split()[0]))
@@ -2527,6 +2546,23 @@ def doctor(messages: list[dict], cases: dict[str, dict]) -> bool:
     checks.append(("consistency constraints", counts["native_constraints"] == 81, str(counts["native_constraints"])))
     checks.append(("manipulation primitives", counts["manipulation_primitives"] == 5, str(counts["manipulation_primitives"])))
     checks.append(("native scenarios", counts["native_scenarios"] == 232, str(counts["native_scenarios"])))
+    for label, filename, expected_rows in (
+        ("all-field dataset", "all_field_positions_2280.csv", 2280),
+        (
+            "charging-field dataset",
+            "charging_relevant_fields_2050.csv",
+            2050,
+        ),
+        (
+            "constraint dataset",
+            "consistency_constraints_81.csv",
+            81,
+        ),
+        ("scenario dataset", "threat_scenarios_232.csv", 232),
+        ("derivation crosswalk", "derivation_crosswalk.csv", 2050),
+    ):
+        passed, detail = _analysis_csv_check(filename, expected_rows)
+        checks.append((label, passed, detail))
     representative_ids = [
         case["representative_id"] for case in cases.values() if case["status"] == "E2E"
     ]
