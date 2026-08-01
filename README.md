@@ -31,7 +31,7 @@ The analysis reported by the paper is:
 
 [![T3-MOD1 reviewer-guided artifact walkthrough](assets/t3-mod1-attack-demo.gif)](assets/t3-mod1-attack-demo.gif)
 
-The five panels follow one complete reviewer path: selecting T3-MOD1 from the
+The animated walkthrough follows one complete reviewer path: selecting T3-MOD1 from the
 twenty paper cells, tracing its standard-driven derivation, locating the T3/N4
 mutation and propagation path, comparing the measured benign and unprotected
 attack runs, and mapping the mismatch to the paper-evaluated defense
