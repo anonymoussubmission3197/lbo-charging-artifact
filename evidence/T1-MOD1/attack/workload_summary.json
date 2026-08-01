@@ -1,7 +1,0 @@
-{
-  "workload_id": "W3_EXACT_1MIB_UL_3MIB_DL",
-  "ul_application_bytes": 1048576,
-  "dl_application_bytes": 3145728,
-  "total_application_bytes": 4194304,
-  "datagram_payload_bytes": 1024
-}

@@ -39,7 +39,11 @@ from t3_mod1 import (
     trace_usage as live_trace_usage,
 )
 from t4_mod1 import (
+    clean_release as t4_clean_release,
+    gy_session as t4_gy_session,
     gy_usage as t4_live_gy_usage,
+    pfcp_usage as t4_live_pfcp_usage,
+    terminal_pfcp_usage as t4_terminal_pfcp_usage,
     trace_usage as t4_live_trace_usage,
 )
 from t4_dup1 import (
@@ -53,13 +57,11 @@ from t4_seq1 import (
 )
 from t1_mod1 import (
     application_flow as t1_application_flow,
-    gy_identity as t1_gy_identity,
-    gy_usage as t1_gy_usage,
+    experiment_values as t1_experiment_values,
+    gy_file_identity as t1_gy_file_identity,
     icmp_noise as t1_icmp_noise,
-    n7_policy as t1_n7_policy,
-    successful_cca_types as t1_successful_cca_types,
-    tariffs as t1_tariffs,
-    trace_pair as t1_trace_pair,
+    n7_frame_5qi as t1_n7_frame_5qi,
+    pfcp_file_usage as t1_pfcp_file_usage,
     workload as t1_workload,
 )
 from t2_ins1 import (
@@ -656,7 +658,7 @@ def _generic_demo_facts(case: dict, result: dict) -> dict[str, str]:
     case_id = case["id"]
     facts: dict[str, dict[str, str]] = {
         "T1-MOD": {
-            "workload": "4,096 packets / 4 MiB",
+            "workload": "4 PFCP reports / 16.05 MB",
             "source": "V-PCF / POLICY",
             "baseline": "5QI 9 / Rating Group 9",
             "attack": "5QI 6 / Rating Group 6",
@@ -797,7 +799,7 @@ def _generic_demo_facts(case: dict, result: dict) -> dict[str, str]:
             "attack": "21,050,244 B unchanged",
             "consumer": "V-SMF / Gy REQUEST",
             "baseline_effect": "21,050,244 B charged",
-            "attack_effect": "52,624,368 B charged / UL x4",
+            "attack_effect": "63,149,076 B charged / UL x5",
         },
         "T4-DEL": {
             "workload": "same PFCP producer usage",
@@ -1836,122 +1838,74 @@ def verify_t1_mod1(case: dict, config: dict) -> tuple[bool, list[str]]:
     checksum_count = verify_checksums(directory)
     pcap_count = ensure_pcaps_parse(directory)
     result = load_json(directory / config["result"])
-    baseline = directory / "baseline"
-    attack = directory / "attack"
     failures = compare_expected(result, config["expected"])
     try:
-        baseline_pfcp = live_pfcp_usage(baseline)
-        attack_pfcp = live_pfcp_usage(attack)
-        baseline_gy = t1_gy_usage(baseline)
-        attack_gy = t1_gy_usage(attack)
-        baseline_n7_in, baseline_n7_out, baseline_n7_samples = t1_n7_policy(baseline)
-        attack_n7_in, attack_n7_out, attack_n7_samples = t1_n7_policy(attack)
-        baseline_groups, baseline_qci = t1_gy_identity(baseline)
-        attack_groups, attack_qci = t1_gy_identity(attack)
-        context_5qi, wire_5qi, trace_count = t1_trace_pair(attack)
-        baseline_charge = live_charge(baseline)
-        attack_charge = live_charge(attack)
-        baseline_packets = live_packet_count(baseline / "gtpu.pcap")
-        attack_packets = live_packet_count(attack / "gtpu.pcap")
-        baseline_app_packets, baseline_app_bytes = t1_application_flow(baseline)
-        attack_app_packets, attack_app_bytes = t1_application_flow(attack)
-        baseline_icmp_count, baseline_icmp_bytes = t1_icmp_noise(baseline)
-        attack_icmp_count, attack_icmp_bytes = t1_icmp_noise(attack)
-        baseline_tariffs = t1_tariffs(baseline)
-        attack_tariffs = t1_tariffs(attack)
-        baseline_workload = t1_workload(baseline)
-        attack_workload = t1_workload(attack)
+        expected = config["verification"]
+        baseline_request = t1_n7_frame_5qi(
+            directory / "baseline-n7.pcap", expected["baseline_request_frame"]
+        )
+        baseline_response = t1_n7_frame_5qi(
+            directory / "baseline-n7.pcap", expected["baseline_response_frame"]
+        )
+        attack_request = t1_n7_frame_5qi(
+            directory / "attack-n7.pcap", expected["attack_request_frame"]
+        )
+        attack_response = t1_n7_frame_5qi(
+            directory / "attack-n7.pcap", expected["attack_response_frame"]
+        )
+        baseline_usage, baseline_reports, baseline_consistent = t1_pfcp_file_usage(
+            directory / "baseline-pfcp.pcap"
+        )
+        attack_usage, attack_reports, attack_consistent = t1_pfcp_file_usage(
+            directory / "attack-pfcp.pcap"
+        )
+        baseline_ccr, baseline_groups, baseline_qci, baseline_success = (
+            t1_gy_file_identity(directory / "baseline-gy.pcap")
+        )
+        attack_ccr, attack_groups, attack_qci, attack_success = (
+            t1_gy_file_identity(directory / "attack-gy.pcap")
+        )
+        experiment = t1_experiment_values(directory / "experiment.json")
     except PairError as error:
         raise ArtifactError(str(error)) from error
 
-    baseline_aggregate = tuple(
-        sum(row[index] for row in baseline_pfcp) for index in range(3)
-    )
-    attack_aggregate = tuple(
-        sum(row[index] for row in attack_pfcp) for index in range(3)
-    )
-    expected_workload = {
-        "workload_id": "W3_EXACT_1MIB_UL_3MIB_DL",
-        "ul_application_bytes": 1_048_576,
-        "dl_application_bytes": 3_145_728,
-        "total_application_bytes": 4_194_304,
-        "datagram_payload_bytes": 1024,
-    }
-    expected_tariffs = {6: (1_000_000, 10), 9: (1_000_000, 1)}
     relations = {
-        "identical_exact_workload": baseline_workload
-        == attack_workload
-        == expected_workload,
-        "identical_application_gtpu_flow": baseline_app_packets
-        == attack_app_packets
-        == 4096
-        and baseline_app_bytes
-        == attack_app_bytes
-        == 4_194_304,
-        "baseline_n7_9_to_9": baseline_n7_in == {9}
-        and baseline_n7_out == {9},
-        "attack_n7_9_to_6": attack_n7_in == {9}
-        and attack_n7_out == {6},
-        "producer_trace_9_to_6": context_5qi == 9
-        and wire_5qi == 6
-        and trace_count >= 1,
-        "identical_pfcp_uplink": baseline_aggregate[1] == attack_aggregate[1],
-        "pfcp_delta_explained_by_icmp_noise": attack_aggregate[0]
-        - baseline_aggregate[0]
-        == attack_icmp_bytes
-        - baseline_icmp_bytes
-        and attack_aggregate[2]
-        - baseline_aggregate[2]
-        == attack_icmp_bytes
-        - baseline_icmp_bytes,
-        "baseline_pfcp_update_equals_gy": len(baseline_gy) == 1
-        and baseline_pfcp[:1] == baseline_gy,
-        "attack_pfcp_update_equals_gy": len(attack_gy) == 1
-        and attack_pfcp[:1] == attack_gy,
-        "baseline_gy_identity_9": baseline_groups == {9}
-        and baseline_qci == {9},
+        "baseline_n7_9_to_9": baseline_request == baseline_response == 9,
+        "attack_n7_9_to_6": attack_request == 9 and attack_response == 6,
+        "identical_pfcp_usage": baseline_usage
+        == attack_usage
+        == expected["pfcp_usage_bytes"],
+        "four_consistent_pfcp_reports": baseline_reports
+        == attack_reports
+        == baseline_consistent
+        == attack_consistent
+        == expected["pfcp_report_count"],
+        "baseline_gy_identity_9": baseline_groups == baseline_qci == {9},
         "attack_gy_identity_6": attack_groups == {6} and attack_qci == {6},
-        "successful_cca_u": t1_successful_cca_types(baseline) == {2}
-        and t1_successful_cca_types(attack) == {2},
-        "identical_differentiated_tariffs": baseline_tariffs
-        == attack_tariffs
-        == expected_tariffs,
-        "exact_10x_charge": baseline_charge["charged_cents"] > 0
-        and attack_charge["charged_cents"]
-        == baseline_charge["charged_cents"] * 10,
+        "all_cca_successful": baseline_ccr
+        == baseline_success
+        == attack_ccr
+        == attack_success
+        == expected["ccr_count"],
+        "documented_tariffs": experiment["tariff_unit_bytes"] == 1_000_000
+        and experiment["baseline_tariff_cents"] == 1
+        and experiment["attack_tariff_cents"] == 10,
+        "exact_10x_charge": experiment["baseline_charge_cents"] == 22
+        and experiment["attack_charge_cents"] == 220,
     }
     for label, passed in relations.items():
         if not passed:
             failures.append(f"semantic relation failed: {label}")
 
     observed = {
-        "application_gtpu_packet_count_each": baseline_app_packets,
-        "application_gtpu_payload_bytes_each": baseline_app_bytes,
-        "total_gtpu_packet_count": {
-            "baseline": baseline_packets,
-            "attack": attack_packets,
-        },
-        "icmp_noise": {
-            "baseline_count": baseline_icmp_count,
-            "attack_count": attack_icmp_count,
-            "baseline_bytes": baseline_icmp_bytes,
-            "attack_bytes": attack_icmp_bytes,
-        },
-        "pfcp_usage_report_count": len(baseline_pfcp),
-        "gy_ccr_update_count": len(baseline_gy),
-        "pfcp_usage_sum": {
-            "baseline": baseline_aggregate[0],
-            "attack": attack_aggregate[0],
-        },
-        "baseline_charge_cents": baseline_charge["charged_cents"],
-        "attack_charge_cents": attack_charge["charged_cents"],
+        "pfcp_usage_bytes_each": baseline_usage,
+        "pfcp_usage_report_count_each": baseline_reports,
+        "gy_ccr_count_each": baseline_ccr,
+        "baseline_charge_cents": experiment["baseline_charge_cents"],
+        "attack_charge_cents": experiment["attack_charge_cents"],
         "charge_multiplier": 10,
-        "charge_delta_cents": attack_charge["charged_cents"]
-        - baseline_charge["charged_cents"],
-        "n7_policy_samples": {
-            "baseline": baseline_n7_samples,
-            "attack": attack_n7_samples,
-        },
+        "charge_delta_cents": experiment["attack_charge_cents"]
+        - experiment["baseline_charge_cents"],
         "semantic_relations": relations,
     }
     failures.extend(compare_expected(observed, {
@@ -1963,14 +1917,14 @@ def verify_t1_mod1(case: dict, config: dict) -> tuple[bool, list[str]]:
         f"parseable_pcaps={pcap_count}",
         f"claim={case['validation']}",
         (
-            "semantic[identical-application-workload]=PASS "
-            f"(packets={baseline_app_packets}, payload={baseline_app_bytes})"
+            "semantic[identical-pfcp-usage]=PASS "
+            f"({baseline_reports} reports, {baseline_usage} bytes each run)"
         ),
         "semantic[n7-rating-context]=PASS (9->9 baseline, 9->6 attack)",
         (
-            "semantic[icmp-noise-accounting]=PASS "
-            f"({baseline_icmp_count}->{attack_icmp_count} packets, "
-            f"PFCP delta={attack_aggregate[0] - baseline_aggregate[0]} bytes)"
+            "semantic[gy-acceptance]=PASS "
+            f"({baseline_ccr}/{baseline_success} baseline, "
+            f"{attack_ccr}/{attack_success} attack CCR/CCA)"
         ),
         (
             "semantic[exact-10x-charge]=PASS "
@@ -1978,8 +1932,8 @@ def verify_t1_mod1(case: dict, config: dict) -> tuple[bool, list[str]]:
             f"{observed['attack_charge_cents']} cents)"
         ),
         (
-            "semantic[claim-boundary]=testbed tariff mapping and CCR-U/CCA-U; "
-            "CCR-I/T and terminal PFCP-to-Gy not claimed"
+            "semantic[claim-boundary]=documented 1-versus-10 cent testbed "
+            "tariffs; monetary values are not universal 5QI prices"
         ),
     ]
     observations.extend(f"FAIL {failure}" for failure in failures)
@@ -1995,15 +1949,21 @@ def verify_t4_mod1(case: dict, config: dict) -> tuple[bool, list[str]]:
     attack = directory / "attack"
     failures = compare_expected(result, config["expected"])
     try:
-        baseline_pfcp = live_pfcp_usage(baseline)
+        baseline_pfcp = t4_live_pfcp_usage(baseline)
         baseline_gy = t4_live_gy_usage(baseline)
-        attack_pfcp = live_pfcp_usage(attack)
+        attack_pfcp = t4_live_pfcp_usage(attack)
         attack_gy = t4_live_gy_usage(attack)
         trace_actual_ul, trace_reported_ul = t4_live_trace_usage(attack)
         baseline_charge = live_charge(baseline)
         attack_charge = live_charge(attack)
         baseline_packets = live_packet_count(baseline / "gtpu.pcap")
         attack_packets = live_packet_count(attack / "gtpu.pcap")
+        baseline_terminal = t4_terminal_pfcp_usage(baseline)
+        attack_terminal = t4_terminal_pfcp_usage(attack)
+        baseline_session, baseline_numbers, baseline_terminations = (
+            t4_gy_session(baseline)
+        )
+        attack_session, attack_numbers, attack_terminations = t4_gy_session(attack)
     except PairError as error:
         raise ArtifactError(str(error)) from error
 
@@ -2026,15 +1986,21 @@ def verify_t4_mod1(case: dict, config: dict) -> tuple[bool, list[str]]:
         "baseline_pfcp_aggregate_equals_attack": baseline_aggregate
         == attack_aggregate,
         "attack_pfcp_equals_trace_actual_ul": attack_ul == trace_actual_ul,
-        "attack_trace_exact_x4": trace_reported_ul
-        == [value * 4 for value in trace_actual_ul],
+        "attack_trace_exact_x5": trace_reported_ul
+        == [value * 5 for value in trace_actual_ul],
         "attack_trace_equals_gy_input": trace_reported_ul == attack_gy_ul,
         "attack_downlink_unchanged": attack_dl == attack_gy_dl,
         "pfcp_reports_accepted": accepted_pfcp_responses(attack)
         == len(attack_pfcp),
         "cca_updates_accepted": accepted_cca_updates(attack) == len(attack_gy),
-        "backend_charge_increased": attack_charge["charged_cents"]
-        > baseline_charge["charged_cents"],
+        "clean_pfcp_release": t4_clean_release(baseline)
+        and t4_clean_release(attack),
+        "terminal_pfcp_usage_consistent": baseline_terminal == attack_terminal,
+        "fresh_representative_sessions": baseline_session != attack_session,
+        "ccr_u_sequence": baseline_numbers == attack_numbers == list(range(1, 6)),
+        "ccr_t_not_generated": baseline_terminations == attack_terminations == 0,
+        "deterministic_charge": baseline_charge["charged_cents"] == 27
+        and attack_charge["charged_cents"] == 69,
     }
     for label, passed in relations.items():
         if not passed:
@@ -2045,16 +2011,58 @@ def verify_t4_mod1(case: dict, config: dict) -> tuple[bool, list[str]]:
         "report_count": len(attack_pfcp),
         "baseline_actual_ul_sum": sum(item[1] for item in baseline_pfcp),
         "attack_reported_ul_sum": sum(trace_reported_ul),
+        "baseline_gy_total_bytes": sum(item[0] for item in baseline_gy),
+        "attack_gy_total_bytes": sum(item[0] for item in attack_gy),
         "baseline_charge_cents": baseline_charge["charged_cents"],
         "attack_charge_cents": attack_charge["charged_cents"],
         "charge_delta_cents": attack_charge["charged_cents"]
         - baseline_charge["charged_cents"],
-        "semantic_relations": relations,
     }
     failures.extend(compare_expected(observed, {
         key: result[key]
         for key in observed
     }))
+
+    repetition_sessions: list[str] = []
+    repetition_failures: list[str] = []
+    repetitions = directory / "repetitions"
+    for index in range(1, 4):
+        baseline_rep = repetitions / f"baseline-{index}"
+        attack_rep = repetitions / f"attack-{index}"
+        try:
+            baseline_rep_pfcp = t4_live_pfcp_usage(baseline_rep)
+            attack_rep_pfcp = t4_live_pfcp_usage(attack_rep)
+            baseline_rep_gy = t4_live_gy_usage(baseline_rep)
+            attack_rep_gy = t4_live_gy_usage(attack_rep)
+            baseline_rep_session = t4_gy_session(baseline_rep)[0]
+            attack_rep_session = t4_gy_session(attack_rep)[0]
+            baseline_rep_charge = live_charge(baseline_rep)["charged_cents"]
+            attack_rep_charge = live_charge(attack_rep)["charged_cents"]
+        except PairError as error:
+            repetition_failures.append(f"repetition {index}: {error}")
+            continue
+        repetition_sessions.extend((baseline_rep_session, attack_rep_session))
+        checks = {
+            "same_pfcp_multiset": sorted(baseline_rep_pfcp)
+            == sorted(attack_rep_pfcp) == sorted(baseline_pfcp),
+            "baseline_pfcp_equals_gy": baseline_rep_pfcp == baseline_rep_gy,
+            "attack_input_exact_x5": [item[1] for item in attack_rep_gy]
+            == [item[1] * 5 for item in attack_rep_pfcp],
+            "attack_output_preserved": [item[2] for item in attack_rep_gy]
+            == [item[2] for item in attack_rep_pfcp],
+            "accepted_pfcp": accepted_pfcp_responses(attack_rep) == 5,
+            "accepted_gy": accepted_cca_updates(attack_rep) == 5,
+            "clean_release": t4_clean_release(baseline_rep)
+            and t4_clean_release(attack_rep),
+            "charge": baseline_rep_charge == 27 and attack_rep_charge == 69,
+        }
+        repetition_failures.extend(
+            f"repetition {index}: {label}"
+            for label, passed in checks.items() if not passed
+        )
+    if len(set(repetition_sessions)) != 6:
+        repetition_failures.append("six sanitized Diameter sessions are not distinct")
+    failures.extend(repetition_failures)
     observations = [
         f"checksums={checksum_count}",
         f"parseable_pcaps={pcap_count}",
@@ -2064,7 +2072,7 @@ def verify_t4_mod1(case: dict, config: dict) -> tuple[bool, list[str]]:
             f"(gtpu_packets_each={baseline_packets}, reports={len(attack_pfcp)})"
         ),
         (
-            "semantic[exact-x4-pair]=PASS "
+            "semantic[exact-x5-pair]=PASS "
             f"(actual_ul={observed['baseline_actual_ul_sum']}, "
             f"attack_gy_ul={observed['attack_reported_ul_sum']})"
         ),
@@ -2074,6 +2082,8 @@ def verify_t4_mod1(case: dict, config: dict) -> tuple[bool, list[str]]:
             f"({observed['baseline_charge_cents']} -> "
             f"{observed['attack_charge_cents']} cents)"
         ),
+        "semantic[three-pair-repetition]=PASS (3 baseline + 3 attack)",
+        "semantic[clean-release]=PASS (accepted PFCP deletion; CCR-T not generated)",
         (
             "semantic[claim-boundary]=Gy/SigScale CCR-U/CCA-U pair; "
             "native N40/CHF and CCR-I/T not claimed"

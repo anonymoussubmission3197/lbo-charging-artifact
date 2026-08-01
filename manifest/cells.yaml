@@ -16,12 +16,12 @@ cells:
     title: "5QI tariff rewrite"
     summary: "Change an existing policy value so the same usage is rated under a different tariff."
     paper_mutation: "authDefQos.5qi 9 -> 6 and Rating Group 9 -> 6."
-    measured_effect: "The same testbed workload changed the OCS balance debit from 7 to 70 cents."
+    measured_effect: "The same 16,049,952-byte PFCP usage changed the OCS balance debit from 22 to 220 cents."
     status: E2E
     implementation_profile: Open5GS-SigScale
     claim_boundary: "native T1/N7"
-    baseline_charge_cents: 7
-    attack_charge_cents: 70
+    baseline_charge_cents: 22
+    attack_charge_cents: 220
     repetitions: 1
 
   - id: T1-INS
@@ -250,14 +250,14 @@ cells:
     native_scenario_count: 54
     title: "Charging-volume inflation"
     summary: "Inflate the outgoing charging volume while accepted PFCP usage remains unchanged."
-    paper_mutation: "Multiply Gy CC-Input-Octets by four while preserving PFCP usage and CC-Output-Octets."
-    measured_effect: "Charged volume changed from 21.05 to 52.62 MB and the OCS balance debit from 27 to 58 cents."
+    paper_mutation: "Multiply Gy CC-Input-Octets by five while preserving PFCP usage and CC-Output-Octets."
+    measured_effect: "Charged volume changed from 21.05 to 63.15 MB and the OCS balance debit from 27 to 69 cents."
     status: E2E
     implementation_profile: Open5GS-SigScale-Gy
     claim_boundary: "Gy analogue; not native N40/CHF acceptance proof"
     baseline_charge_cents: 27
-    attack_charge_cents: 58
-    repetitions: 1
+    attack_charge_cents: 69
+    repetitions: 3
 
   - id: T4-INS
     representative_id: T4-INS1

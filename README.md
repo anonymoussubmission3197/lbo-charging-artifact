@@ -27,6 +27,16 @@ The analysis reported by the paper is:
 → 19 representative PoCs
 ```
 
+## Guided artifact overview
+
+[![T3-MOD1 reviewer-guided artifact overview](assets/artifact-overview-t3-mod1.png)](assets/artifact-overview-t3-mod1.png)
+
+The five panels follow one complete reviewer path: selecting T3-MOD1 from the
+twenty paper cells, tracing its standard-driven derivation, locating the T3/N4
+mutation and propagation path, comparing the measured benign and unprotected
+attack runs, and mapping the mismatch to the paper-evaluated defense
+predicate.
+
 ## Demo video
 
 The [T3-MOD1 live demonstration](https://youtu.be/n1MCp5k2rZ8) shows the
@@ -38,7 +48,7 @@ not included in this package.
 [![T3-MOD1 usage-report inflation demo](assets/t3-mod1-attack-demo.gif)](https://youtu.be/n1MCp5k2rZ8)
 
 The animation shows the unprotected T3-MOD1 run: the UE generates the same
-controlled workload, the V-UPF reports twice its measured usage, and the
+controlled workload, the V-UPF reports five times its measured usage, and the
 inflated value propagates through the V-SMF to charging. Select the image to
 open the complete video, including the TEE-protected rejection run.
 

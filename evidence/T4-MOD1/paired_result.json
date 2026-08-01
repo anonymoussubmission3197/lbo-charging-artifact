@@ -1,109 +1,50 @@
 {
-  "schema_version": "1.0",
-  "run_id": "paired_baseline_T4G-A17_LIVE_PUBLIC__attack_T4G-A17_LIVE_PUBLIC",
+  "schema_version": "2.0-public",
   "audit_id": "T4G-A17",
+  "representative_id": "T4-MOD1",
   "legacy_threat_id": "T4-1",
-  "experiment_kind": "clean_source_paired_live_reproduction",
+  "experiment_kind": "clean_release_paired_live_reproduction",
   "implementation_profile": "Gy-semantic-analogue",
   "kernel": "6.17.0-40-generic",
   "open5gs_commit": "26cbc33a418a292e3b3949be69155898d751bd6e",
-  "mutation_factor": 4,
+  "mutation_factor": 5,
   "mutated_field": "CC-Input-Octets",
+  "preserved_field": "CC-Output-Octets",
   "gtpu_packet_count_each": 30400,
   "report_count": 5,
+  "gy_ccr_update_count_each": 5,
+  "gy_ccr_terminate_count_each": 0,
   "baseline_pfcp_usage": [
-    [
-      1049076,
-      525780,
-      523296
-    ],
-    [
-      5000292,
-      2500560,
-      2499732
-    ],
-    [
-      5000292,
-      2499732,
-      2500560
-    ],
-    [
-      5000292,
-      2498904,
-      2501388
-    ],
-    [
-      5000292,
-      2499732,
-      2500560
-    ]
+    [1049076, 525780, 523296],
+    [5000292, 2500560, 2499732],
+    [5000292, 2499732, 2500560],
+    [5000292, 2498904, 2501388],
+    [5000292, 2499732, 2500560]
   ],
   "attack_pfcp_usage": [
-    [
-      1049076,
-      525780,
-      523296
-    ],
-    [
-      5000292,
-      2499732,
-      2500560
-    ],
-    [
-      5000292,
-      2500560,
-      2499732
-    ],
-    [
-      5000292,
-      2498904,
-      2501388
-    ],
-    [
-      5000292,
-      2499732,
-      2500560
-    ]
+    [1049076, 525780, 523296],
+    [5000292, 2500560, 2499732],
+    [5000292, 2499732, 2500560],
+    [5000292, 2498904, 2501388],
+    [5000292, 2499732, 2500560]
   ],
-  "attack_actual_ul": [
-    525780,
-    2499732,
-    2500560,
-    2498904,
-    2499732
-  ],
-  "attack_reported_ul": [
-    2103120,
-    9998928,
-    10002240,
-    9995616,
-    9998928
-  ],
+  "terminal_pfcp_usage": [4120956, 2060892, 2060064],
   "baseline_actual_ul_sum": 10524708,
-  "attack_reported_ul_sum": 42098832,
+  "baseline_output_sum": 10525536,
+  "baseline_gy_total_bytes": 21050244,
+  "attack_reported_ul_sum": 52623540,
+  "attack_output_sum": 10525536,
+  "attack_gy_total_bytes": 63149076,
   "baseline_charge_cents": 27,
-  "attack_charge_cents": 58,
-  "charge_delta_cents": 31,
+  "attack_charge_cents": 69,
+  "charge_delta_cents": 42,
+  "baseline_repetitions": 3,
+  "attack_repetitions": 3,
+  "all_fresh_session_ids": true,
+  "clean_pfcp_release_each": true,
   "g1_wire_acceptance": true,
   "g2_state_effect": true,
   "g3_backend_effect": true,
   "classification": "E2E",
-  "semantic_relations": {
-    "identical_gtpu_packet_count": true,
-    "identical_report_count": true,
-    "baseline_pfcp_equals_gy": true,
-    "baseline_pfcp_aggregate_equals_attack": true,
-    "attack_pfcp_equals_trace_actual_ul": true,
-    "attack_trace_exact_x4": true,
-    "attack_trace_equals_gy_input": true,
-    "attack_downlink_unchanged": true,
-    "pfcp_reports_accepted": true,
-    "cca_updates_accepted": true,
-    "backend_charge_increased": true
-  },
-  "input_checksum_counts": {
-    "baseline": 58,
-    "attack": 58
-  },
-  "claim_boundary": "This paired live run validates accepted Gy CCR-U/CCA-U exchanges in the Open5GS/SigScale prototype. It does not claim native N40/Nchf CHF acceptance or capture of CCR-I/T."
+  "claim_boundary": "Five accepted Gy CCR-U/CCA-U exchanges are observed per run. Clean PFCP session deletion is accepted. CCR-T was not generated and is not claimed. Native N40/Nchf CHF acceptance is not claimed."
 }

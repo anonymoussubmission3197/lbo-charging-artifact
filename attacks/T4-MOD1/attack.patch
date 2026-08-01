@@ -17,8 +17,8 @@ index 4590091dc..f68a07343 100644
 -    val.u64 = sess->gy.ul_octets - sess->gy.last_report.ul_octets;
 +    actual_ul_octets =
 +        sess->gy.ul_octets - sess->gy.last_report.ul_octets;
-+    val.u64 = actual_ul_octets * 4;
-+    ogs_warn("T4-1 SMF request inflation: request_type[%u] factor[4] "
++    val.u64 = actual_ul_octets * 5;
++    ogs_warn("T4-1 SMF request inflation: request_type[%u] factor[5] "
 +             "actual_ul[%" PRIu64 "] reported_ul[%" PRIu64 "]",
 +             cc_request_type, actual_ul_octets, val.u64);
      sess->gy.last_report.ul_octets = sess->gy.ul_octets;

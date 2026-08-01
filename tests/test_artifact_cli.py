@@ -155,6 +155,11 @@ class ArtifactCliTests(unittest.TestCase):
         readme = (ROOT / "README.md").read_text(encoding="utf-8")
         self.assertIn("https://github.com/5g-lbo-tee/charging-artifact.git", readme)
         self.assertIn("https://youtu.be/n1MCp5k2rZ8", readme)
+        self.assertIn("assets/artifact-overview-t3-mod1.png", readme)
+        self.assertGreater(
+            (ROOT / "assets/artifact-overview-t3-mod1.png").stat().st_size,
+            100_000,
+        )
         self.assertIn("assets/t3-mod1-attack-demo.gif", readme)
         self.assertGreater(
             (ROOT / "assets/t3-mod1-attack-demo.gif").stat().st_size,
@@ -197,6 +202,20 @@ class ArtifactCliTests(unittest.TestCase):
                 )
                 self.assertNotIn("GUIDED DEMO COMPLETE", result.stdout)
                 self.assertNotIn("trace case", result.stdout)
+
+    def test_updated_t1_and_t4_results_are_presented_consistently(self):
+        t1 = run_cli("demo", "T1-MOD1", "--non-interactive", columns=140)
+        self.assertEqual(t1.returncode, 0, t1.stderr)
+        self.assertIn("22 -> 220 cents", t1.stdout)
+        self.assertIn("16,049,952-byte PFCP usage", t1.stdout)
+        self.assertNotIn("7 -> 70 cents", t1.stdout)
+
+        t4 = run_cli("demo", "T4-MOD1", "--non-interactive", columns=140)
+        self.assertEqual(t4.returncode, 0, t4.stderr)
+        self.assertIn("63,149,076 B charged / UL x5", t4.stdout)
+        self.assertIn("27 -> 69 cents", t4.stdout)
+        self.assertIn("21.05 to 63.15 MB", t4.stdout)
+        self.assertNotIn("27 -> 58 cents", t4.stdout)
 
     def test_verify_all_passes_nineteen_and_marks_na(self):
         result = run_cli("verify", "--all")

@@ -1,0 +1,8 @@
+{
+  "attack": {"beforeCents": 1339, "afterCents": 1119},
+  "baseline": {"beforeCents": 1119, "afterCents": 1097},
+  "tariffs": {
+    "6": {"unitBytes": 1000000, "cents": 10},
+    "9": {"unitBytes": 1000000, "cents": 1}
+  }
+}
