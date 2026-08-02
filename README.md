@@ -27,7 +27,7 @@ The analysis reported by the paper is:
 → 19 representative PoCs
 ```
 
-## Guided artifact overview
+## artifact overview
 
 [![T3-MOD1 reviewer-guided artifact walkthrough](assets/t3-mod1-attack-demo.gif)](assets/t3-mod1-attack-demo.gif)
 
